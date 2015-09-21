@@ -5,40 +5,34 @@
  */
 package networking;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 /**
  *
  * @author joris-main
  */
-public class ClientNode extends Node implements Runnable{
+public class ClientNode extends Node implements Runnable {
 
-    public ClientNode(String ipAddress, String clientName, int portNumber) {
-        super(ipAddress, clientName, portNumber);
-        System.out.println(clientName);
+    /**
+     *
+     * @param ipAddress
+     * @param machineName
+     */
+    public ClientNode(String ipAddress, String machineName) {
+        super(ipAddress, machineName);
+        System.out.println(machineName);
     }
 
-     public void run() {
+    @Override
+    public void run() {
         System.out.println("Client");
-         try {
-             createClient();
-             //receiver(s);
-         } catch (IOException ex) {
-             Logger.getLogger(ClientNode.class.getName()).log(Level.SEVERE, null, ex);
-         }
+        try {
+            createClient();
+        } catch (IOException ex) {
+            Logger.getLogger(ClientNode.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
-     
-     
-     
-    
-    }
-    
-
+}

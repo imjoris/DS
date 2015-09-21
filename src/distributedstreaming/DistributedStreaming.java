@@ -8,26 +8,24 @@ package distributedstreaming;
 import networking.ClientNode;
 import networking.ServerNode;
 
-
-
 /**
  *
  * @author joris-main
  */
 public class DistributedStreaming {
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         Thread sn = new Thread(new ServerNode("server1"));
-        Thread cn = new Thread(new ClientNode("localhost", "client1", 9000));
-        Thread cn2 = new Thread(new ClientNode("localhost", "client2", 9000));
-
+        Thread cn = new Thread(new ClientNode("localhost", "client1"));
+        Thread cn2 = new Thread(new ClientNode("localhost", "client2"));
 
         sn.start();
         cn.start();
         cn2.start();
 
     }
-    
+
 }

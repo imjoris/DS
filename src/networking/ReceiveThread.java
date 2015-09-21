@@ -25,17 +25,17 @@ public class ReceiveThread extends Thread{
     private int ID = -1;
     private DataInputStream streamIn = null;
 
-    public ReceiveThread(Socket socket) {
-        this.socket = socket;
+    public ReceiveThread(Socket _socket) {
+        socket = _socket;
         ID = socket.getPort();
     }
 
     public void run() {
-        System.out.println("Server Thread " + ID + " running.");
+        System.out.println("Receive Thread " + ID + " running.");
         while (true) {
             try {
                 receiver(socket);
-                System.out.println(streamIn.readUTF());
+                //System.out.println(streamIn.readUTF());
             } catch (IOException ioe) {
             }
         }
@@ -56,7 +56,6 @@ public class ReceiveThread extends Thread{
     
    protected void receiver(Socket socket) throws IOException{
         while(true){
-            System.out.println("xxx");
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String answer = input.readLine();
             System.out.println(answer);

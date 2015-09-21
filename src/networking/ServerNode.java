@@ -23,19 +23,17 @@ import java.util.logging.Logger;
 public class ServerNode extends Node implements Runnable {
     //private Socket s;
     
-    public ServerNode() {
-        //super(ipAddress);
+    public ServerNode(String machineName) {
+        super(machineName);
     }
 
     public void run() {
         System.out.println("Server");
 
         try {
-            Socket s = createServer();
-            sender(s);
+            createServer();
+            //sender(s);
         } catch (IOException ex) {
-            Logger.getLogger(ServerNode.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
             Logger.getLogger(ServerNode.class.getName()).log(Level.SEVERE, null, ex);
         }
         

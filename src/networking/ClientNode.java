@@ -20,15 +20,16 @@ import javax.swing.JOptionPane;
  */
 public class ClientNode extends Node implements Runnable{
 
-    public ClientNode(String ipAddress) {
-        super(ipAddress);
+    public ClientNode(String ipAddress, String clientName, int portNumber) {
+        super(ipAddress, clientName, portNumber);
+        System.out.println(clientName);
     }
 
      public void run() {
         System.out.println("Client");
          try {
-             Socket s = createClient();
-             receiver(s);
+             createClient();
+             //receiver(s);
          } catch (IOException ex) {
              Logger.getLogger(ClientNode.class.getName()).log(Level.SEVERE, null, ex);
          }

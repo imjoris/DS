@@ -21,46 +21,58 @@ public class Node {
     public enum MessageType {
         GroupManagement 
     }
-    private static final int PORT = 9000;
+    private int port = 9000;
     private String ipAddress = "localhost";
+    private String machineName = "";
+    private static int threadCount = 0;
     
     /**
      * Constructor for Server
      */
-    public Node(){
-
+    public Node(String name){
+        this.machineName = name;
     }
     
     /**
      * Constructor for Client
      * @param ipAddress
+     * @param name
      */
-    public Node(String ipAddress) {
+    public Node(String ipAddress, String name, int portNumber) {
         this.ipAddress = ipAddress;
+        this.machineName = name;
+        this.port = portNumber;
     }
-
     
     /**
      * Bind client socket
-     * @return Socket socket
      * @throws IOException
      */
-    protected Socket createClient() throws IOException{
-        Socket socket = new Socket(this.ipAddress, PORT);
-        return socket;
+    protected void createClient() throws IOException{
+        Socket socket = new Socket(this.ipAddress, this.port);
+        SpawnConnectionThreads(socket);
     }
     
     /**
      * Bind server socket
-     * @return Socket socket
      * @throws IOException
      */
-    protected Socket createServer() throws IOException {
-        ServerSocket server = new ServerSocket(PORT);
+    protected void createServer() throws IOException {
+        ServerSocket server = new ServerSocket(9000);
+        while(true){
         Socket s = server.accept();
-        return s;
+        SpawnConnectionThreads(s);
+        }
     }
 
+    protected void SpawnConnectionThreads(Socket s) throws IOException{
+        SendThread st = new SendThread(s, this.machineName);
+        st.open();
+        st.start();
+        ReceiveThread rt = new ReceiveThread(s);
+        rt.open();
+        rt.start();
+    }
     
     /**
      * Receive stream
@@ -89,7 +101,6 @@ public class Node {
             count += 1;
         }
     }
-    
 }
     
     

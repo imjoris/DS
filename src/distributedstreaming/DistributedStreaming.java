@@ -19,14 +19,14 @@ public class DistributedStreaming {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Thread sn = new Thread(new ServerNode());
-        Thread cn = new Thread(new ClientNode("localhost"));
-        //Thread cn2 = new Thread(new ClientNode("localhost"));
+        Thread sn = new Thread(new ServerNode("server1"));
+        Thread cn = new Thread(new ClientNode("localhost", "client1", 9000));
+        Thread cn2 = new Thread(new ClientNode("localhost", "client2", 9000));
 
 
         sn.start();
         cn.start();
-        //cn2.start();
+        cn2.start();
 
     }
     

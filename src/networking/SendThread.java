@@ -17,27 +17,28 @@ import java.util.logging.Logger;
  *
  * @author Euaggelos
  */
-public class ServerThread extends Thread {
+public class SendThread extends Thread {
 
     private Socket socket = null;
-    private ServerNode server = null;
+    private String name = "";
     private int ID = -1;
     private DataInputStream streamIn = null;
 
-    public ServerThread(Socket _socket) {
+    public SendThread(Socket _socket, String name) {
         socket = _socket;
+        this.name = name;
         ID = socket.getPort();
     }
 
     public void run() {
-        System.out.println("Server Thread " + ID + " running.");
+        System.out.println("Send Thread " + name + " " + ID + " running.");
         while (true) {
             try {
                 sender(socket);
                 System.out.println(streamIn.readUTF());
             } catch (IOException ioe) {
             } catch (InterruptedException ex) {
-                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -56,13 +57,12 @@ public class ServerThread extends Thread {
     }
     
     public void sender(Socket socket) throws IOException, InterruptedException{
-        System.out.println("asdf");
         int count = 0;
         while (true) {
-            System.out.println("qwer");
             Thread.sleep(1000);
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            out.println(count);
+            System.out.println(this.name + " will now send");
+            out.println(this.name + '\t' + count);
             count += 1;
         }
     }

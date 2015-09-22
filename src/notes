@@ -1,2 +1,26 @@
+
+
+JAVA TCP example
+
+https://systembash.com/a-simple-java-tcp-server-and-tcp-client/
+
+JAVA UDP example
+
+https://systembash.com/a-simple-java-udp-server-and-udp-client/
+
+On multicasting
+
 http://michieldemey.be/blog/network-discovery-using-udp-broadcast/
 
+https://docs.oracle.com/javase/tutorial/networking/datagrams/broadcasting.html
+
+http://www.java2s.com/Code/Java/Network-Protocol/Performsbroadcastandmulticastpeerdetection.htm
+
+
+Ethernet frame size
+
+https://en.wikipedia.org/wiki/Ethernet_frame
+
+https://en.wikipedia.org/wiki/Jumbo_frame
+
+http://serverfault.com/questions/422158/what-is-the-in-the-wire-size-of-a-ethernet-frame-1518-or-1542

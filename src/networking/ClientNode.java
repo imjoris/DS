@@ -29,7 +29,8 @@ public class ClientNode extends Node implements Runnable {
     public void run() {
         System.out.println("Client");
         try {
-            createClient();
+            //createTCPClient();
+            createUDPClient();
         } catch (IOException ex) {
             Logger.getLogger(ClientNode.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -20,11 +20,11 @@ public class DistributedStreaming {
     public static void main(String[] args) {
         Thread sn = new Thread(new ServerNode("server1"));
         Thread cn = new Thread(new ClientNode("localhost", "client1"));
-        Thread cn2 = new Thread(new ClientNode("localhost", "client2"));
+        //Thread cn2 = new Thread(new ClientNode("localhost", "client2"));
 
         sn.start();
         cn.start();
-        cn2.start();
+        //cn2.start();
 
     }
 

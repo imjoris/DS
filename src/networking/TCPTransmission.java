@@ -5,7 +5,6 @@
  */
 package networking;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -19,13 +18,13 @@ import java.util.logging.Logger;
  * THERE IS A BETTER WAY TO DO THIS WITH MULTICASTING. THIS IS ONLY TEMPORARY!!!!!!!!!!!!!!!!!!
  * @author Euaggelos
  */
-public class Transmission extends Thread {
+public class TCPTransmission extends Thread {
 
     private Socket socket = null;
     private String machineName = "";
     private int ID = -1;
     private DataInputStream streamIn = null;
-    private States type;
+    private final States type;
 
     /**
      *
@@ -33,7 +32,7 @@ public class Transmission extends Thread {
      * @param machineName
      * @param type
      */
-    public Transmission(Socket socket, String machineName, States type) {
+    public TCPTransmission(Socket socket, String machineName, States type) {
         this.socket = socket;
         this.machineName = machineName;
         this.type = type;
@@ -43,7 +42,6 @@ public class Transmission extends Thread {
     @Override
     public void run() {
         System.out.println("Send Thread " + machineName + " " + ID + " running.");
-        while (true) {
             try {
                 switch (this.type) {
                     case RCV:
@@ -58,17 +56,8 @@ public class Transmission extends Thread {
 
             } catch (IOException ioe) {
             } catch (InterruptedException ex) {
-                Logger.getLogger(Transmission.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(TCPTransmission.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-    }
-
-    /**
-     *
-     * @throws IOException
-     */
-    public void open() throws IOException {
-        streamIn = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
     }
 
     /**
@@ -76,30 +65,33 @@ public class Transmission extends Thread {
      * @throws IOException
      */
     public void close() throws IOException {
+        System.out.println("thread will now terminate");
         if (socket != null) {
             socket.close();
-        }
-        if (streamIn != null) {
-            streamIn.close();
         }
     }
 
     /**
-     *
      * @param socket
      *
      * @throws IOException
      * @throws InterruptedException
      */
-    public void sender(Socket socket) throws IOException, InterruptedException {
-        int count = 0;
-        while (true) {
+    protected void sender(Socket socket) throws IOException, InterruptedException {
+        boolean running = true;
+        int count = 0;//TO BE REMOVED
+        while (running) {
             Thread.sleep(1000);
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             System.out.println(this.machineName + " will now send");
             out.println(this.machineName + '\t' + count);
-            count += 1;
+            count += 1;//TO BE REMOVED
+            if(count == 20){
+                out.println("TERMINATE");
+                running = false;
+            }
         }
+        close();
     }
 
     /**
@@ -107,13 +99,31 @@ public class Transmission extends Thread {
      * @param socket
      *
      * @throws IOException
+     * @throws java.lang.InterruptedException
      */
-    protected void receiver(Socket socket) throws IOException {
-        while (true) {
-            BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String answer = input.readLine();
-            System.out.println(answer);
+    protected void receiver(Socket socket) throws IOException, InterruptedException {
+        boolean running = true;
+        String answer = "";
+        int timer = 1000;
+        int timeout = 0, timeoutLimit = 10000;
+        BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+        while (running) {
+            if(input.ready()){
+                timeout = 0;
+                answer = input.readLine();
+                System.out.println(answer);
+            }
+            else{
+                Thread.sleep(timer);
+                timeout += timer;
+            }
+            
+            if((timeout > timeoutLimit) || ("TERMINATE".equals(answer))){
+                running = false;
+            }
         }
+        close();
     }
 
 }

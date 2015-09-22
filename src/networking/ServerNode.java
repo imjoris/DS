@@ -28,7 +28,8 @@ public class ServerNode extends Node implements Runnable {
     public void run() {
         System.out.println("Server");
         try {
-            createServer();
+            //createTCPServer();
+            createUDPServer();
         } catch (IOException ex) {
             Logger.getLogger(ServerNode.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -1,5 +1,60 @@
 
 
+Architecture
+
+- Tree
+- Leader for logs (causal ordering)
+
+Use this state for incoming connections (minimize tree depth)
+
+
+Requirements
+
+- ordered multicast added ONLY upon arrival
+- KEEP global state of all nodes
+- Tree, each node keeps track of parents
+- Children keep track of the parents
+
+Parent died
+
+1) Parent dies
+2) Child repeats connect procedure
+2.1) I am still alive (from orphans to children)
+
+Connecting procedure
+
+0) DNS server to give you the ip addresses of someone who has the list.
+0.1) the DNS gives you the list of people that they have the list
+0.2) you ask the people about THE TREE
+1) someone gives you THE TREE
+2) Look for the highest open slot
+3) Ask if he can stream to you
+4.a) if he can you are done
+4.b) if he cant go back to step 2 (excluding the ones that refused) 
+5.b) if the list is depleted request THE TREE again
+
+Logging requirements
+
+- keep initial state AND keep a repository of all changes
+
+=======================================================================
+
+how to update THE TREE for dead people
+
+1) remove them AND their sub-tree from THE TREE. PENDING
+
+How to add new user(yourself) to THE TREE
+
+1) Add yourself to THE TREE
+2) Send the update ONLY to your neighbors PENDING 
+
+
+
+
+
+
+
+
 JAVA TCP example
 
 https://systembash.com/a-simple-java-tcp-server-and-tcp-client/

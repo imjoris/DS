@@ -1,0 +1,9 @@
+/home/joris/RugP2.1/DistributedSystems/DistributedStreaming/src/main/java/ds/rug/nl/Server.java
+/home/joris/RugP2.1/DistributedSystems/DistributedStreaming/src/main/java/ds/rug/nl/network/Networking.java
+/home/joris/RugP2.1/DistributedSystems/DistributedStreaming/src/main/java/ds/rug/nl/main/SpecificMessageHandler.java
+/home/joris/RugP2.1/DistributedSystems/DistributedStreaming/src/main/java/ds/rug/nl/network/StreamSender.java
+/home/joris/RugP2.1/DistributedSystems/DistributedStreaming/src/main/java/ds/rug/nl/main/CmdReceiver.java
+/home/joris/RugP2.1/DistributedSystems/DistributedStreaming/src/main/java/ds/rug/nl/network/StreamReceiver.java
+/home/joris/RugP2.1/DistributedSystems/DistributedStreaming/src/main/java/ds/rug/nl/Client.java
+/home/joris/RugP2.1/DistributedSystems/DistributedStreaming/src/main/java/ds/rug/nl/main/Node.java
+/home/joris/RugP2.1/DistributedSystems/DistributedStreaming/src/main/java/ds/rug/nl/App.java

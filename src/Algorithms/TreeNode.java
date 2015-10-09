@@ -1,11 +1,8 @@
-package com.tree;
-
-import java.util.Deque;
-import java.util.ArrayDeque;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Iterator;
 
 
 public class TreeNode<T> {
@@ -41,7 +38,7 @@ public class TreeNode<T> {
             return parent.getLevel() + 1;
     }
     
-    // depth first
+    // depth first search
     public TreeNode<T> findTreeNode(T item) {
         for (TreeNode<T> child : this.children) {
             if (item.equals(child.data))
@@ -54,26 +51,14 @@ public class TreeNode<T> {
         return null;            
     }
     
-    public TreeNode<T> getHighestLeaf() {
-        Deque<TreeNode<T>> nodeQueue = new ArrayDeque<TreeNode<T>>(this.children);
-        nodeQueue.addFirst(this);
-        while(nodeQueue.size() != 0){
-            TreeNode<T> node = nodeQueue.removeLast();
-            if (node.isLeaf())
-                return node;
-            for (TreeNode<T> child : node.children){
-                nodeQueue.addFirst(child);
-            }
-        }
-        // cannot possibly be reached, the queue can only be empty if we had a leaf
-        return null;
+    public Iterator<TreeNode<T>> getHighestLeaves() {
+        return new HighestLeafIter<T>(this);
     }
     
     public boolean acyclic(){
         Set<TreeNode<T>> seen = new HashSet<TreeNode<T>>();
         return this.acyclic(seen);
-    }
-    
+    }    
     boolean acyclic(Set<TreeNode<T>> seen) {
         for (TreeNode<T> child : this.children) {
             if (seen.contains(child))

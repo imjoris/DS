@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package networking;
+package ds.rug.nl.algorithm;
+
+import ds.rug.nl.network.DTO.DTO;
 
 /**
  *
- * @author Euaggelos
+ * @author joris
  */
-public enum States {
-    RCV, SND
-};
+public interface IAlgorithm {
+    void handle(DTO message);
+}

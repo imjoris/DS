@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Algorithms;
+package ds.rug.nl;
+
+import ds.rug.nl.main.Node;
 
 /**
  *
- * @author joris-main
+ * @author joris
  */
-public class IAlgorithm {
-    //void handle();
+public class Server extends Node {
+    
 }

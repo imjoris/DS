@@ -11,7 +11,7 @@ import java.util.Iterator;
  * @author Bart
  * @param <T> Data in the node
  */
-public class TreeNode<T> {
+public class TreeNode<T> implements java.io.Serializable{
 
     public T data;
     public TreeNode<T> parent;

@@ -10,6 +10,7 @@ core
 nbproject/*
 !nbproject/project.properties
 !nbproject/project.xml
+.netbeans_automatic_build
 
 #java specific
 *.class

@@ -25,7 +25,7 @@ public class Node {
         network.send(new JoinDTO(getinfo), Config.dnsip, Config.commandPort);
     }
     
-        public void execute() {
+    public void execute() {
         //To change body of generated methods, choose Tools | Templates.
     }
 }

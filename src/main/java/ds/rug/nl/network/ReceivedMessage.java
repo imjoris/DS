@@ -3,17 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ds.rug.nl;
+package ds.rug.nl.network;
 
-import ds.rug.nl.main.Node;
+import java.io.OutputStream;
 
 /**
  *
  * @author joris
  */
-public class Server extends Node {
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
-    }
+public class ReceivedMessage {
+    public String ip;
+    public int port;
+    public String data;
 }

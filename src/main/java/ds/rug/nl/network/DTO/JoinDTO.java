@@ -14,7 +14,7 @@ public class JoinDTO extends DTO{
         getinfo,
         list,
         tree,
-        joinstream,
+        requestjoin,
     }
     cmdType command;
     String message;

@@ -15,29 +15,16 @@ import ds.rug.nl.threads.CmdMessageHandler;
  *
  * @author joris
  */
-public class Client extends Node{
-//    Node mynode = new Node(ip, name);
-//    mynode.join();
+public class DNSNode extends Node{
     public CmdMessageHandler handler;
-    
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        DNSNode dnsNode = new DNSNode();
     }
-    public Client(){
-        //this.network=new Networking("192.168.0.2");
+    public DNSNode(){
         handler = new CmdMessageHandler();
         DNSAlgo dnsAlgo = new DNSAlgo();
         handler.registerAlgorithm(DTO.messageType.dns, dnsAlgo);
         network.startReceiving(Config.commandPort, handler);
-        dnsAlgo.getDNSIps();
-        while(dnsAlgo.hasReceivedIps != true){}
-        for(String ip:dnsAlgo.ips){
-            System.out.println(dnsAlgo.ips);
-        }       
-    }
-    public void join(){
-        
-        //network.send(new JoinDTO(getinfo), Config.dnsip, Config.commandPort);
     }
 }

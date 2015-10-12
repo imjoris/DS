@@ -7,10 +7,8 @@ package ds.rug.nl.network;
 
 import ds.rug.nl.Config;
 import ds.rug.nl.network.DTO.*;
-import ds.rug.nl.threads.CmdMessageHandler;
 import ds.rug.nl.threads.IReceiver;
 import java.io.BufferedReader;
-import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -25,7 +23,6 @@ import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sun.nio.ch.Secrets;
 
 /**
  *

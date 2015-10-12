@@ -11,4 +11,8 @@ public class Server extends Node {
     {
         System.out.println( "Hello World!" );
     }
+    
+    public Server(){
+        System.out.println("Creating server");
+    }
 }

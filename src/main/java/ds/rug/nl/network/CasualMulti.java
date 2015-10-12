@@ -23,6 +23,10 @@ public class CasualMulti {
     public void addToList(String Id, int x) {
         sendMultiMessages.put(Id, x);
     }
+    
+    public void rmvFromList(String Id){
+        sendMultiMessages.remove(Id);
+    }
 
     public void updateList(String Id) {
         if (sendMultiMessages.containsKey(Id)) {
@@ -47,6 +51,10 @@ public class CasualMulti {
     }
     
     public void receiveSmthg(){
+        
+    }
+    
+    public void serializeMe(){
         
     }
 }

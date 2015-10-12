@@ -1,14 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ds.rug.nl.main;
 
 import ds.rug.nl.Config;
 import ds.rug.nl.network.Networking;
 import ds.rug.nl.threads.CmdMessageHandler;
-import java.io.IOException;
 
 /**
  *
@@ -32,15 +26,32 @@ public class Node {
     public void execute() {
         //To change body of generated methods, choose Tools | Templates.
     }
-
-    /**
-     *
-     * @throws IOException
-     */
-    protected void setIp() throws IOException{
-    }
     
     private void createfunctionmap(){
+        
+    }
+    
+    public String getIpAddress(){
+        return null;
+    }
+    
+    public void setIpAddress(String ip){
+        
+    }
+    
+    public String getMachineName(){
+        return null;
+    }
+    
+    public void setMachineName(String name){
+        
+    }
+    
+    public String getID(){
+        return null;
+    }
+    
+    public void setID(String id){
         
     }
 }

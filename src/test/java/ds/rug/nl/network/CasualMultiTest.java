@@ -16,7 +16,6 @@ public class CasualMultiTest extends TestCase {
 
     public CasualMultiTest(String testName) {
         super(testName);
-
     }
 
     @Override
@@ -34,28 +33,33 @@ public class CasualMultiTest extends TestCase {
         CasualMulti cm = new CasualMulti();
         Map tmp = cm.getList();
 
-        addSmthg(cm);
+        addSmthgTest(cm);
         printMap(tmp);
-        updateSmth(cm);
+        updateSmthTest(cm);
+        printMap(tmp);
+        rmvSmthgTest(cm);
         printMap(tmp);
     }
 
-    private void addSmthg(CasualMulti cm) {
+    private void addSmthgTest(CasualMulti cm) {
+        System.out.println("Testing addToList");
         cm.addToList("asdf", 111);
         cm.addToList("qwer", 222);
         cm.addToList("zxcv", 333);
         cm.addToList("poiu", 444);
     }
 
-    private void updateSmth(CasualMulti cm) {
+    private void updateSmthTest(CasualMulti cm) {
+        System.out.println("Testing updateList");
         cm.updateList("asdf");
         cm.updateList("qwer");
         cm.updateList("zxcv");
         cm.updateList("poiu");
     }
 
-    private void rmvSmthg() {
-
+    private void rmvSmthgTest(CasualMulti cm) {
+        System.out.println("Testing rmvFromList");
+        cm.rmvFromList("asdf");
     }
 
     private void printMap(Map tmp) {
@@ -63,5 +67,6 @@ public class CasualMultiTest extends TestCase {
             System.out.println(key + " " + tmp.get(key));
         }
     }
+    
 
 }

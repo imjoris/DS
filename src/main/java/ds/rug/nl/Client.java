@@ -3,7 +3,6 @@ package ds.rug.nl;
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DTO;
-import ds.rug.nl.network.Networking;
 import ds.rug.nl.threads.CmdMessageHandler;
 
 /**
@@ -17,9 +16,10 @@ public class Client extends Node{
     
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        System.out.println( "This is a " );
     }
     public Client(){
+        System.out.println("Creating client");
         //this.network=new Networking("192.168.0.2");
         handler = new CmdMessageHandler();
         DNSAlgo dnsAlgo = new DNSAlgo();

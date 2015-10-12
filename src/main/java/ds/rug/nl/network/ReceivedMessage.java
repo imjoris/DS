@@ -5,8 +5,6 @@
  */
 package ds.rug.nl.network;
 
-import java.io.OutputStream;
-
 /**
  *
  * @author joris

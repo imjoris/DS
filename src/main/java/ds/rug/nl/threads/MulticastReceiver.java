@@ -21,6 +21,7 @@ public class MulticastReceiver extends Thread{
         
     }
     
+    @Override
     public void run(){
          while (true) {
             DTO dto = network.receiveMulticasts();
@@ -59,7 +60,7 @@ public class MulticastReceiver extends Thread{
                        MulticastDTO resetreq = new MulticastDTO();
                        resetreq.setMessage("resend");
                        resetreq.setSequencenum(i);
-                       network.send(resetreq, multidto.getNodeip(), multidto.getNodeport());
+                       //network.send(resetreq, multidto.getNodeId(), multidto.getNodeport()); THIS DOES NOT WORK (ANGELO)
                     }
             }
         }

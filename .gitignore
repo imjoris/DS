@@ -10,6 +10,7 @@ core
 nbproject/*
 !nbproject/project.properties
 !nbproject/project.xml
+.netbeans_automatic_build
 
 #java specific
 *.class
@@ -46,4 +47,18 @@ nb-configuration.xml
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+<<<<<<< HEAD
 /target/
+=======
+
+#maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+>>>>>>> def1415178231e8b428be50e00e7897f9aa861e9

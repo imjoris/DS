@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ds.rug.nl.network;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,36 +10,28 @@ import java.util.Map;
  */
 public class CasualMulti {
 
-    private Map sendMultiMessages; // <ID, Counter>    
+    private Map sendMultiMessages; // <ID, Counter>
+    private ArrayList<Tuple> queue = new ArrayList<Tuple>(); // <ID, Counter>
+
 
     public CasualMulti() {
         sendMultiMessages = new HashMap();
-    }
-
-    public void addToList(String Id, int x) {
-        sendMultiMessages.put(Id, x);
     }
     
     public void rmvFromList(String Id){
         sendMultiMessages.remove(Id);
     }
-
-    public void updateList(String Id) {
-        if (sendMultiMessages.containsKey(Id)) {
-            sendMultiMessages.put(Id, (Integer) sendMultiMessages.get(Id) + 1);
-        } else {
-            addToList(Id, 1);
-        }
-    }
     
     public void updateList(String Id, int x){
-        if (sendMultiMessages.containsKey(Id)){
-            sendMultiMessages.put(Id, x);
-        }
+        sendMultiMessages.put(Id, x);
     }
 
     public Map getList() {
         return sendMultiMessages;
+    }
+    
+    public ArrayList getQueue(){
+        return queue;
     }
     
     public void sendSmthg(){
@@ -57,4 +45,30 @@ public class CasualMulti {
     public void serializeMe(){
         
     }
+    
+    /**
+     * This takes the ID and the number as parameters.
+     * IF checks if the new package has larger counter than the previous one and if id does, it places into the queue.
+     * ELSE just update the list.
+     * @param Id
+     * @param x
+     */
+    public void checkSequence(String Id, int x){
+        if((sendMultiMessages.containsKey(Id)) && ((Integer) sendMultiMessages.get(Id) < x-1)){
+            queue.add(new Tuple(Id, x));
+        } else{
+            updateList(Id,x);
+        }
+    }
+    
+    private void updateListFromQueue(){ // NOT SURE IF THIS WORKS YET
+        for(Tuple t: queue){
+            if(sendMultiMessages.containsKey(t.x)){
+                if((t.y) == ((Integer) sendMultiMessages.get(t.x))){
+                    
+                }
+            }
+        }
+    }
+    
 }

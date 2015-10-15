@@ -9,7 +9,7 @@ package ds.rug.nl.network.DTO;
  *
  * @author joris
  */
-public abstract class DTO {
+public class DTO {
 
     public enum messageType {
         dns,
@@ -17,7 +17,7 @@ public abstract class DTO {
         election
     }
 
-    messageType messagetype;
+    public messageType messagetype;
     String nodeName;
     int nodeId;
     

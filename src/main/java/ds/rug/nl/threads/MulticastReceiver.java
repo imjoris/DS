@@ -5,8 +5,6 @@
  */
 package ds.rug.nl.threads;
 
-import ds.rug.nl.network.DTO.DTO;
-import ds.rug.nl.network.DTO.MulticastDTO;
 import ds.rug.nl.network.Networking;
 import java.util.HashMap;
 import java.util.Map;

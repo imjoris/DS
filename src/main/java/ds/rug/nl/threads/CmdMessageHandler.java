@@ -5,10 +5,10 @@
  */
 package ds.rug.nl.threads;
 
-import ds.rug.nl.Config;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import ds.rug.nl.algorithm.Algorithm;
 import ds.rug.nl.network.DTO.DTO;
-import ds.rug.nl.network.Networking;
 import ds.rug.nl.network.ReceivedMessage;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +20,9 @@ import java.util.Map;
 public class CmdMessageHandler implements IReceiver{
 
     Map<DTO.messageType, Algorithm> mTypeToHandler;
-    
+    Gson gson;
     public CmdMessageHandler(){
+        gson = new GsonBuilder().create();
         mTypeToHandler=new HashMap<DTO.messageType, Algorithm>();
     }
     public void registerAlgorithm(DTO.messageType messagetype, Algorithm algorithm){
@@ -32,7 +33,12 @@ public class CmdMessageHandler implements IReceiver{
 //    }
 
     public void handleMessage(ReceivedMessage message) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        DTO dto = gson.fromJson(message.data, DTO.class);
+        System.out.println(dto.toString());
+        Algorithm algo = mTypeToHandler.get(dto.messagetype);
+        if(algo != null){
+            algo.handle(message);
+        }
     }
 
 }

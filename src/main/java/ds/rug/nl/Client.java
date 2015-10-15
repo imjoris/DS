@@ -22,14 +22,15 @@ public class Client extends Node{
     
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        Client client = new Client();
     }
     public Client(){
+        this.ipAddress=network.getNewIp();
         //this.network=new Networking("192.168.0.2");
         handler = new CmdMessageHandler();
         DNSAlgo dnsAlgo = new DNSAlgo();
         handler.registerAlgorithm(DTO.messageType.dns, dnsAlgo);
-        network.startReceiving(Config.commandPort, handler);
+        network.startReceiving(this.ipAddress, Config.commandPort, handler);
         dnsAlgo.getDNSIps();
         while(dnsAlgo.hasReceivedIps != true){}
         for(String ip:dnsAlgo.ips){

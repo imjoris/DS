@@ -11,14 +11,9 @@ package ds.rug.nl;
  */
 public class Config {
     public static int multicastPort = 9006;
-    public static int commandPort = 9005;
+    public static int commandPort = 12321;
     public static int streamPort = 9004;
     public static String multicastAdres = "224.0.0.3";
     public static int bufferSize = 1024;
-    public static String dnsip = "192.168.1.2";
-    
-    public static class NodeNetwork{
-        public static String nextunusedip="192.168.0.1";
-        public static String subnet="255.255.255.0";
-    }
+    public static String dnsip = "127.0.0.2";
 }

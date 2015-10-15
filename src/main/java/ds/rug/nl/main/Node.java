@@ -5,7 +5,6 @@
  */
 package ds.rug.nl.main;
 
-import ds.rug.nl.Config;
 import ds.rug.nl.network.Networking;
 import ds.rug.nl.threads.CmdMessageHandler;
 import java.io.IOException;
@@ -15,7 +14,7 @@ import java.io.IOException;
  * @author joris
  */
 public class Node {
-    protected String ipAddress = "localhost";
+    protected String ipAddress;
     protected String machineName;
     protected String id;
     
@@ -25,7 +24,7 @@ public class Node {
     //MulticastReceiver multicastReceiver;
     public Node() {
         network = new Networking();
-        this.network.startReceiving(Config.commandPort, commandReceiver);
+        //this.network.startReceiving(Config.commandPort, commandReceiver);
         //this.multicastReceiver = new MulticastReceiver(network);
     }
     

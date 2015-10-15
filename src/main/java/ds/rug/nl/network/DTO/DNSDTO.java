@@ -16,6 +16,9 @@ public class DNSDTO extends DTO{
         request,
         response
     }
+    public DNSDTO(){
+        this.messagetype=messagetype.dns;
+    }
     public cmdType command;
     public List<String> ips;
 }

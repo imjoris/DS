@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ds.rug.nl.algorithm;
-
-import ds.rug.nl.network.DTO.DTO;
+package ds.rug.nl.network;
 
 /**
  *
  * @author joris
  */
-public interface IAlgorithm {
-    void handle(DTO message);
+public class ReceivedMessage {
+    public String ip;
+    public int port;
+    public String data;
 }

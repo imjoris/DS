@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ds.rug.nl.network.DTO;
 
 /**
@@ -12,31 +7,22 @@ package ds.rug.nl.network.DTO;
 public abstract class DTO {
 
     public enum messageType {
-
+        dns,
         join,
         election
     }
-    String nodeip;
-    int nodeport;
 
-    public String getNodeip() {
-        return nodeip;
-    }
-
-    public void setNodeip(String nodeip) {
-        this.nodeip = nodeip;
-    }
-
-    public int getNodeport() {
-        return nodeport;
-    }
-
-    public void setNodeport(int nodeport) {
-        this.nodeport = nodeport;
-    }
-
-    messageType type;
+    messageType messagetype;
+    String nodeName;
     int nodeId;
+    
+    public messageType getMessagetype() {
+        return messagetype;
+    }
+
+    public void setMessagetype(messageType messagetype) {
+        this.messagetype = messagetype;
+    }
 
     public int getNodeId() {
         return nodeId;
@@ -52,14 +38,5 @@ public abstract class DTO {
 
     public void setNodeName(String nodeName) {
         this.nodeName = nodeName;
-    }
-    String nodeName;
-
-    public messageType getType() {
-        return type;
-    }
-
-    public void setType(messageType type) {
-        this.type = type;
     }
 }

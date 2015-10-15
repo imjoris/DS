@@ -1,19 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ds.rug.nl.threads;
 
-import ds.rug.nl.Config;
-import ds.rug.nl.algorithm.IAlgorithm;
+import ds.rug.nl.algorithm.Algorithm;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.Networking;
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,7 +11,7 @@ import java.util.Map;
  */
 public class CmdReceiver extends Thread{
 
-    Map<DTO.messageType, IAlgorithm> mTypeToHandler;
+    Map<DTO.messageType, Algorithm> mTypeToHandler;
     boolean receiving;
     Networking network;
 
@@ -33,7 +22,7 @@ public class CmdReceiver extends Thread{
     public void run(){
         receiving = true;
         while (receiving){
-            DTO dto = network.receive(Config.commandPort);
+            //DTO dto = network.receive(Config.commandPort); THIS DOESNT WORK AND I DONT KNOW WHY (ANGELO)
             //process dto by calling an algorithm.
         }
         

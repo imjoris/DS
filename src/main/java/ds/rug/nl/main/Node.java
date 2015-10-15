@@ -1,21 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ds.rug.nl.main;
 
 import ds.rug.nl.Config;
-import ds.rug.nl.network.DTO.JoinDTO;
-import static ds.rug.nl.network.DTO.JoinDTO.cmdType.getinfo;
 import ds.rug.nl.network.Networking;
 import ds.rug.nl.algorithm.TreeNode;
 import java.util.Iterator;
+import ds.rug.nl.threads.CmdMessageHandler;
 
-/**
- *
- * @author joris
- */
 public class Node {
     private String ipAddress = "localhost";
     private String machineName;
@@ -25,7 +15,18 @@ public class Node {
     // other nodes, just ourselves. Might want to move it somewhere else.
     private TreeNode<String> netTree;
     
-    Networking network;
+    protected String ipAddress = "localhost";
+    protected String machineName;
+    protected String id;
+    protected Networking network;
+    
+    protected CmdMessageHandler commandReceiver;
+    //MulticastReceiver multicastReceiver;
+    public Node() {
+        network = new Networking();
+        this.network.startReceiving(Config.commandPort, commandReceiver);
+        //this.multicastReceiver = new MulticastReceiver(network);
+    }
     
     public void join(){
         network.send(new JoinDTO(getinfo), Config.dnsip, Config.commandPort);
@@ -43,12 +44,12 @@ public class Node {
         // if we get here, none of the leaves were available, so we restart
         // this should be rare, so recursion should rarely happen and it is more
         // legible than a while (true)
-        this.join();        
-    }
+        this.join();  
     
     public void execute() {
         //To change body of generated methods, choose Tools | Templates.
     }
+
     /**
      * Attempt to connect as a child to othernode.
      * @param otherNode the node to which connection will be attempted
@@ -65,5 +66,33 @@ public class Node {
         // probably is going to need to deal with the group-manager.
         // May want to move this to another file
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    private void createfunctionmap(){
+        
+    }
+    
+    public String getIpAddress(){
+        return null;
+    }
+    
+    public void setIpAddress(String ip){
+        
+    }
+    
+    public String getMachineName(){
+        return null;
+    }
+    
+    public void setMachineName(String name){
+        
+    }
+    
+    public String getID(){
+        return null;
+    }
+    
+    public void setID(String id){
+        
     }
 }

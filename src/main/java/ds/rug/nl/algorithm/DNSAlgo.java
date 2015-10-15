@@ -2,6 +2,7 @@ package ds.rug.nl.algorithm;
 
 import ds.rug.nl.Config;
 import ds.rug.nl.network.DTO.DNSDTO;
+import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.ReceivedMessage;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,9 @@ public class DNSAlgo extends Algorithm{
             DNSDTO returnDTO = new DNSDTO();
             returnDTO.ips=this.ips;
             returnDTO.command=DNSDTO.cmdType.response;
+            
+            String jsonString = gson.toJson(returnDTO);
+            network.send(jsonString, message.ip, Config.commandPort);
         }else if(dnsMessage.command == DNSDTO.cmdType.response){
             this.ips=dnsMessage.ips;
             hasReceivedIps = true;

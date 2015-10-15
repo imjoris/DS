@@ -1,15 +1,25 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package ds.rug.nl.main;
 
 import ds.rug.nl.Config;
+import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.network.Networking;
 import ds.rug.nl.algorithm.TreeNode;
+import ds.rug.nl.network.DTO.DTO;
+import ds.rug.nl.network.DTO.JoinDTO;
+import static ds.rug.nl.network.DTO.JoinDTO.cmdType.getinfo;
 import java.util.Iterator;
 import ds.rug.nl.threads.CmdMessageHandler;
 
+/**
+ *
+ * @author joris
+ */
 public class Node {
-    private String ipAddress = "localhost";
-    private String machineName;
-    private String id;
     // tree that stores nodes by their ID
     // kinda ugly that is is here, since we don't want to store the tree for
     // other nodes, just ourselves. Might want to move it somewhere else.
@@ -18,19 +28,26 @@ public class Node {
     protected String ipAddress = "localhost";
     protected String machineName;
     protected String id;
+    
     protected Networking network;
     
-    protected CmdMessageHandler commandReceiver;
+    protected CmdMessageHandler cmdMessageHandler;
+    protected DNSAlgo dnsAlgo;
+    
     //MulticastReceiver multicastReceiver;
     public Node() {
+        cmdMessageHandler = new CmdMessageHandler();
+        
+        //register the dnsAlgorithm with the cmd message handler
+        //this way, all the dns message types get handled by the
+        //dnsAlgo class
+        dnsAlgo = new DNSAlgo();
+        cmdMessageHandler.registerAlgorithm(DTO.messageType.dns, dnsAlgo);
+        
         network = new Networking();
-        this.network.startReceiving(Config.commandPort, commandReceiver);
-        //this.multicastReceiver = new MulticastReceiver(network);
     }
     
     public void join(){
-        network.send(new JoinDTO(getinfo), Config.dnsip, Config.commandPort);
-        
         // at some point a response gives the Tree of the network
         // this tree should be written into class variable netTree
         Iterator<TreeNode<String>> highestLeaves = netTree.getHighestLeaves();
@@ -45,7 +62,7 @@ public class Node {
         // this should be rare, so recursion should rarely happen and it is more
         // legible than a while (true)
         this.join();  
-    
+    }
     public void execute() {
         //To change body of generated methods, choose Tools | Templates.
     }
@@ -69,30 +86,6 @@ public class Node {
     }
     
     private void createfunctionmap(){
-        
-    }
-    
-    public String getIpAddress(){
-        return null;
-    }
-    
-    public void setIpAddress(String ip){
-        
-    }
-    
-    public String getMachineName(){
-        return null;
-    }
-    
-    public void setMachineName(String name){
-        
-    }
-    
-    public String getID(){
-        return null;
-    }
-    
-    public void setID(String id){
         
     }
 }

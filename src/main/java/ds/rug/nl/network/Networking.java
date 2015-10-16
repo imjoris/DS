@@ -26,7 +26,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,8 +39,24 @@ import java.util.logging.Logger;
 public class Networking {
 
     Executor executor;
+
     public Networking() {
-         executor = Executors.newFixedThreadPool(5);
+        executor = Executors.newFixedThreadPool(5);
+    }
+
+    class mythread2 extends Thread {
+
+        IReceiver handler;
+        ReceivedMessage message;
+
+        public mythread2(IReceiver handler, ReceivedMessage message) {
+            this.handler = handler;
+            this.message = message;
+        }
+
+        public void run() {
+            handler.handleMessage(message);
+        }
     }
 
     public void send(String json, String ip, int port) {
@@ -83,7 +98,6 @@ public class Networking {
 //            Logger.getLogger(Networking.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 
-
     public void startReceiving(String ip, int port, IReceiver handler) {
 
         class mythread extends Thread {
@@ -102,12 +116,12 @@ public class Networking {
                 try {
                     ServerSocket serversock = new ServerSocket();//Config.commandPort, 50, InetAddress.getByName(ip));
                     serversock.setReuseAddress(false);
-                    
+
                     serversock.bind(new InetSocketAddress(ip, Config.commandPort));
                     System.out.println("Waiting for client on " + serversock.getInetAddress().getHostName() + " port "
                             + serversock.getLocalPort() + "...");
-                    
-                     ExecutorService executor = Executors.newFixedThreadPool(5);
+
+                    ExecutorService executor = Executors.newFixedThreadPool(5);
 
                     while (true) {
                         try {
@@ -117,14 +131,14 @@ public class Networking {
                             BufferedReader in = new BufferedReader(new InputStreamReader(callsocket.getInputStream()));
                             String jsonMessage = in.readLine();
                             ReceivedMessage message = new ReceivedMessage();
-                            
+
                             message.data = jsonMessage;
                             message.ip = callsocket.getLocalAddress().getHostAddress();
                             message.port = callsocket.getPort();
-                            
+
                             Thread handleThreat = new mythread2(this.handler, message);
                             executor.execute(handleThreat);
-                            
+
                         } catch (SocketTimeoutException s) {
                             System.out.println("Socket timed out!");
                             break;
@@ -189,7 +203,7 @@ public class Networking {
         }
     }
 
-    public void joinMulticastGroup(String ip, int port) {
+    private void joinMulticastGroup(String ip, int port) {
         try {
             MulticastSocket socket;
             socket = new MulticastSocket(Config.multicastPort); // must bind receive side
@@ -199,113 +213,139 @@ public class Networking {
         }
     }
 
-    public DTO receiveMulticasts() {
-        byte[] b = new byte[Config.bufferSize];
-        DatagramPacket dgram = new DatagramPacket(b, b.length);
-        MulticastSocket socket;
-        ReceivedMessage message = new ReceivedMessage();
-        try {
-            socket = new MulticastSocket(Config.multicastPort); // must bind receive side
-            socket.joinGroup(InetAddress.getByName(Config.multicastAdres));
-            while (true) {
-                socket.receive(dgram); // blocks until a datagram is received
-                System.err.println("Received " + dgram.getLength()
-                        + " bytes from " + dgram.getAddress());
-                dgram.setLength(b.length); // must reset length field!
-                String strData = new String(
-                        dgram.getData(),
-                        dgram.getOffset(),
-                        dgram.getLength()
-                );
-                message.data = strData;
-//                message.out = socket.get
-//                        = MulticastDTO multicastData = gson.fromJson(strData, MulticastDTO.class);
-//                dto = multicastData;
+    public void startReceiveMulticasts(String ip, int port, IReceiver multicastMessageHandler) {
+
+        class mythread extends Thread {
+
+            IReceiver handler;
+            String ip;
+            int port;
+
+            public mythread(String ip, int port, IReceiver handler) {
+                this.handler = handler;
+                this.ip = ip;
+                this.port = port;
             }
-        } catch (IOException ex) {
-            Logger.getLogger(Networking.class.getName()).log(Level.SEVERE, null, ex);
 
-        }
-        return null;
-        //TODO
-        //return dto;
-    }
+            public void run() {
 
-    public static final String nextIpAddress(final String input) {
-        final String[] tokens = input.split("\\.");
-        if (tokens.length != 4) {
-            throw new IllegalArgumentException();
-        }
-        for (int i = tokens.length - 1; i >= 0; i--) {
-            final int item = Integer.parseInt(tokens[i]);
-            if (item < 255) {
-                tokens[i] = String.valueOf(item + 1);
-                for (int j = i + 1; j < 4; j++) {
-                    tokens[j] = "0";
+                try {
+                    byte[] b = new byte[Config.bufferSize];
+                    DatagramPacket dgram = new DatagramPacket(b, b.length);
+                    MulticastSocket socket;
+                    socket = new MulticastSocket(Config.multicastPort); // must bind receive side
+                    socket.joinGroup(InetAddress.getByName(Config.multicastAdres));
+                    
+                    ExecutorService executor = Executors.newFixedThreadPool(5);
+                    
+                    while (true) {
+                        try {
+                            socket.receive(dgram); // blocks until a datagram is received
+
+                            System.err.println("Received " + dgram.getLength()
+                                    + " bytes from " + dgram.getAddress());
+                            dgram.setLength(b.length); // must reset length field!
+                            String strData = new String(
+                                    dgram.getData(),
+                                    dgram.getOffset(),
+                                    dgram.getLength()
+                            );
+                            ReceivedMessage message = new ReceivedMessage(); message.data = strData;
+                            message.ip = socket.getLocalAddress().getHostAddress();
+                            message.port = socket.getPort();
+                            Thread handlerThread = new mythread2(handler, message);
+                            executor.execute(handlerThread);
+                        } catch (IOException ex) {
+                            Logger.getLogger(Networking.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(Networking.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                break;
+
             }
         }
-        return new StringBuilder()
-                .append(tokens[0]).append('.')
-                .append(tokens[1]).append('.')
-                .append(tokens[2]).append('.')
-                .append(tokens[3])
-                .toString();
+        Thread multicastListenThread = new mythread(ip, port, multicastMessageHandler);
+        executor.execute(multicastListenThread);
     }
-
-    /*****
-     * Not working
-     * @return 
-     */
-    public String getNewIp() {
-        Enumeration<NetworkInterface> nets = null;
-        ArrayList<Integer> values1 = new ArrayList<Integer>();
-        ArrayList<Integer> values2 = new ArrayList<Integer>();
-        ArrayList<Integer> values3 = new ArrayList<Integer>();
-
-        try {
-            nets = NetworkInterface.getNetworkInterfaces();
-        } catch (SocketException ex) {
-            Logger.getLogger(Networking.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        for (NetworkInterface netint : Collections.list(nets)) {
-            Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
-            for (InetAddress inetAddress : Collections.list(inetAddresses)) {
-                String ipaddr = inetAddress.getHostAddress();
-                if (ipaddr.startsWith("127")) {
-                    final String[] tokens = ipaddr.split("\\.");
-                    values1.add(Integer.parseInt(tokens[1]));
-                    values2.add(Integer.parseInt(tokens[2]));
-                    values3.add(Integer.parseInt(tokens[3]));
+            public static final String nextIpAddress(final String input) {
+                final String[] tokens = input.split("\\.");
+                if (tokens.length != 4) {
+                    throw new IllegalArgumentException();
                 }
+                for (int i = tokens.length - 1; i >= 0; i--) {
+                    final int item = Integer.parseInt(tokens[i]);
+                    if (item < 255) {
+                        tokens[i] = String.valueOf(item + 1);
+                        for (int j = i + 1; j < 4; j++) {
+                            tokens[j] = "0";
+                        }
+                        break;
+                    }
+                }
+                return new StringBuilder()
+                        .append(tokens[0]).append('.')
+                        .append(tokens[1]).append('.')
+                        .append(tokens[2]).append('.')
+                        .append(tokens[3])
+                        .toString();
+            }
+
+            /**
+             * ***
+             * Not working
+             *
+             * @return
+             */
+            public String getNewIp() {
+                Enumeration<NetworkInterface> nets = null;
+                ArrayList<Integer> values1 = new ArrayList<Integer>();
+                ArrayList<Integer> values2 = new ArrayList<Integer>();
+                ArrayList<Integer> values3 = new ArrayList<Integer>();
+
+                try {
+                    nets = NetworkInterface.getNetworkInterfaces();
+                } catch (SocketException ex) {
+                    Logger.getLogger(Networking.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                for (NetworkInterface netint : Collections.list(nets)) {
+                    Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+                    for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+                        String ipaddr = inetAddress.getHostAddress();
+                        if (ipaddr.startsWith("127")) {
+                            final String[] tokens = ipaddr.split("\\.");
+                            values1.add(Integer.parseInt(tokens[1]));
+                            values2.add(Integer.parseInt(tokens[2]));
+                            values3.add(Integer.parseInt(tokens[3]));
+                        }
+                    }
+                }
+
+                int highest1 = getHighestValue(values1);
+                int highest2 = getHighestValue(values2);
+                int highest3 = getHighestValue(values3);
+
+                if (highest1 == 0 && highest2 == 0 && highest3 < 3) {
+                    highest3 = 3;
+                }
+                String highestip = new StringBuilder()
+                        .append("127").append('.')
+                        .append(highest1).append('.')
+                        .append(highest2).append('.')
+                        .append(highest3)
+                        .toString();
+                return nextIpAddress(highestip);
+            }
+
+            private int getHighestValue(ArrayList<Integer> array) {
+                int max = array.get(0);
+
+                for (int i = 1; i < array.size(); i++) {
+                    if (array.get(i) > max) {
+                        max = array.get(i);
+                    }
+                }
+                return max;
             }
         }
-
-        int highest1 = getHighestValue(values1);
-        int highest2 = getHighestValue(values2);
-        int highest3 = getHighestValue(values3);
-
-        if(highest1 == 0 && highest2==0 && highest3<3){
-            highest3=3;
-        }
-        String highestip= new StringBuilder()
-                .append("127").append('.')
-                .append(highest1).append('.')
-                .append(highest2).append('.')
-                .append(highest3)
-                .toString();
-        return nextIpAddress(highestip);
-    }
-
-    private int getHighestValue(ArrayList<Integer> array) {
-        int max = array.get(0);
-
-        for (int i = 1; i < array.size(); i++) {
-            if (array.get(i) > max) {
-                max = array.get(i);
-            }
-        }
-        return max;
-    }
-}

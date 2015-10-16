@@ -9,7 +9,8 @@ public class DTO {
     public enum messageType {
         dns,
         join,
-        election
+        election,
+        multicast
     }
 
     public messageType messagetype;

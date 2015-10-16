@@ -5,13 +5,10 @@
  */
 package ds.rug.nl.main;
 
-import ds.rug.nl.Config;
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.network.Networking;
 import ds.rug.nl.algorithm.TreeNode;
 import ds.rug.nl.network.DTO.DTO;
-import ds.rug.nl.network.DTO.JoinDTO;
-import static ds.rug.nl.network.DTO.JoinDTO.cmdType.getinfo;
 import java.util.Iterator;
 import ds.rug.nl.threads.CmdMessageHandler;
 
@@ -34,7 +31,6 @@ public class Node {
     protected CmdMessageHandler cmdMessageHandler;
     protected DNSAlgo dnsAlgo;
     
-    //MulticastReceiver multicastReceiver;
     public Node() {
         cmdMessageHandler = new CmdMessageHandler();
         

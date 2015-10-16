@@ -7,7 +7,13 @@ package ds.rug.nl.network.DTO;
 public class MulticastDTO extends DTO {
     String message;
     int sequencenum;
-
+    public enum cmdType{
+        request,
+        send
+    }
+    public cmdType command;
+    public MulticastDTO(){
+    }
     public String getMessage() {
         return message;
     }

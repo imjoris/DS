@@ -8,7 +8,7 @@ package ds.rug.nl;
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.main.Node;
-import ds.rug.nl.network.DTO.DTO;
+import ds.rug.nl.network.DTO.*;
 import ds.rug.nl.network.hostInfo;
 
 /**
@@ -29,10 +29,10 @@ public class DNSNode extends Node {
         //this way, all the dns message types get handled by the
         //dnsAlgo class
         dnsAlgo = new DNSAlgo(this);
-        cmdMessageHandler.registerAlgorithm(DTO.messageType.dns, dnsAlgo);
+        cmdMessageHandler.registerAlgorithm(DNSDTO.class, dnsAlgo);
 
         multiAlgo = new BMulticast(cmdMessageHandler);
-        cmdMessageHandler.registerAlgorithm(DTO.messageType.multicast, multiAlgo);
+        cmdMessageHandler.registerAlgorithm(MulticastDTO.class, multiAlgo);
 
         //while(dnsAlgo.hasReceivedIps != true){}
         //if(dnsAlgo.hasReceivedIps == true)

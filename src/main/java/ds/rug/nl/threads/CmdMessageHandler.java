@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ds.rug.nl.algorithm.Algorithm;
 import ds.rug.nl.network.DTO.DTO;
-import ds.rug.nl.network.ReceivedMessage;
+import java.lang.ProcessBuilder.Redirect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,13 +19,13 @@ import java.util.Map;
  */
 public class CmdMessageHandler implements IReceiver{
 
-    Map<DTO.messageType, Algorithm> mTypeToHandler;
+    Map<Class, Algorithm> mTypeToHandler;
     Gson gson;
     public CmdMessageHandler(){
         gson = new GsonBuilder().create();
-        mTypeToHandler=new HashMap<DTO.messageType, Algorithm>();
+        mTypeToHandler=new HashMap<Class, Algorithm>();
     }
-    public void registerAlgorithm(DTO.messageType messagetype, Algorithm algorithm){
+    public void registerAlgorithm(Class messagetype, Algorithm algorithm){
         mTypeToHandler.put(messagetype, algorithm);
     }
 //    public void run() {
@@ -35,7 +35,7 @@ public class CmdMessageHandler implements IReceiver{
     @Override
     public void handleDTO(DTO dto) {
         
-        Algorithm algo = mTypeToHandler.get(dto.messagetype);
+        Algorithm algo = mTypeToHandler.get(dto.getClass());
         if(algo != null){
             algo.handle(dto);
         }

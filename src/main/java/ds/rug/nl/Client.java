@@ -8,7 +8,7 @@ package ds.rug.nl;
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.main.Node;
-import ds.rug.nl.network.DTO.DTO;
+import ds.rug.nl.network.DTO.*;
 import ds.rug.nl.network.hostInfo;
 import java.util.List;
 
@@ -32,10 +32,10 @@ public class Client extends Node {
         //this.network=new Networking("192.168.0.2");
 
         dnsAlgo = new DNSAlgo(this);
-        cmdMessageHandler.registerAlgorithm(DTO.messageType.dns, dnsAlgo);
+        cmdMessageHandler.registerAlgorithm(DNSDTO.class, dnsAlgo);
 
-        multiAlgo = new BMulticast(this.cmdMessageHandler);
-        cmdMessageHandler.registerAlgorithm(DTO.messageType.multicast, multiAlgo);
+        multiAlgo = new BMulticast(cmdMessageHandler);
+        cmdMessageHandler.registerAlgorithm(MulticastDTO.class, multiAlgo);
     }
 
     public void joinabc() {

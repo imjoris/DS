@@ -9,32 +9,43 @@ import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.algorithm.Multicast;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DTO;
-import ds.rug.nl.network.Networking;
-import static ds.rug.nl.network.Networking.nextIpAddress;
-import ds.rug.nl.threads.CmdMessageHandler;
-import ds.rug.nl.threads.IReceiver;
+import ds.rug.nl.network.hostInfo;
 
 /**
  *
  * @author joris
  */
-public class DNSNode extends Node{
-    public static void main( String[] args )
-    {
+public class DNSNode extends Node {
+
+    public static void main(String[] args) {
         DNSNode dnsNode = new DNSNode();
+        dnsNode.start();
     }
-    public DNSNode(){
+
+    public DNSNode() {
+
         //request the dns ips
-        
-        //network.startReceiving(Config.dnsip, Config.commandPort, handler);
-        
-        //network.startReceiving(Config.dnsip, Config.commandPort, this.cmdMessageHandler);
-        network.startReceiveMulticasts(Config.multicastAdres, Config.multicastPort, cmdMessageHandler);
-        Multicast multiAlgo = new Multicast();
+        //register the dnsAlgorithm with the cmd message handler
+        //this way, all the dns message types get handled by the
+        //dnsAlgo class
+        dnsAlgo = new DNSAlgo(this);
+        cmdMessageHandler.registerAlgorithm(DTO.messageType.dns, dnsAlgo);
+
+        multiAlgo = new Multicast();
         cmdMessageHandler.registerAlgorithm(DTO.messageType.multicast, multiAlgo);
-        while(true){}
+
         //while(dnsAlgo.hasReceivedIps != true){}
         //if(dnsAlgo.hasReceivedIps == true)
         //System.out.println("yay");
     }
+
+    @Override
+    public void run() {
+        this.ipAddress = Config.dnsip;
+        hostInfo info = new hostInfo(this, Config.commandPort);
+        network.startReceiving(info);
+        this.keepRunning();
+        //network.startReceiveMulticasts(Config.multicastAdres, Config.multicastPort, cmdMessageHandler);
+    }
+
 }

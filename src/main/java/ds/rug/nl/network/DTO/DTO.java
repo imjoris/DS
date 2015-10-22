@@ -16,6 +16,15 @@ public class DTO {
     public messageType messagetype;
     String nodeName;
     int nodeId;
+    String nodeIp;
+
+    public String getNodeIp() {
+        return nodeIp;
+    }
+
+    public void setNodeIp(String nodeIp) {
+        this.nodeIp = nodeIp;
+    }
     
     public messageType getMessagetype() {
         return messagetype;

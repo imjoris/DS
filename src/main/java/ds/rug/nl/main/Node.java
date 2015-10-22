@@ -67,7 +67,7 @@ public abstract class Node extends Thread{
         isRunning=false;
     }
     
-    public void keepRunning() {
+    public void run() {
         isRunning=true;
         while(isRunning){
             try {

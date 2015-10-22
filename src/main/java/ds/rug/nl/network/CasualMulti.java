@@ -2,7 +2,9 @@ package ds.rug.nl.network;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -10,30 +12,15 @@ import java.util.Map;
  */
 public class CasualMulti {
 
-    private Map sendMultiMessages; // <ID, Counter>
-    private ArrayList<Tuple> queue = new ArrayList<Tuple>(); // <ID, Counter>
-
+    private Map<String, Integer> localVector; // <ID, Counter>
+    private Map<String, Integer> rcvVector; // <ID, Counter>
+    String ID;
 
     public CasualMulti() {
-        sendMultiMessages = new HashMap();
-    }
-    
-    public void rmvFromList(String Id){
-        sendMultiMessages.remove(Id);
-    }
-    
-    public void updateList(String Id, int x){
-        sendMultiMessages.put(Id, x);
+        localVector = new HashMap();
+        rcvVector = new HashMap();
     }
 
-    public Map getList() {
-        return sendMultiMessages;
-    }
-    
-    public ArrayList getQueue(){
-        return queue;
-    }
-    
     public void sendSmthg(){
         
     }
@@ -45,30 +32,23 @@ public class CasualMulti {
     public void serializeMe(){
         
     }
-    
-    /**
-     * This takes the ID and the number as parameters.
-     * IF checks if the new package has larger counter than the previous one and if id does, it places into the queue.
-     * ELSE just update the list.
-     * @param Id
-     * @param x
-     */
-    public void checkSequence(String Id, int x){
-        if((sendMultiMessages.containsKey(Id)) && ((Integer) sendMultiMessages.get(Id) < x-1)){
-            queue.add(new Tuple(Id, x));
-        } else{
-            updateList(Id,x);
+
+    public Boolean cmpQ(){
+        Set<String> s = localVector.keySet();
+        s.addAll(rcvVector.keySet());
+        
+        s.remove(ID);
+        if(!(localVector.get(ID)+1 == rcvVector.get(ID)))
+            return false;
+ 
+        
+        Iterator<String> sIterator = s.iterator();
+        while(sIterator.hasNext()){
+            String key = sIterator.next();
+            if(!(rcvVector.get(s) > localVector.get(s)))
+                return false;
+
         }
-    }
-    
-    private void updateListFromQueue(){ // NOT SURE IF THIS WORKS YET
-        for(Tuple t: queue){
-            if(sendMultiMessages.containsKey(t.x)){
-                if((t.y) == ((Integer) sendMultiMessages.get(t.x))){
-                    
-                }
-            }
-        }
-    }
-    
+        return true;
+    } 
 }

@@ -1,6 +1,7 @@
 package ds.rug.nl.algorithm;
 
 import com.google.gson.Gson;
+import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.MyGson;
 import ds.rug.nl.network.Networking;
 import ds.rug.nl.network.ReceivedMessage;
@@ -21,5 +22,6 @@ public abstract class Algorithm {
     }
     
     public abstract void handle(ReceivedMessage message);
+    public abstract void handle(DTO message);
 
 }

@@ -1,54 +1,63 @@
 package ds.rug.nl.network;
 
+import ds.rug.nl.algorithm.Algorithm;
+import ds.rug.nl.network.DTO.COmulticastDTO;
+import ds.rug.nl.network.DTO.DTO;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 /**
  *
  * @author angelo
  */
-public class CasualMulti {
+public class CasualMulti extends Algorithm {
 
-    private Map<String, Integer> localVector; // <ID, Counter>
-    private Map<String, Integer> rcvVector; // <ID, Counter>
-    String ID;
+    private VectorClock localVector; // <ID, Counter>
+    private ArrayList<Tuple> holdBackQ;
+    private String id;
 
     public CasualMulti() {
-        localVector = new HashMap();
-        rcvVector = new HashMap();
+
     }
 
-    public void sendSmthg(){
-        
-    }
-    
-    public void receiveSmthg(){
-        
-    }
-    
-    public void serializeMe(){
-        
+    public void sendSmthg(DTO data) {
+
+        COmulticastDTO pckg = new COmulticastDTO(localVector, data, id);
+        sendMulticast(pckg);
     }
 
-    public Boolean cmpQ(){
-        Set<String> s = localVector.keySet();
-        s.addAll(rcvVector.keySet());
-        
-        s.remove(ID);
-        if(!(localVector.get(ID)+1 == rcvVector.get(ID)))
-            return false;
- 
-        
-        Iterator<String> sIterator = s.iterator();
-        while(sIterator.hasNext()){
-            String key = sIterator.next();
-            if(!(rcvVector.get(s) > localVector.get(s)))
-                return false;
+    public void receiveSmthg(COmulticastDTO msg) {
+        VectorClock rcvVector = msg.getVectorClock();
+        DTO data = msg.getMessage();
 
+        if (localVector.isNext(rcvVector, msg.getSender())) {
+            deliverDTO(data, msg.getSender());
+        } else {
+            holdBackQ.add(new Tuple(rcvVector, data, msg.getSender()));
         }
-        return true;
-    } 
+    }
+
+    public void deliverDTO(DTO data, String sender) {
+        //TO DO
+        localVector.incementValue(sender);
+
+        Iterator<Tuple> i = holdBackQ.iterator();
+        while (i.hasNext()) {
+            Tuple tmp = i.next();
+            if (localVector.isNext(tmp.vectorClock, tmp.id)) {
+                deliverDTO(data, tmp.id);
+                i.remove();
+            }
+        }
+    }
+
+    @Override
+    public void handle(DTO message) {
+        COmulticastDTO msg = (COmulticastDTO) message;
+    }
+
+    @Override
+    public void handle(ReceivedMessage message) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

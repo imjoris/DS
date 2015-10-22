@@ -1,10 +1,12 @@
 package ds.rug.nl.network.DTO;
 
+import java.io.Serializable;
+
 /**
  *
  * @author joris
  */
-public class DTO {
+public abstract class DTO implements Serializable{
 
     public enum messageType {
         dns,
@@ -12,20 +14,10 @@ public class DTO {
         election,
         multicast
     }
-
-    public messageType messagetype;
-    String nodeName;
-    int nodeId;
-    String nodeIp;
-
-    public String getNodeIp() {
-        return nodeIp;
-    }
-
-    public void setNodeIp(String nodeIp) {
-        this.nodeIp = nodeIp;
-    }
     
+    public messageType messagetype;
+    public String ip;
+
     public messageType getMessagetype() {
         return messagetype;
     }
@@ -34,12 +26,20 @@ public class DTO {
         this.messagetype = messagetype;
     }
 
-    public int getNodeId() {
-        return nodeId;
+    public String getIp() {
+        return ip;
     }
 
-    public void setNodeId(int nodeId) {
-        this.nodeId = nodeId;
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public String getNodeName() {
@@ -49,4 +49,26 @@ public class DTO {
     public void setNodeName(String nodeName) {
         this.nodeName = nodeName;
     }
+
+    public int getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(int nodeId) {
+        this.nodeId = nodeId;
+    }
+    public int port;
+    
+    public String nodeName;
+    public int nodeId;
+
+    public DTO(){};
+    public DTO(messageType messagetype, String ip, int port, String nodeName, int nodeId) {
+        this.messagetype = messagetype;
+        this.ip = ip;
+        this.port = port;
+        this.nodeName = nodeName;
+        this.nodeId = nodeId;
+    }
+
 }

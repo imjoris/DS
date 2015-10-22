@@ -1,11 +1,11 @@
 package ds.rug.nl.threads;
 
-import ds.rug.nl.network.ReceivedMessage;
+import ds.rug.nl.network.DTO.DTO;
 
 /**
  *
  * @author joris
  */
 public interface IReceiver {
-    void handleMessage(ReceivedMessage message);
+    void handleDTO(DTO dto);
 }

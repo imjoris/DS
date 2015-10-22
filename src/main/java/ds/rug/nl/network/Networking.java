@@ -6,11 +6,14 @@
 package ds.rug.nl.network;
 
 import ds.rug.nl.Config;
+import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.threads.IReceiver;
-import java.io.BufferedReader;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -46,23 +49,21 @@ public class Networking {
     class mythread2 extends Thread {
 
         IReceiver handler;
-        ReceivedMessage message;
+        DTO dto;
 
-        public mythread2(IReceiver handler, ReceivedMessage message) {
+        public mythread2(IReceiver handler, DTO dto) {
             this.handler = handler;
-            this.message = message;
+            this.dto = dto;
         }
 
         public void run() {
-            handler.handleMessage(message);
+            handler.handleDTO(dto);
         }
     }
 
-    public void send(String json, String ip, int port) {
+    public void send(DTO dto, String ip, int port) {
         Socket socket = null;
-        PrintWriter out = null;
-        BufferedReader in = null;
-
+        ObjectOutputStream out = null;
         try {
             //socket = new Socket(port);
             socket = new Socket(ip, port);
@@ -70,8 +71,9 @@ public class Networking {
 //            InetSocketAddress socketAddress = new InetSocketAddress(ip, port);
 //            s.bind(socketAddress);
 //            s.setReuseAddress(true);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            out.println(json);
+            out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(dto);
+            out.flush();
             out.close();
             socket.close();
         } catch (IOException ex) {
@@ -80,7 +82,7 @@ public class Networking {
 
     }
 
-    public void sendCommand(String message, String ip) {
+    public void sendCommand(DTO message, String ip) {
         send(message, ip, Config.commandPort);
     }
 //       
@@ -97,7 +99,6 @@ public class Networking {
 //            Logger.getLogger(Networking.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 
-    
 //    public void startReceiving(String ip, int port, IReceiver handler) {
 //        startReceiving(
 //                new hostInfo("", ip, port, handler)
@@ -109,7 +110,6 @@ public class Networking {
 //                new hostInfo("", ip, port, handler)
 //        );
 //    }
-
     public void startReceiving(hostInfo host) {
         class mythread extends Thread {
 
@@ -136,18 +136,10 @@ public class Networking {
                             Socket callsocket = serversock.accept();
                             System.out.println(host.hostname + "accepted incomming connection from "
                                     + callsocket.getRemoteSocketAddress());
-                            BufferedReader in = new BufferedReader(new InputStreamReader(callsocket.getInputStream()));
-                            String jsonMessage = in.readLine();
-                            ReceivedMessage message = new ReceivedMessage();
 
-                            message.data = jsonMessage;
-                            String test = callsocket.getLocalAddress().getHostAddress();
-                            
-                            
-                            message.ip = callsocket.getInetAddress().getHostAddress();
-                            message.port = callsocket.getPort();
-
-                            Thread handleThreat = new mythread2(host.handler, message);
+                            ObjectInputStream in = new ObjectInputStream(callsocket.getInputStream());
+                            DTO objectReceived = (DTO) in.readObject();
+                            Thread handleThreat = new mythread2(host.handler, objectReceived);
                             executor.execute(handleThreat);
 
                         } catch (SocketTimeoutException s) {
@@ -156,6 +148,8 @@ public class Networking {
                         } catch (IOException e) {
                             e.printStackTrace();
                             break;
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(Networking.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } catch (IOException ex) {
@@ -167,16 +161,16 @@ public class Networking {
             class mythread2 extends Thread {
 
                 IReceiver handler;
-                ReceivedMessage message;
+                DTO dto;
 
-                public mythread2(IReceiver handler, ReceivedMessage message) {
+                public mythread2(IReceiver handler, DTO message) {
                     this.handler = handler;
-                    this.message = message;
+                    this.dto = dto;
                 }
 
                 @Override
                 public void run() {
-                    handler.handleMessage(message);
+                    handler.handleDTO(dto);
                 }
             }
         }
@@ -186,9 +180,32 @@ public class Networking {
         executor.execute(t);
     }
 
-    public void sendMulticast(String data) {
-        byte[] sendData = data.getBytes();
+    private byte[] getBytesOfObject(Object o) {
+        ObjectOutputStream os = null;
+        byte[] sendBuf = null;
+        try {
+            ByteArrayOutputStream byteStream = new ByteArrayOutputStream(5000);
+            os = new ObjectOutputStream(new BufferedOutputStream(byteStream));
+            os.flush();
+            os.writeObject(o);
+            os.flush();
+            //retrieves byte array
+            sendBuf = byteStream.toByteArray();
+        } catch (IOException ex) {
+            Logger.getLogger(Networking.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                os.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Networking.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return sendBuf;
+    }
 
+    public void sendMulticast(DTO data) {
+        ObjectOutputStream os = null;
+        byte[] sendData = getBytesOfObject(data);
         try {
             DatagramSocket socket = new DatagramSocket();
             DatagramPacket dgram;
@@ -199,7 +216,7 @@ public class Networking {
                     Config.multicastPort
             );
             socket.send(dgram);
-
+            
         } catch (UnknownHostException ex) {
             Logger.getLogger(Networking.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -259,18 +276,26 @@ public class Networking {
                             System.err.println("Received " + dgram.getLength()
                                     + " bytes from " + dgram.getAddress());
                             dgram.setLength(b.length); // must reset length field!
-                            String strData = new String(
-                                    dgram.getData(),
-                                    dgram.getOffset(),
-                                    dgram.getLength()
-                            );
-                            ReceivedMessage message = new ReceivedMessage();
-                            message.data = strData;
-                            message.ip = socket.getLocalAddress().getHostAddress();
-                            message.port = socket.getPort();
-                            Thread handlerThread = new mythread2(handler, message);
+                            int len = 0;
+//      // byte[] -> int
+//      for (int i = 0; i < 4; ++i) {
+//          len |= (data[3-i] & 0xff) << (i << 3);
+//      }
+//
+//      // now we know the length of the payload
+//      byte[] buffer = new byte[len];
+//      packet = new DatagramPacket(buffer, buffer.length );
+//      socket.receive(packet);
+
+                            ByteArrayInputStream baos = new ByteArrayInputStream(b);
+                            ObjectInputStream oos = new ObjectInputStream(baos);
+                            DTO dto = (DTO) oos.readObject();
+
+                            Thread handlerThread = new mythread2(handler, dto);
                             executor.execute(handlerThread);
                         } catch (IOException ex) {
+                            Logger.getLogger(Networking.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (ClassNotFoundException ex) {
                             Logger.getLogger(Networking.class.getName()).log(Level.SEVERE, null, ex);
                         }
 

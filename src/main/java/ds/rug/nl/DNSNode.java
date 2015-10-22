@@ -31,7 +31,7 @@ public class DNSNode extends Node {
         dnsAlgo = new DNSAlgo(this);
         cmdMessageHandler.registerAlgorithm(DTO.messageType.dns, dnsAlgo);
 
-        multiAlgo = new Multicast();
+        multiAlgo = new Multicast(cmdMessageHandler);
         cmdMessageHandler.registerAlgorithm(DTO.messageType.multicast, multiAlgo);
 
         //while(dnsAlgo.hasReceivedIps != true){}
@@ -47,5 +47,4 @@ public class DNSNode extends Node {
         this.keepRunning();
         //network.startReceiveMulticasts(Config.multicastAdres, Config.multicastPort, cmdMessageHandler);
     }
-
 }

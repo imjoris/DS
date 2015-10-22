@@ -1,8 +1,9 @@
 package ds.rug.nl.algorithm;
 
-import com.google.gson.Gson;
+import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.MulticastDTO;
-import ds.rug.nl.network.ReceivedMessage;
+import ds.rug.nl.threads.CmdMessageHandler;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -11,12 +12,20 @@ import java.util.Map;
  */
 public class Multicast extends Algorithm {
 
-    Map<Integer, Integer> sequenceNumbersPerNode;
-    Gson gson;
-
+    Map<Integer, Integer> sequenceNumbersFromNodes;
+    
+    int myLastSendSeqNr;
+    Map<Integer, MulticastDTO> mySendSeqNrs;
+    
+    public Multicast(CmdMessageHandler mainHandler){
+        sequenceNumbersFromNodes = new HashMap<Integer, Integer>();
+        mySendSeqNrs = new HashMap<Integer, MulticastDTO>();
+        myLastSendSeqNr=0;
+    }
+    
     @Override
-    public void handle(ReceivedMessage message) {
-        MulticastDTO multidto = gson.fromJson(message.data, MulticastDTO.class);
+    public void handle(DTO dto) {
+        MulticastDTO multidto = (MulticastDTO) dto;
         int nodeId;
         int receivedSeq;
 
@@ -28,7 +37,7 @@ public class Multicast extends Algorithm {
         }
 
         receivedSeq = multidto.getSequencenum();
-        Integer mySeqNr = sequenceNumbersPerNode.get(receivedSeq);
+        Integer mySeqNr = sequenceNumbersFromNodes.get(receivedSeq);
 
         mySeqNr++;
         if (receivedSeq == mySeqNr) {
@@ -44,5 +53,19 @@ public class Multicast extends Algorithm {
                 //network.send(resetreq, multidto.getNodeId(), multidto.getNodeport()); THIS DOES NOT WORK (ANGELO)
             }
         }
+    }
+    
+    public void sendMulticast(DTO data){
+        myLastSendSeqNr++;
+        String stringData = gson.toJson(data);
+        
+        MulticastDTO multiDTO = new MulticastDTO(
+                stringData, myLastSendSeqNr, MulticastDTO.cmdType.send
+        );
+        multiDTO.setSequencenum(myLastSendSeqNr);
+        multiDTO.jsonDTOData = stringData;
+        
+        
+        mySendSeqNrs.put(myLastSendSeqNr, multiDTO);
     }
 }

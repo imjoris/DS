@@ -5,21 +5,19 @@ package ds.rug.nl.network.DTO;
  * @author joris
  */
 public class MulticastDTO extends DTO {
-    String message;
-    int sequencenum;
     public enum cmdType{
         request,
         send
     }
-    public cmdType command;
-    public MulticastDTO(){
-    }
-    public String getMessage() {
-        return message;
+    public String jsonDTOData;
+    public int sequencenum;
+
+    public String getJsonDTOData() {
+        return jsonDTOData;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setJsonDTOData(String jsonDTOData) {
+        this.jsonDTOData = jsonDTOData;
     }
 
     public int getSequencenum() {
@@ -28,6 +26,27 @@ public class MulticastDTO extends DTO {
 
     public void setSequencenum(int sequencenum) {
         this.sequencenum = sequencenum;
+    }
+
+    public cmdType getCommand() {
+        return command;
+    }
+
+    public void setCommand(cmdType command) {
+        this.command = command;
+    }
+    public cmdType command;
+
+    public MulticastDTO(String jsonDTOData, int sequencenum, cmdType command) {
+        this.messagetype = DTO.messageType.multicast;
+        this.jsonDTOData = jsonDTOData;
+        this.sequencenum = sequencenum;
+        this.command = command;
+    }
+    
+    
+    public MulticastDTO(){
+        this.messagetype = DTO.messageType.multicast;
     }
     
 }

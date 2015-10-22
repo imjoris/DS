@@ -6,7 +6,7 @@
 package ds.rug.nl;
 
 import ds.rug.nl.algorithm.DNSAlgo;
-import ds.rug.nl.algorithm.Multicast;
+import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.hostInfo;
@@ -31,7 +31,7 @@ public class DNSNode extends Node {
         dnsAlgo = new DNSAlgo(this);
         cmdMessageHandler.registerAlgorithm(DTO.messageType.dns, dnsAlgo);
 
-        multiAlgo = new Multicast();
+        multiAlgo = new BMulticast(cmdMessageHandler);
         cmdMessageHandler.registerAlgorithm(DTO.messageType.multicast, multiAlgo);
 
         //while(dnsAlgo.hasReceivedIps != true){}
@@ -47,5 +47,4 @@ public class DNSNode extends Node {
         this.keepRunning();
         //network.startReceiveMulticasts(Config.multicastAdres, Config.multicastPort, cmdMessageHandler);
     }
-
 }

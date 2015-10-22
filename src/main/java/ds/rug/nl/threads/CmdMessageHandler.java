@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ds.rug.nl.algorithm.Algorithm;
 import ds.rug.nl.network.DTO.DTO;
-import ds.rug.nl.network.Networking;
 import ds.rug.nl.network.ReceivedMessage;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,13 +33,11 @@ public class CmdMessageHandler implements IReceiver{
 //    }
 
     @Override
-    public void handleMessage(ReceivedMessage message) {
-        DTO dto = gson.fromJson(message.data, DTO.class);
-        System.out.println(dto.toString());
+    public void handleDTO(DTO dto) {
+        
         Algorithm algo = mTypeToHandler.get(dto.messagetype);
         if(algo != null){
-            algo.handle(message);
+            algo.handle(dto);
         }
     }
-
 }

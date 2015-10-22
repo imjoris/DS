@@ -3,7 +3,7 @@ package ds.rug.nl.algorithm;
 import ds.rug.nl.Config;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DNSDTO;
-import ds.rug.nl.network.ReceivedMessage;
+import ds.rug.nl.network.DTO.DTO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -37,9 +37,8 @@ public class DNSAlgo extends Algorithm {
         hasReceivedIps = false;
         DNSDTO dnsDto = new DNSDTO();
         dnsDto.command = DNSDTO.cmdType.request;
-        dnsDto.setNodeIp(this.node.getIpAddress());
-        String jsonMessage = gson.toJson(dnsDto);
-        network.send(jsonMessage, ip, port);
+        dnsDto.setIp(this.node.getIpAddress());
+        network.send(dnsDto, ip, port);
         
         try {
             ipsLatch.await();
@@ -55,17 +54,16 @@ public class DNSAlgo extends Algorithm {
     }
 
     @Override
-    public void handle(ReceivedMessage message) {
-        DNSDTO dnsMessage = gson.fromJson(message.data, DNSDTO.class);
-        if (dnsMessage.command == DNSDTO.cmdType.request) {
+    public void handle(DTO dto) {
+        DNSDTO dntDto = (DNSDTO) dto;
+        if (dntDto.command == DNSDTO.cmdType.request) {
             DNSDTO returnDTO = new DNSDTO();
             returnDTO.ips = this.ips;
             returnDTO.command = DNSDTO.cmdType.response;
-            returnDTO.setNodeIp(this.node.getIpAddress());
-            String jsonString = gson.toJson(returnDTO);
-            network.send(jsonString, dnsMessage.getNodeIp(), Config.commandPort);
-        } else if (dnsMessage.command == DNSDTO.cmdType.response) {
-            this.ips = dnsMessage.ips;
+            returnDTO.setIp(this.node.getIpAddress());
+            network.send(returnDTO, dto.getIp(), Config.commandPort);
+        } else if (dntDto.command == DNSDTO.cmdType.response) {
+            this.ips = dntDto.ips;
             
             ipsLatch.countDown();
             hasReceivedIps = true;

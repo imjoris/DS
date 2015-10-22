@@ -1,6 +1,7 @@
 package ds.rug.nl.network;
 
 import ds.rug.nl.algorithm.Algorithm;
+import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.network.DTO.COmulticastDTO;
 import ds.rug.nl.network.DTO.DTO;
 import java.util.ArrayList;
@@ -15,15 +16,15 @@ public class CasualMulti extends Algorithm {
     private VectorClock localVector; // <ID, Counter>
     private ArrayList<Tuple> holdBackQ;
     private String id;
-
-    public CasualMulti() {
-
+    private BMulticast bmultiCast;
+    public CasualMulti(BMulticast bmulti) {
+        this.bmultiCast = bmulti;
     }
 
     public void sendSmthg(DTO data) {
 
         COmulticastDTO pckg = new COmulticastDTO(localVector, data, id);
-        sendMulticast(pckg);
+        bmultiCast.sendMulticast(pckg);
     }
 
     public void receiveSmthg(COmulticastDTO msg) {
@@ -54,10 +55,5 @@ public class CasualMulti extends Algorithm {
     @Override
     public void handle(DTO message) {
         COmulticastDTO msg = (COmulticastDTO) message;
-    }
-
-    @Override
-    public void handle(ReceivedMessage message) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

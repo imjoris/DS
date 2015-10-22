@@ -6,7 +6,7 @@
 package ds.rug.nl;
 
 import ds.rug.nl.algorithm.DNSAlgo;
-import ds.rug.nl.algorithm.Multicast;
+import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.hostInfo;
@@ -34,7 +34,7 @@ public class Client extends Node {
         dnsAlgo = new DNSAlgo(this);
         cmdMessageHandler.registerAlgorithm(DTO.messageType.dns, dnsAlgo);
 
-        multiAlgo = new Multicast();
+        multiAlgo = new BMulticast(this.cmdMessageHandler);
         cmdMessageHandler.registerAlgorithm(DTO.messageType.multicast, multiAlgo);
     }
 

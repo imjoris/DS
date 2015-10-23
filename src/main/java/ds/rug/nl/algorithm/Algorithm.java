@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.MyGson;
 import ds.rug.nl.network.Networking;
+import java.net.InetSocketAddress;
 
 /**
  *
@@ -22,5 +23,9 @@ public abstract class Algorithm {
     }
 
     public abstract void handle(DTO message);
+    
+    public void send(DTO dto, InetSocketAddress address){
+        
+    }
 
 }

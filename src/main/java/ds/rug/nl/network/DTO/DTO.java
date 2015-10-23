@@ -62,7 +62,12 @@ public abstract class DTO implements Serializable{
     public String nodeName;
     public int nodeId;
 
-    public DTO(){};
+    public DTO(){
+        
+    
+    }
+    
+    
     public DTO(messageType messagetype, String ip, int port, String nodeName, int nodeId) {
         this.messagetype = messagetype;
         this.ip = ip;

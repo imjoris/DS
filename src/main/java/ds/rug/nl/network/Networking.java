@@ -61,13 +61,13 @@ public class Networking {
         }
     }
 
-    public void send(DTO dto, String ip, int port) {
+    public void send(DTO dto, InetSocketAddress address) {
         Socket socket = null;
         ObjectOutputStream out = null;
         try {
             //socket = new Socket(port);
-            socket = new Socket(ip, port);
-
+            socket = new Socket(address.getAddress(), address.getPort());
+            
 //            InetSocketAddress socketAddress = new InetSocketAddress(ip, port);
 //            s.bind(socketAddress);
 //            s.setReuseAddress(true);
@@ -83,7 +83,7 @@ public class Networking {
     }
 
     public void sendCommand(DTO message, String ip) {
-        send(message, ip, Config.commandPort);
+        send(message, new InetSocketAddress(ip, Config.commandPort));
     }
 //       
 //        //String bytes = 
@@ -160,12 +160,12 @@ public class Networking {
 
             class mythread2 extends Thread {
 
-                IReceiver handler;
-                DTO dto;
+                public IReceiver handler;
+                public DTO dto;
 
                 public mythread2(IReceiver handler, DTO message) {
                     this.handler = handler;
-                    this.dto = dto;
+                    this.dto = message;
                 }
 
                 @Override

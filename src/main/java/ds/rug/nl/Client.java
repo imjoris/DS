@@ -34,7 +34,7 @@ public class Client extends Node {
         dnsAlgo = new DNSAlgo(this);
         cmdMessageHandler.registerAlgorithm(DNSDTO.class, dnsAlgo);
 
-        multiAlgo = new BMulticast(cmdMessageHandler);
+        multiAlgo = new BMulticast(this, cmdMessageHandler);
         cmdMessageHandler.registerAlgorithm(MulticastDTO.class, multiAlgo);
     }
 

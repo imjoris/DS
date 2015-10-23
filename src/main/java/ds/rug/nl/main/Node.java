@@ -31,13 +31,13 @@ public abstract class Node extends Thread{
 
     protected String ipAddress;
     protected String machineName;
-    protected String nodeId;
+    protected int nodeId;
 
-    public String getNodeId() {
+    public int getNodeId() {
         return nodeId;
     }
 
-    public void setNodeId(String nodeId) {
+    public void setNodeId(int nodeId) {
         this.nodeId = nodeId;
     }
 
@@ -76,24 +76,6 @@ public abstract class Node extends Thread{
                 Logger.getLogger(DNSNode.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }
-
-    public void joinTree() {
-        // at some point a response gives the Tree of the network
-        // this tree should be written into class variable netTree
-        Iterator<TreeNode<String>> highestLeaves = netTree.getHighestLeaves();
-        while (highestLeaves.hasNext()) {
-            TreeNode<String> leaf = highestLeaves.next();
-            Node leafNode = getNodeById(leaf.data);
-            if (this.requestAttach(leafNode)) {
-                leaf.addChild(this.nodeId);
-            }
-            return;
-        }
-        // if we get here, none of the leaves were available, so we restart
-        // this should be rare, so recursion should rarely happen and it is more
-        // legible than a while (true)
-        this.joinTree();
     }
 
     public void execute() {

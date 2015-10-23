@@ -2,6 +2,7 @@ package ds.rug.nl.network;
 
 import ds.rug.nl.algorithm.Algorithm;
 import ds.rug.nl.algorithm.BMulticast;
+import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.COmulticastDTO;
 import ds.rug.nl.network.DTO.DTO;
 import java.util.ArrayList;
@@ -17,7 +18,8 @@ public class CasualMulti extends Algorithm {
     private ArrayList<Tuple> holdBackQ;
     private String id;
     private BMulticast bmultiCast;
-    public CasualMulti(BMulticast bmulti) {
+    public CasualMulti(Node node, BMulticast bmulti) {
+        super(node);
         this.bmultiCast = bmulti;
     }
 

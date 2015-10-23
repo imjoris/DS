@@ -1,5 +1,6 @@
 package ds.rug.nl;
 
+import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.network.hostInfo;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,8 @@ public class DNSNodeTest
         
         hostInfo info = new hostInfo(clientNode, Config.commandPort);
         clientNode.getNetwork().startReceiving(info);
-        List<String> ips = clientNode.getDnsAlgo().getDNSIps();
+        DNSAlgo dnsAlgo = clientNode.getDnsAlgo();
+        List<String> ips = dnsAlgo.getDNSIps();
         
         assertTrue(clientNode.getDnsAlgo().hasReceivedIps);
         assertEquals(dnsIps, ips);

@@ -1,8 +1,10 @@
 package ds.rug.nl.algorithm;
 
+import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.MulticastDTO;
 import ds.rug.nl.threads.CmdMessageHandler;
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -32,7 +34,8 @@ public class BMulticast extends Algorithm {
     Map<Integer, MulticastDTO> mySendSeqNrs;
     CmdMessageHandler mainHandler;
 
-    public BMulticast(CmdMessageHandler mainHandler){
+    public BMulticast(Node node, CmdMessageHandler mainHandler){
+        super(node);
         sequenceNumbersFromNodes = new HashMap<String, Integer>();
         mySendSeqNrs = new HashMap<Integer, MulticastDTO>();
         myLastSendSeqNr=0;
@@ -70,7 +73,7 @@ public class BMulticast extends Algorithm {
                 requestMissingIds.getRequestSeqNums().add(i);
                 //network.send(resetreq, multidto.getNodeId(), multidto.getNodeport()); THIS DOES NOT WORK (ANGELO)
             }
-            network.send(dto,  multidto.ip, multidto.port);
+            send(dto, new InetSocketAddress(multidto.ip, multidto.port));
         }
     }
     

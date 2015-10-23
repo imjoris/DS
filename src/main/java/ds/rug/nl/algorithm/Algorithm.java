@@ -21,7 +21,6 @@ public abstract class Algorithm {
     }
 
     public abstract void handle(DTO message);
-
     public void send(DTO dto, InetSocketAddress address){
         dto.ip = node.getIpAddress();
         dto.port = Config.commandPort;

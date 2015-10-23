@@ -1,5 +1,7 @@
 package ds.rug.nl.network.DTO;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author joris
@@ -11,13 +13,15 @@ public class MulticastDTO extends DTO {
     }
     public String jsonDTOData;
     public int sequencenum;
-
-    public String getJsonDTOData() {
-        return jsonDTOData;
+    public ArrayList<Integer> requestSeqNums;
+    DTO dto;
+    
+    public ArrayList<Integer> getRequestSeqNums() {
+        return requestSeqNums;
     }
 
-    public void setJsonDTOData(String jsonDTOData) {
-        this.jsonDTOData = jsonDTOData;
+    public void setRequestSeqNums(ArrayList<Integer> requestSeqNums) {
+        this.requestSeqNums = requestSeqNums;
     }
 
     public int getSequencenum() {
@@ -37,15 +41,15 @@ public class MulticastDTO extends DTO {
     }
     public cmdType command;
 
-    public MulticastDTO(String jsonDTOData, int sequencenum, cmdType command) {
+    public MulticastDTO(DTO dto, int sequencenum, cmdType command) {
         this.messagetype = DTO.messageType.multicast;
-        this.jsonDTOData = jsonDTOData;
+        this.dto = dto;
         this.sequencenum = sequencenum;
         this.command = command;
     }
     
-    
     public MulticastDTO(){
+        requestSeqNums = new ArrayList<Integer>();
         this.messagetype = DTO.messageType.multicast;
     }
     

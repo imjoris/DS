@@ -73,7 +73,7 @@ public class BMulticast extends Algorithm {
                 requestMissingIds.getRequestSeqNums().add(i);
                 //network.send(resetreq, multidto.getNodeId(), multidto.getNodeport()); THIS DOES NOT WORK (ANGELO)
             }
-            send(dto, new InetSocketAddress(multidto.ip, multidto.port));
+            send(dto, multidto.ip, multidto.port);
         }
     }
     

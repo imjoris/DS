@@ -4,7 +4,9 @@ import ds.rug.nl.Config;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DNSDTO;
 import ds.rug.nl.network.DTO.DTO;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -28,18 +30,19 @@ public class DNSAlgo extends Algorithm {
         ips = new ArrayList<String>();
     }
 
-    public List<String> getDNSIps() {
-        return this.getDNSIps(Config.dnsip, Config.commandPort);
+    public List<String> getDNSIps() throws UnknownHostException {
+        InetAddress dnsIp = InetAddress.getByName(Config.dnsip);
+        return this.getDNSIps(dnsIp, Config.commandPort);
     }
 
-    public List<String> getDNSIps(String ip, int port) {
+    public List<String> getDNSIps(InetAddress ip, int port) {
         ipsLatch = new CountDownLatch(1);
 
         hasReceivedIps = false;
         DNSDTO dnsDto = new DNSDTO();
         dnsDto.command = DNSDTO.cmdType.request;
         dnsDto.setIp(node.getIpAddress());
-        send(dnsDto, new InetSocketAddress(ip, port));
+        send(dnsDto, ip, port);
         
         try {
             ipsLatch.await();
@@ -63,8 +66,7 @@ public class DNSAlgo extends Algorithm {
             returnDTO.command = DNSDTO.cmdType.response;
             returnDTO.setIp(this.node.getIpAddress());
             
-            InetSocketAddress address = new InetSocketAddress(dto.getIp(), Config.commandPort);
-            send(returnDTO, address);
+            send(returnDTO, dto.getIp(), Config.commandPort);
         } else if (dntDto.command == DNSDTO.cmdType.response) {
             this.ips = dntDto.ips;
             

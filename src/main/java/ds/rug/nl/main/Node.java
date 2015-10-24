@@ -28,9 +28,7 @@ public abstract class Node extends Thread{
     // kinda ugly that is is here, since we don't want to store the tree for
     // other nodes, just ourselves. Might want to move it somewhere else.
 
-    protected InetAddress ipAddress;
-    protected String machineName;
-    protected int nodeId;
+    protected NodeInfo nodeInfo;
     
     protected CmdMessageHandler cmdMessageHandler;
     protected DNSAlgo dnsAlgo;
@@ -38,7 +36,8 @@ public abstract class Node extends Thread{
 
     protected boolean isRunning;
 
-    public Node(){
+    public Node(NodeInfo nodeInfo){
+        this.nodeInfo = nodeInfo;
         cmdMessageHandler = new CmdMessageHandler();
         network = new Networking();
         isRunning = false;
@@ -64,11 +63,7 @@ public abstract class Node extends Thread{
      # GETTERS AND SETTERS
      ##########################################*/
     public int getNodeId() {
-        return nodeId;
-    }
-
-    public void setNodeId(int nodeId) {
-        this.nodeId = nodeId;
+        return nodeInfo.nodeId;
     }
 
     protected Networking network;
@@ -98,19 +93,12 @@ public abstract class Node extends Thread{
     }
 
     public InetAddress getIpAddress() {
-        return ipAddress;
+        return nodeInfo.ipAddress;
     }
 
-    public void setIpAddress(InetAddress ipAddress) {
-        this.ipAddress = ipAddress;
-    }
 
     public String getMachineName() {
-        return machineName;
-    }
-
-    public void setMachineName(String machineName) {
-        this.machineName = machineName;
+        return nodeInfo.name;
     }
 
     public boolean isIsRunning() {

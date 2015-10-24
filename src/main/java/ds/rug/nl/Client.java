@@ -12,7 +12,10 @@ import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.*;
 import ds.rug.nl.network.hostInfo;
 import ds.rug.nl.tree.TreeNode;
+import java.net.UnknownHostException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -20,11 +23,11 @@ import java.util.List;
  */
 public class Client extends Node {
 
-    public static void main(String[] args) {
-        Client client = new Client();
-    }
+    TreeNode<NodeInfo> streamTree;
 
-    public Client() {
+    public Client(NodeInfo nodeInfo) {
+        super(nodeInfo);
+        
         System.out.println("Creating client");
         //this dynamic "getnewip" is not working\
         //this.ipAddress=network.getNewIp();
@@ -48,7 +51,10 @@ public class Client extends Node {
         hostInfo info = new hostInfo(this, Config.commandPort);
         network.startReceiving(info);
         //network.startReceiveMulticasts(Config.multicastAdres, Config.multicastPort, cmdMessageHandler);
-
-        List<String> ips = dnsAlgo.getDNSIps();
+        try {
+            List<String> ips = dnsAlgo.getDNSIps();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

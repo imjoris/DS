@@ -2,8 +2,10 @@ package ds.rug.nl.algorithm;
 
 import ds.rug.nl.Config;
 import ds.rug.nl.main.Node;
+import ds.rug.nl.main.NodeInfo;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.Networking;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 /**
@@ -21,11 +23,18 @@ public abstract class Algorithm {
     }
 
     public abstract void handle(DTO message);
-    public void send(DTO dto, InetSocketAddress address){
+    
+    public void send(DTO dto, NodeInfo otherNode){
+        this.send(dto, otherNode, Config.commandPort);
+    }   
+    public void send(DTO dto, NodeInfo otherNode, int port){
+        this.send(dto, otherNode.getIpAddress(), port);
+    } 
+    public void send(DTO dto, InetAddress address, int port){
         dto.ip = node.getIpAddress();
         dto.port = Config.commandPort;
         dto.nodeName = node.getName();
         dto.nodeId = node.getNodeId();
-        network.send(dto, address);
+        network.send(dto, address, port);       
     }
 }

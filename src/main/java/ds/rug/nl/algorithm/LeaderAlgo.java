@@ -6,6 +6,7 @@
 package ds.rug.nl.algorithm;
 
 import ds.rug.nl.main.Node;
+import ds.rug.nl.main.NodeInfo;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.ElectionDTO;
 import ds.rug.nl.network.DTO.ElectionReplyDTO;
@@ -26,18 +27,14 @@ public class LeaderAlgo extends Algorithm {
         }
     }
 
-    private String leftNeighbour;
-    private String rightNeighbour;
-    private InetSocketAddress leftAddress;
-    private InetSocketAddress rightAddress;
+    private NodeInfo leftNeighbour;
+    private NodeInfo rightNeighbour;
     private int id;
 
-    public LeaderAlgo(Node node, int id, String leftNeighbour, String rightNeighbour, InetSocketAddress leftAddress, InetSocketAddress rightAddress) {
+    public LeaderAlgo(Node node, int id, NodeInfo leftNeighbour, NodeInfo rightNeighbour) {
         super(node);
         this.leftNeighbour = leftNeighbour;
         this.rightNeighbour = rightNeighbour;
-        this.rightAddress = rightAddress;
-        this.leftAddress = leftAddress;
         this.id = id;
     }
 
@@ -83,17 +80,17 @@ public class LeaderAlgo extends Algorithm {
         return 0;
     }
     
-    private InetSocketAddress getAddress(Direction dir){
-        return dir == Direction.LEFT ? leftAddress : rightAddress;
+    private NodeInfo getNeighbour(Direction dir){
+        return dir == Direction.LEFT ? leftNeighbour : rightNeighbour;
     }
 
     private void reply(int candidate, int phaseNumebr, Direction dir) {
         ElectionReplyDTO message = new ElectionReplyDTO(candidate, phaseNumebr);
-        send(message, getAddress(dir));
+        send(message, getNeighbour(dir));
     }
     
     private void passOn(ElectionDTO eleMsg, Direction dir) {
         ElectionDTO message = new ElectionDTO(eleMsg.candidate, eleMsg.phaseNumebr, eleMsg.hopCount+1);
-        send(message, getAddress(dir));
+        send(message, getNeighbour(dir));
     }
 }

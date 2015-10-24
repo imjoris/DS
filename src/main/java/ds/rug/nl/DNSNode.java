@@ -8,6 +8,7 @@ package ds.rug.nl;
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.main.Node;
+import ds.rug.nl.main.NodeInfo;
 import ds.rug.nl.network.DTO.*;
 import ds.rug.nl.network.hostInfo;
 import java.net.InetAddress;
@@ -21,12 +22,8 @@ import java.util.logging.Logger;
  */
 public class DNSNode extends Node {
 
-    public static void main(String[] args) {
-        DNSNode dnsNode = new DNSNode();
-        dnsNode.start();
-    }
-
-    public DNSNode() {
+    public DNSNode(NodeInfo nodeInfo) {
+        super(nodeInfo);
 
         //request the dns ips
         //register the dnsAlgorithm with the cmd message handler
@@ -45,11 +42,6 @@ public class DNSNode extends Node {
 
     @Override
     public void run() {
-        try {
-            this.ipAddress = InetAddress.getByName(Config.dnsip);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(DNSNode.class.getName()).log(Level.SEVERE, null, ex);
-        }
         hostInfo info = new hostInfo(this, Config.commandPort);
         network.startReceiving(info);
         this.keepRunning();

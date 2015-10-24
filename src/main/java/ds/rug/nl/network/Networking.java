@@ -61,12 +61,12 @@ public class Networking {
         }
     }
 
-    public void send(DTO dto, InetSocketAddress address) {
+    public void send(DTO dto, InetAddress address, int port) {
         Socket socket = null;
         ObjectOutputStream out = null;
         try {
             //socket = new Socket(port);
-            socket = new Socket(address.getAddress(), address.getPort());
+            socket = new Socket(address, port);
             
 //            InetSocketAddress socketAddress = new InetSocketAddress(ip, port);
 //            s.bind(socketAddress);
@@ -82,34 +82,6 @@ public class Networking {
 
     }
 
-    public void sendCommand(DTO message, String ip) {
-        send(message, new InetSocketAddress(ip, Config.commandPort));
-    }
-//       
-//        //String bytes = 
-//        InetAddress address;
-//        
-//        try {
-//            DatagramSocket socket;
-//            socket = new DatagramSocket();
-//            address = InetAddress.getByName(ip);
-//            DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
-//            socket.send(packet);
-//        }catch (UnknownHostException | SocketException ex) {
-//            Logger.getLogger(Networking.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-
-//    public void startReceiving(String ip, int port, IReceiver handler) {
-//        startReceiving(
-//                new hostInfo("", ip, port, handler)
-//        );
-//    }
-//    
-//    public void startReceiving(String hostname, String ip, int port, IReceiver handler) {
-//        startReceiving(
-//                new hostInfo("", ip, port, handler)
-//        );
-//    }
     public void startReceiving(hostInfo host) {
         class mythread extends Thread {
 

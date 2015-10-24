@@ -15,7 +15,7 @@ public class JoinDTO extends DTO{
     String message;
 
     public JoinDTO(cmdType type){
-            this.command = type;
+        this.command = type;
     }
     public cmdType getCommand() {
         return command;

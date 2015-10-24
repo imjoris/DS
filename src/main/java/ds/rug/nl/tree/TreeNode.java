@@ -1,4 +1,4 @@
-package ds.rug.nl.algorithm;
+package ds.rug.nl.tree;
 
 import java.util.List;
 import java.util.ArrayList;

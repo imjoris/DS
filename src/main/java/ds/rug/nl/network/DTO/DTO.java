@@ -8,23 +8,7 @@ import java.io.Serializable;
  */
 public abstract class DTO implements Serializable{
 
-    public enum messageType {
-        dns,
-        join,
-        election,
-        multicast
-    }
-    
-    public messageType messagetype;
     public String ip;
-
-    public messageType getMessagetype() {
-        return messagetype;
-    }
-
-    public void setMessagetype(messageType messagetype) {
-        this.messagetype = messagetype;
-    }
 
     public String getIp() {
         return ip;
@@ -62,14 +46,10 @@ public abstract class DTO implements Serializable{
     public String nodeName;
     public int nodeId;
 
-    public DTO(){
-        
+    public DTO(){}
     
-    }
-    
-    
-    public DTO(messageType messagetype, String ip, int port, String nodeName, int nodeId) {
-        this.messagetype = messagetype;
+    // NEVER USED ATM
+    public DTO(String ip, int port, String nodeName, int nodeId) {
         this.ip = ip;
         this.port = port;
         this.nodeName = nodeName;

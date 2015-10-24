@@ -17,8 +17,6 @@ import java.net.InetSocketAddress;
  */
 public class LeaderAlgo extends Algorithm {
 
-
-    
     enum Direction{
         LEFT,
         RIGHT;

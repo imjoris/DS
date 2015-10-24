@@ -61,7 +61,7 @@ public class BMulticast extends Algorithm {
 
         mySeqNr++;
         if (receivedSeq == mySeqNr) {
-            deliver(dto, dto.ip);
+            deliver(dto);
         } else if (receivedSeq < mySeqNr) {
             //reject message because it has been delivered before
         } else if (receivedSeq > mySeqNr) {
@@ -77,19 +77,22 @@ public class BMulticast extends Algorithm {
         }
     }
     
-    public void deliver(DTO data, String sender) {
+    public void deliver(DTO data) {
         //handle the dto the multicast had send
-        mainHandler.handleDTO(data);        
+        mainHandler.handleDTO(data);
+        
+        // TO-DO: Make this use a guaranteed unique ID
+        String sender = Integer.toString(data.nodeId);
 
         //increase the sequence number 
         int seqNodeNow = sequenceNumbersFromNodes.get(sender);
         seqNodeNow++;
         sequenceNumbersFromNodes.put(sender, seqNodeNow);
         
-        DTOSeq dtowithseqnr = holdBackQ.get(sender).peek();
+        DTOSeq dtoWithSeqNumber = holdBackQ.get(sender).peek();
         
-        if(dtowithseqnr.sequenceNumber == seqNodeNow+1){
-            deliver(dtowithseqnr.dto, sender);
+        if(dtoWithSeqNumber.sequenceNumber == seqNodeNow+1){
+            deliver(dtoWithSeqNumber.dto);
             this.holdBackQ.get(sender).remove();
         }
     }

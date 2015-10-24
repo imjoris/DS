@@ -7,6 +7,7 @@ package ds.rug.nl.network;
 
 import ds.rug.nl.main.Node;
 import ds.rug.nl.threads.IReceiver;
+import java.net.InetAddress;
 
 /**
  *
@@ -14,7 +15,7 @@ import ds.rug.nl.threads.IReceiver;
  */
     public class hostInfo {
         public String hostname;
-        public String ip;
+        public InetAddress ip;
         public int port;
         public IReceiver handler;
         

@@ -5,11 +5,13 @@
  */
 package ds.rug.nl;
 
+import ds.rug.nl.main.NodeInfo;
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.*;
 import ds.rug.nl.network.hostInfo;
+import ds.rug.nl.tree.TreeNode;
 import java.util.List;
 
 /**
@@ -17,8 +19,6 @@ import java.util.List;
  * @author joris
  */
 public class Client extends Node {
-//    Node mynode = new Node(ip, name);
-//    mynode.join();
 
     public static void main(String[] args) {
         Client client = new Client();

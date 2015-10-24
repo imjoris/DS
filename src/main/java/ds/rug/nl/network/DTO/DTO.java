@@ -1,6 +1,7 @@
 package ds.rug.nl.network.DTO;
 
 import java.io.Serializable;
+import java.net.InetAddress;
 
 /**
  *
@@ -8,13 +9,18 @@ import java.io.Serializable;
  */
 public abstract class DTO implements Serializable{
 
-    public String ip;
+    public InetAddress ip;
+    public String nodeName;
+    public int nodeId;
+    public int port;
+    
+    public DTO(){}
 
-    public String getIp() {
+    public InetAddress getIp() {
         return ip;
-    }
-
-    public void setIp(String ip) {
+    }    
+    
+    public void setIp(InetAddress ip) {
         this.ip = ip;
     }
 
@@ -40,20 +46,6 @@ public abstract class DTO implements Serializable{
 
     public void setNodeId(int nodeId) {
         this.nodeId = nodeId;
-    }
-    public int port;
-    
-    public String nodeName;
-    public int nodeId;
-
-    public DTO(){}
-    
-    // NEVER USED ATM
-    public DTO(String ip, int port, String nodeName, int nodeId) {
-        this.ip = ip;
-        this.port = port;
-        this.nodeName = nodeName;
-        this.nodeId = nodeId;
-    }
+    }   
 
 }

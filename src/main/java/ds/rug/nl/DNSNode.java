@@ -10,6 +10,10 @@ import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.*;
 import ds.rug.nl.network.hostInfo;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -41,7 +45,11 @@ public class DNSNode extends Node {
 
     @Override
     public void run() {
-        this.ipAddress = Config.dnsip;
+        try {
+            this.ipAddress = InetAddress.getByName(Config.dnsip);
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(DNSNode.class.getName()).log(Level.SEVERE, null, ex);
+        }
         hostInfo info = new hostInfo(this, Config.commandPort);
         network.startReceiving(info);
         this.keepRunning();

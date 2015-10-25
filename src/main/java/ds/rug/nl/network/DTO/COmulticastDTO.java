@@ -1,6 +1,6 @@
 package ds.rug.nl.network.DTO;
 
-import ds.rug.nl.network.VectorClock;
+import ds.rug.nl.algorithm.VectorClock;
 
 /**
  *

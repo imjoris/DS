@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ds.rug.nl.main;
+package ds.rug.nl;
 
 import ds.rug.nl.network.DTO.StreamDTO;
 

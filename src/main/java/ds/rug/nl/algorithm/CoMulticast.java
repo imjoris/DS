@@ -4,7 +4,6 @@ import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.COmulticastDTO;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.Tuple;
-import ds.rug.nl.network.VectorClock;
 import java.util.ArrayList;
 import java.util.Iterator;
 

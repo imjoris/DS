@@ -1,17 +1,13 @@
 package ds.rug.nl.main;
 
-import ds.rug.nl.main.NodeInfo;
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.algorithm.CoMulticast;
 import ds.rug.nl.algorithm.JoinAlgo;
 import ds.rug.nl.algorithm.StreamAlgo;
-import ds.rug.nl.main.CommonClientData;
-import ds.rug.nl.main.Node;
-import ds.rug.nl.main.StreamHandler;
+import ds.rug.nl.StreamHandler;
 import ds.rug.nl.network.DTO.*;
 import ds.rug.nl.network.hostInfo;
-import ds.rug.nl.tree.TreeNode;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.logging.Level;
@@ -25,6 +21,9 @@ public class Client extends Node {
 
     // Variables are shared with multiple algorithms
     private final CommonClientData clientData;
+    private final CoMulticast coMulticast;
+    private final JoinAlgo joinAlgo;
+    private final StreamAlgo streamAlgo;
 
     public Client(NodeInfo nodeInfo, StreamHandler streamHandler) {
         super(nodeInfo);
@@ -38,13 +37,13 @@ public class Client extends Node {
         bMulticast = new BMulticast(this, cmdMessageHandler);
         cmdMessageHandler.registerAlgorithm(MulticastDTO.class, bMulticast);
         
-        CoMulticast coMulticast = new CoMulticast(this, bMulticast);
+        coMulticast = new CoMulticast(this, bMulticast);
         cmdMessageHandler.registerAlgorithm(COmulticastDTO.class, coMulticast);        
         
-        JoinAlgo joinAlgo = new JoinAlgo(this, clientData, coMulticast); 
+        joinAlgo = new JoinAlgo(this, clientData, coMulticast); 
         joinAlgo.registerDTOs();
         
-        StreamAlgo streamAlgo = new StreamAlgo(this, clientData, streamHandler);
+        streamAlgo = new StreamAlgo(this, clientData, streamHandler);
         cmdMessageHandler.registerAlgorithm(StreamDTO.class, streamAlgo);
     }
 
@@ -59,8 +58,13 @@ public class Client extends Node {
         network.startReceiving(info);
         try {
             List<String> ips = dnsAlgo.getDNSIps();
+            joinAlgo.joinTree();
+            // hartbeat stuff?
         } catch (UnknownHostException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        
+        
     }
 }

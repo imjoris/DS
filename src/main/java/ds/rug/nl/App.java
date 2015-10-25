@@ -5,10 +5,40 @@
  */
 package ds.rug.nl;
 
+import ds.rug.nl.main.Client;
+import ds.rug.nl.main.IntStreamHandler;
+import ds.rug.nl.main.NodeInfo;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Bart
  */
 public class App {
+    public static void main(String [] args){
+        try {
+            StreamHandler sHandle = new IntStreamHandler();
+            
+            String Ip;
+            String hostName;
+            if (args.length > 1)
+                Ip = args[1];
+            else
+                Ip = InetAddress.getLocalHost().getHostAddress();
+            if (args.length > 2)
+                hostName = args[2];
+            else
+                hostName = InetAddress.getLocalHost().getHostName();
+            NodeInfo nodeInfo = new NodeInfo(Ip, hostName);
+            
+            Client client = new Client(nodeInfo, sHandle);
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("IP adress did not resolve");
+        }
+    }
     
 }

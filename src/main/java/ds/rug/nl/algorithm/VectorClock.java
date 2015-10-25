@@ -1,4 +1,4 @@
-package ds.rug.nl.network;
+package ds.rug.nl.algorithm;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,9 +10,10 @@ import java.util.Set;
  */
 public class VectorClock extends HashMap<Integer, Integer> {
 
-    public Integer get(Integer key) {
+    @Override
+    public Integer get(Object key) {
         if (!(super.containsKey(key))) {
-            super.put(key, 0);
+            super.put((Integer) key, 0);
             return 0;
         }
         return super.get(key);

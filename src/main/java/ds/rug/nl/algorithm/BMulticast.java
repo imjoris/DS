@@ -3,7 +3,6 @@ package ds.rug.nl.algorithm;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.MulticastDTO;
-import ds.rug.nl.network.VectorClock;
 import ds.rug.nl.threads.CmdMessageHandler;
 import java.util.HashMap;
 import java.util.LinkedList;

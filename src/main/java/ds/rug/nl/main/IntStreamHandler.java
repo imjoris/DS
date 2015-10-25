@@ -5,7 +5,7 @@
  */
 package ds.rug.nl.main;
 
-import ds.rug.nl.main.StreamHandler;
+import ds.rug.nl.StreamHandler;
 import ds.rug.nl.network.DTO.StreamDTO;
 
 /**

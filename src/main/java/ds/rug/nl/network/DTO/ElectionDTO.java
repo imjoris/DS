@@ -14,14 +14,11 @@ public class ElectionDTO extends DTO{
     public int phaseNumebr;
     public int hopCount;
 
-    public ElectionDTO(String candidate, int phaseNumebr, int hopCount, messageType messagetype, String ip, int port, String nodeName, int nodeId) {
-        super(messagetype, ip, port, nodeName, nodeId);
+    public ElectionDTO(int candidate, int phaseNumebr, int hopCount) {
+        super();
         this.candidate = candidate;
         this.phaseNumebr = phaseNumebr;
         this.hopCount = hopCount;
     }
-    
-    
-    
-    
+
 }

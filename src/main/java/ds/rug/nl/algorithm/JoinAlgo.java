@@ -50,10 +50,10 @@ public class JoinAlgo extends Algorithm {
         if (this.fullNode())
             response = new JoinResponseDTO(null, denied);
         else { 
-            this.addChild(msg.nodeInfo);
+            this.addChild(message.nodeInfo);
             response = new JoinResponseDTO(streamTree, accepted);
         }        
-        reply(response, msg); 
+        reply(response, message); 
     }
 
     private boolean fullNode() {

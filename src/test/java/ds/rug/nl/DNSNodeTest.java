@@ -1,5 +1,8 @@
 package ds.rug.nl;
 
+import ds.rug.nl.main.Client;
+import ds.rug.nl.main.Config;
+import ds.rug.nl.main.DNSNode;
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.main.NodeInfo;
 import ds.rug.nl.network.hostInfo;
@@ -34,7 +37,7 @@ public class DNSNodeTest
         dnsNode.start();
         
         NodeInfo clientInfo = new NodeInfo("127.0.0.3", "client1");
-        Client clientNode = new Client(clientInfo);
+        Client clientNode = new Client(clientInfo, null);
         
         hostInfo info = new hostInfo(clientNode, Config.commandPort);
         clientNode.getNetwork().startReceiving(info);

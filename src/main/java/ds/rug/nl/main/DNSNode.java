@@ -1,4 +1,4 @@
-package ds.rug.nl;
+package ds.rug.nl.main;
 
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.algorithm.BMulticast;

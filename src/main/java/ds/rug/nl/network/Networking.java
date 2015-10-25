@@ -1,6 +1,6 @@
 package ds.rug.nl.network;
 
-import ds.rug.nl.Config;
+import ds.rug.nl.main.Config;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.threads.IReceiver;
 import java.io.BufferedOutputStream;

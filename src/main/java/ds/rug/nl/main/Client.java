@@ -1,11 +1,14 @@
-package ds.rug.nl;
+package ds.rug.nl.main;
 
 import ds.rug.nl.main.NodeInfo;
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.algorithm.CoMulticast;
 import ds.rug.nl.algorithm.JoinAlgo;
+import ds.rug.nl.algorithm.StreamAlgo;
+import ds.rug.nl.main.CommonClientData;
 import ds.rug.nl.main.Node;
+import ds.rug.nl.main.StreamHandler;
 import ds.rug.nl.network.DTO.*;
 import ds.rug.nl.network.hostInfo;
 import ds.rug.nl.tree.TreeNode;
@@ -21,11 +24,11 @@ import java.util.logging.Logger;
 public class Client extends Node {
 
     // Variables are shared with multiple algorithms
-    TreeNode<NodeInfo> streamTree;
-    TreeNode<NodeInfo> thisNode;
+    private final CommonClientData clientData;
 
-    public Client(NodeInfo nodeInfo) {
+    public Client(NodeInfo nodeInfo, StreamHandler streamHandler) {
         super(nodeInfo);
+        clientData = new CommonClientData();
         
         System.out.println("Creating client");
 
@@ -38,8 +41,11 @@ public class Client extends Node {
         CoMulticast coMulticast = new CoMulticast(this, bMulticast);
         cmdMessageHandler.registerAlgorithm(COmulticastDTO.class, coMulticast);        
         
-        JoinAlgo joinAlgo = new JoinAlgo(this, streamTree, thisNode, coMulticast); 
+        JoinAlgo joinAlgo = new JoinAlgo(this, clientData, coMulticast); 
         joinAlgo.registerDTOs();
+        
+        StreamAlgo streamAlgo = new StreamAlgo(this, clientData, streamHandler);
+        cmdMessageHandler.registerAlgorithm(StreamDTO.class, streamAlgo);
     }
 
     public void joinabc() {

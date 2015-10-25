@@ -106,7 +106,7 @@ public class BMulticast extends Algorithm {
                 data, myLastSendSeqNr, MulticastDTO.cmdType.send
         );
         
-        network.sendMulticast(multiDTOToSend);
+        this.multicast(multiDTOToSend);
         
         mySendSeqNrs.put(myLastSendSeqNr, multiDTOToSend);
     }

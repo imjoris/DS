@@ -13,11 +13,9 @@ public class JoinResponseDTO extends DTO {
         denied
     }
     
-    public TreeNode<NodeInfo> streamTree;
     public ResponseType responseType;
 
-    public JoinResponseDTO(TreeNode<NodeInfo> streamTree, ResponseType responseType) {
-        this.streamTree = streamTree;
+    public JoinResponseDTO(ResponseType responseType) {
         this.responseType = responseType;
     }
     

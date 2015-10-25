@@ -3,6 +3,7 @@ package ds.rug.nl;
 import ds.rug.nl.main.NodeInfo;
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.algorithm.BMulticast;
+import ds.rug.nl.algorithm.CoMulticast;
 import ds.rug.nl.algorithm.JoinAlgo;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.*;
@@ -19,6 +20,7 @@ import java.util.logging.Logger;
  */
 public class Client extends Node {
 
+    // Variables are shared with multiple algorithms
     TreeNode<NodeInfo> streamTree;
     TreeNode<NodeInfo> thisNode;
 
@@ -30,12 +32,14 @@ public class Client extends Node {
         dnsAlgo = new DNSAlgo(this);
         cmdMessageHandler.registerAlgorithm(DNSDTO.class, dnsAlgo);
 
-        multiAlgo = new BMulticast(this, cmdMessageHandler);
-        cmdMessageHandler.registerAlgorithm(MulticastDTO.class, multiAlgo);
+        bMulticast = new BMulticast(this, cmdMessageHandler);
+        cmdMessageHandler.registerAlgorithm(MulticastDTO.class, bMulticast);
         
-        JoinAlgo joinAlgo = new JoinAlgo(this, streamTree, thisNode); 
-        cmdMessageHandler.registerAlgorithm(JoinRequestDTO.class , joinAlgo);
-        cmdMessageHandler.registerAlgorithm(JoinResponseDTO.class, joinAlgo);
+        CoMulticast coMulticast = new CoMulticast(this, bMulticast);
+        cmdMessageHandler.registerAlgorithm(COmulticastDTO.class, coMulticast);        
+        
+        JoinAlgo joinAlgo = new JoinAlgo(this, streamTree, thisNode, coMulticast); 
+        joinAlgo.registerDTOs();
     }
 
     public void joinabc() {

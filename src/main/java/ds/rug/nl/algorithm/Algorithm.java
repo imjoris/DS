@@ -13,7 +13,7 @@ import java.net.InetAddress;
  */
 public abstract class Algorithm {
 
-    protected Networking network;
+    private Networking network;
     protected Node node;
     
     public Algorithm(Node node) {
@@ -39,5 +39,9 @@ public abstract class Algorithm {
     
     public void reply(DTO dtoToSend, DTO originDTO){
         this.send(dtoToSend, originDTO.getIp(), originDTO.getPort());
+    }
+    
+    public void multicast(DTO dto){
+        network.sendMulticast(dto);
     }
 }

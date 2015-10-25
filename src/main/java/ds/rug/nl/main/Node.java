@@ -25,10 +25,12 @@ public abstract class Node extends Thread{
     // other nodes, just ourselves. Might want to move it somewhere else.
 
     protected final NodeInfo nodeInfo;
+    protected final Networking network;
     
+    // make all these final?
     protected CmdMessageHandler cmdMessageHandler;
     protected DNSAlgo dnsAlgo;
-    public BMulticast multiAlgo;
+    protected BMulticast bMulticast;
 
     protected boolean isRunning;
 
@@ -66,16 +68,10 @@ public abstract class Node extends Thread{
         return nodeInfo.nodeId;
     }
 
-    protected Networking network;
-
     public Networking getNetwork() {
         return network;
     }
 
-    public void setNetwork(Networking network) {
-        this.network = network;
-    }
-    
     public CmdMessageHandler getCmdMessageHandler() {
         return cmdMessageHandler;
     }

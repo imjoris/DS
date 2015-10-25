@@ -13,9 +13,6 @@ public abstract class DTO implements Serializable{
     public String nodeName;
     public int nodeId;
     public int port;
-    private ReplySend type;
-    
-
     
     public DTO(){}
     

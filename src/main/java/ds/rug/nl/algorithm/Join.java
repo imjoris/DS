@@ -1,7 +1,9 @@
 package ds.rug.nl.algorithm;
 
+import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.*;
 import ds.rug.nl.network.ReceivedMessage;
+import java.util.Iterator;
 
 /**
  *
@@ -42,3 +44,20 @@ import ds.rug.nl.network.ReceivedMessage;
 //    }
 //    
 //}
+//    public void joinTree() {
+//        // at some point a response gives the Tree of the network
+//        // this tree should be written into class variable netTree
+//        Iterator<TreeNode<String>> highestLeaves = netTree.getHighestLeaves();
+//        while (highestLeaves.hasNext()) {
+//            TreeNode<String> leaf = highestLeaves.next();
+//            Node leafNode = getNodeById(leaf.data);
+//            if (this.requestAttach(leafNode)) {
+//                leaf.addChild(this.nodeId);
+//            }
+//            return;
+//        }
+//        // if we get here, none of the leaves were available, so we restart
+//        // this should be rare, so recursion should rarely happen and it is more
+//        // legible than a while (true)
+//        this.joinTree();
+//    }

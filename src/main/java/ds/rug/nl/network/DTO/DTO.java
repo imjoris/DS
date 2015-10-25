@@ -1,6 +1,7 @@
 package ds.rug.nl.network.DTO;
 
 import java.io.Serializable;
+import java.net.InetAddress;
 
 /**
  *
@@ -8,29 +9,18 @@ import java.io.Serializable;
  */
 public abstract class DTO implements Serializable{
 
-    public enum messageType {
-        dns,
-        join,
-        election,
-        multicast
-    }
+    public InetAddress ip;
+    public String nodeName;
+    public int nodeId;
+    public int port;
     
-    public messageType messagetype;
-    public String ip;
+    public DTO(){}
 
-    public messageType getMessagetype() {
-        return messagetype;
-    }
-
-    public void setMessagetype(messageType messagetype) {
-        this.messagetype = messagetype;
-    }
-
-    public String getIp() {
+    public InetAddress getIp() {
         return ip;
-    }
-
-    public void setIp(String ip) {
+    }    
+    
+    public void setIp(InetAddress ip) {
         this.ip = ip;
     }
 
@@ -56,24 +46,6 @@ public abstract class DTO implements Serializable{
 
     public void setNodeId(int nodeId) {
         this.nodeId = nodeId;
-    }
-    public int port;
-    
-    public String nodeName;
-    public int nodeId;
-
-    public DTO(){
-        
-    
-    }
-    
-    
-    public DTO(messageType messagetype, String ip, int port, String nodeName, int nodeId) {
-        this.messagetype = messagetype;
-        this.ip = ip;
-        this.port = port;
-        this.nodeName = nodeName;
-        this.nodeId = nodeId;
-    }
+    }   
 
 }

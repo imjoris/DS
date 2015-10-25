@@ -1,8 +1,10 @@
 package ds.rug.nl.algorithm;
 
+import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.MulticastDTO;
 import ds.rug.nl.threads.CmdMessageHandler;
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -32,7 +34,8 @@ public class BMulticast extends Algorithm {
     Map<Integer, MulticastDTO> mySendSeqNrs;
     CmdMessageHandler mainHandler;
 
-    public BMulticast(CmdMessageHandler mainHandler){
+    public BMulticast(Node node, CmdMessageHandler mainHandler){
+        super(node);
         sequenceNumbersFromNodes = new HashMap<String, Integer>();
         mySendSeqNrs = new HashMap<Integer, MulticastDTO>();
         myLastSendSeqNr=0;
@@ -58,7 +61,7 @@ public class BMulticast extends Algorithm {
 
         mySeqNr++;
         if (receivedSeq == mySeqNr) {
-            deliver(dto, dto.ip);
+            deliver(dto);
         } else if (receivedSeq < mySeqNr) {
             //reject message because it has been delivered before
         } else if (receivedSeq > mySeqNr) {
@@ -70,23 +73,26 @@ public class BMulticast extends Algorithm {
                 requestMissingIds.getRequestSeqNums().add(i);
                 //network.send(resetreq, multidto.getNodeId(), multidto.getNodeport()); THIS DOES NOT WORK (ANGELO)
             }
-            network.send(dto,  multidto.ip, multidto.port);
+            send(dto, multidto.ip, multidto.port);
         }
     }
     
-    public void deliver(DTO data, String sender) {
+    public void deliver(DTO data) {
         //handle the dto the multicast had send
-        mainHandler.handleDTO(data);        
+        mainHandler.handleDTO(data);
+        
+        // TO-DO: Make this use a guaranteed unique ID
+        String sender = Integer.toString(data.nodeId);
 
         //increase the sequence number 
         int seqNodeNow = sequenceNumbersFromNodes.get(sender);
         seqNodeNow++;
         sequenceNumbersFromNodes.put(sender, seqNodeNow);
         
-        DTOSeq dtowithseqnr = holdBackQ.get(sender).peek();
+        DTOSeq dtoWithSeqNumber = holdBackQ.get(sender).peek();
         
-        if(dtowithseqnr.sequenceNumber == seqNodeNow+1){
-            deliver(dtowithseqnr.dto, sender);
+        if(dtoWithSeqNumber.sequenceNumber == seqNodeNow+1){
+            deliver(dtoWithSeqNumber.dto);
             this.holdBackQ.get(sender).remove();
         }
     }

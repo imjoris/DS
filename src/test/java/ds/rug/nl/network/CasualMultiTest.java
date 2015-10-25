@@ -7,26 +7,34 @@ package ds.rug.nl.network;
 
 import java.util.ArrayList;
 import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  *
  * @author angelo
  */
-public class CasualMultiTest extends TestCase {
-    private ArrayList<Tuple> l = new ArrayList<Tuple>();
+public class CasualMultiTest {
+//    private ArrayList<Tuple> l = new ArrayList<Tuple>();
+//    
+//    public CasualMultiTest(String testName) {
+//        super(testName);
+//    }
+//
+//    @Override
+//    protected void setUp() throws Exception {
+//        super.setUp();
+//    }
+//
+//    @Override
+//    protected void tearDown() throws Exception {
+//        super.tearDown();
+//    }
     
-    public CasualMultiTest(String testName) {
-        super(testName);
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @Test
+    public void EmptyTest(){
+        assertEquals(2 + 2, 4);
     }
 
 //    public void testSomeMethod() {

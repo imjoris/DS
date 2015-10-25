@@ -42,7 +42,6 @@ public class MulticastDTO extends DTO {
     public cmdType command;
 
     public MulticastDTO(DTO dto, int sequencenum, cmdType command) {
-        this.messagetype = DTO.messageType.multicast;
         this.dto = dto;
         this.sequencenum = sequencenum;
         this.command = command;
@@ -50,7 +49,6 @@ public class MulticastDTO extends DTO {
     
     public MulticastDTO(){
         requestSeqNums = new ArrayList<Integer>();
-        this.messagetype = DTO.messageType.multicast;
     }
     
 }

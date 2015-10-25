@@ -61,13 +61,13 @@ public class Networking {
         }
     }
 
-    public void send(DTO dto, String ip, int port) {
+    public void send(DTO dto, InetAddress address, int port) {
         Socket socket = null;
         ObjectOutputStream out = null;
         try {
             //socket = new Socket(port);
-            socket = new Socket(ip, port);
-
+            socket = new Socket(address, port);
+            
 //            InetSocketAddress socketAddress = new InetSocketAddress(ip, port);
 //            s.bind(socketAddress);
 //            s.setReuseAddress(true);
@@ -82,34 +82,6 @@ public class Networking {
 
     }
 
-    public void sendCommand(DTO message, String ip) {
-        send(message, ip, Config.commandPort);
-    }
-//       
-//        //String bytes = 
-//        InetAddress address;
-//        
-//        try {
-//            DatagramSocket socket;
-//            socket = new DatagramSocket();
-//            address = InetAddress.getByName(ip);
-//            DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
-//            socket.send(packet);
-//        }catch (UnknownHostException | SocketException ex) {
-//            Logger.getLogger(Networking.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-
-//    public void startReceiving(String ip, int port, IReceiver handler) {
-//        startReceiving(
-//                new hostInfo("", ip, port, handler)
-//        );
-//    }
-//    
-//    public void startReceiving(String hostname, String ip, int port, IReceiver handler) {
-//        startReceiving(
-//                new hostInfo("", ip, port, handler)
-//        );
-//    }
     public void startReceiving(hostInfo host) {
         class mythread extends Thread {
 
@@ -160,12 +132,12 @@ public class Networking {
 
             class mythread2 extends Thread {
 
-                IReceiver handler;
-                DTO dto;
+                public IReceiver handler;
+                public DTO dto;
 
                 public mythread2(IReceiver handler, DTO message) {
                     this.handler = handler;
-                    this.dto = dto;
+                    this.dto = message;
                 }
 
                 @Override

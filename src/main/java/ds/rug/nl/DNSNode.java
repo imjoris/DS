@@ -8,8 +8,13 @@ package ds.rug.nl;
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.main.Node;
+import ds.rug.nl.main.NodeInfo;
 import ds.rug.nl.network.DTO.*;
 import ds.rug.nl.network.hostInfo;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,12 +22,8 @@ import ds.rug.nl.network.hostInfo;
  */
 public class DNSNode extends Node {
 
-    public static void main(String[] args) {
-        DNSNode dnsNode = new DNSNode();
-        dnsNode.start();
-    }
-
-    public DNSNode() {
+    public DNSNode(NodeInfo nodeInfo) {
+        super(nodeInfo);
 
         //request the dns ips
         //register the dnsAlgorithm with the cmd message handler
@@ -31,7 +32,7 @@ public class DNSNode extends Node {
         dnsAlgo = new DNSAlgo(this);
         cmdMessageHandler.registerAlgorithm(DNSDTO.class, dnsAlgo);
 
-        multiAlgo = new BMulticast(cmdMessageHandler);
+        multiAlgo = new BMulticast(this, cmdMessageHandler);
         cmdMessageHandler.registerAlgorithm(MulticastDTO.class, multiAlgo);
 
         //while(dnsAlgo.hasReceivedIps != true){}
@@ -41,7 +42,6 @@ public class DNSNode extends Node {
 
     @Override
     public void run() {
-        this.ipAddress = Config.dnsip;
         hostInfo info = new hostInfo(this, Config.commandPort);
         network.startReceiving(info);
         this.keepRunning();

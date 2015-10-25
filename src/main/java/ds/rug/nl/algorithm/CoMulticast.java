@@ -1,23 +1,30 @@
-package ds.rug.nl.network;
+package ds.rug.nl.algorithm;
 
 import ds.rug.nl.algorithm.Algorithm;
 import ds.rug.nl.algorithm.BMulticast;
+import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.COmulticastDTO;
 import ds.rug.nl.network.DTO.DTO;
+import ds.rug.nl.network.Tuple;
+import ds.rug.nl.network.VectorClock;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- *
+ * Handles the following DTOs:
+ * COmulticastDTO, 
+ * 
  * @author angelo
  */
-public class CasualMulti extends Algorithm {
+public class CoMulticast extends Algorithm {
 
     private VectorClock localVector; // <ID, Counter>
     private ArrayList<Tuple> holdBackQ;
     private String id;
     private BMulticast bmultiCast;
-    public CasualMulti(BMulticast bmulti) {
+    
+    public CoMulticast(Node node, BMulticast bmulti) {
+        super(node);
         this.bmultiCast = bmulti;
     }
 

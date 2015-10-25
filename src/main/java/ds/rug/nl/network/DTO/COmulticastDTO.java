@@ -9,9 +9,9 @@ import ds.rug.nl.network.VectorClock;
 public class COmulticastDTO extends DTO {
     private DTO message;
     private VectorClock v;
-    private String sender;
+    private Integer sender;
 
-    public COmulticastDTO(VectorClock v, DTO message, String sender){
+    public COmulticastDTO(VectorClock v, DTO message, Integer sender){
         this.v = v;
         this.message = message;
         this.sender = sender;
@@ -33,11 +33,11 @@ public class COmulticastDTO extends DTO {
         return v;
     }
     
-    public String getSender(){
+    public Integer getSender(){
         return sender;
     }
     
-    public void setSender(String sender){
+    public void setSender(Integer sender){
         this.sender = sender;
     }
     

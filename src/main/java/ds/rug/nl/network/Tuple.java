@@ -10,9 +10,9 @@ import ds.rug.nl.network.DTO.DTO;
 public class Tuple { 
   public final VectorClock vectorClock; 
   public final DTO dto; 
-  public final String id;
+  public final Integer id;
 
-    public Tuple(VectorClock vectorClock, DTO dto, String id) {
+    public Tuple(VectorClock vectorClock, DTO dto, Integer id) {
         this.vectorClock = vectorClock;
         this.dto = dto;
         this.id = id;

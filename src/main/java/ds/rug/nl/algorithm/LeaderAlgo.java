@@ -41,9 +41,9 @@ public class LeaderAlgo extends Algorithm {
     @Override
     public void handle(DTO message) {
         Direction dir = null;
-        if (message.nodeName.equals(leftNeighbour))
+        if (message.nodeName.equals(leftNeighbour.getName()))
             dir = Direction.LEFT;
-        if (message.nodeName.equals(rightNeighbour))
+        if (message.nodeName.equals(rightNeighbour.getName()))
             dir = Direction.RIGHT;
         if (dir == null)
             return;
@@ -51,7 +51,6 @@ public class LeaderAlgo extends Algorithm {
         if (message instanceof ElectionDTO) {
             handleElection((ElectionDTO) message, dir);
         }
-
     }
 
     private void handleElection(ElectionDTO eleMsg, Direction dir) {
@@ -69,7 +68,6 @@ public class LeaderAlgo extends Algorithm {
         }
         
         passOn(eleMsg, dir);
-        
     }
 
     public int anounceLeader() {

@@ -25,11 +25,11 @@ public class BMulticast extends Algorithm {
         } 
     }
     
-    Map<String, Integer> sequenceNumbersFromNodes;
+    Map<Integer, Integer> sequenceNumbersFromNodes;
     Map<String, DTOSeq> DTOSeqPerSender;
     
     int myLastSendSeqNr;
-    Map<String, LinkedList<DTOSeq>> holdBackQ;
+    Map<Integer, LinkedList<DTOSeq>> holdBackQ;
     Map<Integer, MulticastDTO> mySendSeqNrs;
     CmdMessageHandler mainHandler;
 
@@ -39,7 +39,7 @@ public class BMulticast extends Algorithm {
         mySendSeqNrs = new HashMap<Integer, MulticastDTO>();
         myLastSendSeqNr=0;
         this.mainHandler = mainHandler;
-        holdBackQ = new HashMap<String, LinkedList<DTOSeq>>();
+        holdBackQ = new HashMap<Integer, LinkedList<DTOSeq>>();
     }
     
     @Override
@@ -55,7 +55,7 @@ public class BMulticast extends Algorithm {
         }
 
         receivedSeq = multidto.getSequencenum();
-        Integer mySeqNr = sequenceNumbersFromNodes.get(Integer.toString(multidto.nodeId));
+        Integer mySeqNr = sequenceNumbersFromNodes.get(multidto.nodeId);
 
         mySeqNr++;
         if (receivedSeq == mySeqNr) {
@@ -80,7 +80,7 @@ public class BMulticast extends Algorithm {
         //handle the dto the multicast had send
         mainHandler.handleDTO(data);
         
-        String sender = Integer.toString(data.nodeId);
+        Integer sender = data.nodeId;
         
         //increase the sequence number 
         int seqNodeNow = sequenceNumbersFromNodes.get(sender);

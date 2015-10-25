@@ -18,7 +18,7 @@ public class CoMulticast extends Algorithm {
 
     private VectorClock localVector; // <ID, Counter>
     private ArrayList<Tuple> holdBackQ;
-    private String id;
+    private Integer id;
     private BMulticast bmultiCast;
     
     public CoMulticast(Node node, BMulticast bmulti) {
@@ -42,7 +42,7 @@ public class CoMulticast extends Algorithm {
         }
     }
 
-    public void deliverDTO(DTO data, String sender) {
+    public void deliverDTO(DTO data, Integer sender) {
         localVector.incementValue(sender);
 
         Iterator<Tuple> i = holdBackQ.iterator();

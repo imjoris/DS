@@ -8,20 +8,19 @@ import java.util.Set;
  *
  * @author angelo
  */
-public class VectorClock extends HashMap<String, Integer> {
+public class VectorClock extends HashMap<Integer, Integer> {
 
-    @Override
-    public Integer get(Object key) {
+    public Integer get(Integer key) {
         if (!(super.containsKey(key))) {
-            super.put((String) key, 0);
+            super.put(key, 0);
             return 0;
         }
         return super.get(key);
     }
 
-    public Boolean isNext(VectorClock vc, String senderKey) {
+    public Boolean isNext(VectorClock vc, Integer senderKey) {
 
-        Set<String> s = this.keySet();
+        Set<Integer> s = this.keySet();
         s.addAll(vc.keySet());
 
         s.remove(senderKey);
@@ -29,9 +28,9 @@ public class VectorClock extends HashMap<String, Integer> {
             return false;
         }
 
-        Iterator<String> sIterator = s.iterator();
+        Iterator<Integer> sIterator = s.iterator();
         while (sIterator.hasNext()) {
-            String key = sIterator.next();
+            Integer key = sIterator.next();
             if (!(vc.get(key) > this.get(key))) {
                 return false;
             }
@@ -39,7 +38,7 @@ public class VectorClock extends HashMap<String, Integer> {
         return true;
     }
     
-    public void incementValue(String id){
+    public void incementValue(Integer id){
         super.put(id, super.get(id)+1);
     }
 

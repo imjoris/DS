@@ -13,7 +13,7 @@ import java.util.Iterator;
  */
 public class TreeNode<T> implements java.io.Serializable{
 
-    public T data;
+    public T contents;
     public TreeNode<T> parent;
     public List<TreeNode<T>> children;
 
@@ -34,11 +34,11 @@ public class TreeNode<T> implements java.io.Serializable{
     }
 
     /**
-     * Create a new root node with data as its contents
+     * Create a new root node with contents as its contents
      * @param data 
      */
     public TreeNode(T data) {
-        this.data = data;
+        this.contents = data;
         this.children = new ArrayList<TreeNode<T>>();
     }
 
@@ -67,7 +67,7 @@ public class TreeNode<T> implements java.io.Serializable{
      */
     public TreeNode<T> findTreeNode(T item) {
         for (TreeNode<T> child : this.children) {
-            if (item.equals(child.data))
+            if (item.equals(child.contents))
                 return child;
             
             TreeNode<T> recursiveResult = child.findTreeNode(item);
@@ -108,6 +108,6 @@ public class TreeNode<T> implements java.io.Serializable{
 
     @Override
     public String toString() {
-            return data != null ? data.toString() : "[data null]";
+            return contents != null ? contents.toString() : "[data null]";
     }
 }

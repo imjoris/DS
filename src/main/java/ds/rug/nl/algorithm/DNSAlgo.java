@@ -1,6 +1,6 @@
 package ds.rug.nl.algorithm;
 
-import ds.rug.nl.Config;
+import ds.rug.nl.main.Config;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DNSDTO;
 import ds.rug.nl.network.DTO.DTO;

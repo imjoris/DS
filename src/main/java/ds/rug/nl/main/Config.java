@@ -1,4 +1,4 @@
-package ds.rug.nl;
+package ds.rug.nl.main;
 
 /**
  * Holding essential configurations.

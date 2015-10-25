@@ -5,7 +5,6 @@
  */
 package ds.rug.nl.main;
 
-import ds.rug.nl.DNSNode;
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.network.Networking;

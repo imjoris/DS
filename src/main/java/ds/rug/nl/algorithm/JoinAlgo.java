@@ -1,5 +1,6 @@
 package ds.rug.nl.algorithm;
 
+import ds.rug.nl.main.CommonClientData;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.main.NodeInfo;
 import ds.rug.nl.network.DTO.DTO;
@@ -28,8 +29,7 @@ import java.util.logging.Logger;
  */
 public class JoinAlgo extends Algorithm {
 
-    private TreeNode<NodeInfo> streamTree;
-    private TreeNode<NodeInfo> thisNode;
+    private final CommonClientData clientData;
     private final CoMulticast coMulticast;
 
     private final CountDownLatch joinLatch;
@@ -38,13 +38,11 @@ public class JoinAlgo extends Algorithm {
     private TreeDTO treeResponse;
 
     public JoinAlgo(Node node,
-            TreeNode<NodeInfo> streamTree,
-            TreeNode<NodeInfo> thisNode,
+            CommonClientData clientData,
             CoMulticast coMulticast) 
     {
         super(node);
-        this.streamTree = streamTree;
-        this.thisNode = thisNode;
+        this.clientData = clientData;
         this.coMulticast = coMulticast;
         joinLatch = new CountDownLatch(1);
         treeLatch = new CountDownLatch(1);
@@ -62,13 +60,13 @@ public class JoinAlgo extends Algorithm {
     public void joinTree() throws UnknownHostException {
         getTree();
 
-        Iterator<TreeNode<NodeInfo>> highestLeaves = streamTree.getHighestLeaves();
+        Iterator<TreeNode<NodeInfo>> highestLeaves = clientData.streamTree.getHighestLeaves();
         while (highestLeaves.hasNext()) {
             TreeNode<NodeInfo> leaf = highestLeaves.next();
-            NodeInfo leafNode = leaf.data;
+            NodeInfo leafNode = leaf.contents;
 
             if (requestAttach(leafNode)) {
-                thisNode = leaf.addChild(this.node.getNodeInfo());
+                clientData.thisNode = leaf.addChild(this.node.getNodeInfo());
                 announceJoin();
             }
             return;
@@ -93,7 +91,7 @@ public class JoinAlgo extends Algorithm {
         } catch (InterruptedException ex) {
             Logger.getLogger(JoinAlgo.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.streamTree = treeResponse.streamTree;    
+        clientData.streamTree = treeResponse.streamTree;    
     }
 
     private boolean requestAttach(NodeInfo leafNode) {
@@ -139,14 +137,14 @@ public class JoinAlgo extends Algorithm {
     }
 
     private boolean fullNode() {
-        synchronized (thisNode) {
-            return thisNode.children.size() >= 3;
+        synchronized (clientData) {
+            return clientData.thisNode.children.size() >= 3;
         }
     }
 
     private void addChild(NodeInfo nodeInfo) {
-        synchronized (thisNode) {
-            thisNode.addChild(nodeInfo);
+        synchronized (clientData) {
+            clientData.thisNode.addChild(nodeInfo);
         }
     }
 
@@ -158,18 +156,19 @@ public class JoinAlgo extends Algorithm {
             return;
         }
         if (treeDTO.cmd == CmdType.request){
-            TreeDTO response = new TreeDTO(CmdType.reply, streamTree);
+            TreeDTO response = new TreeDTO(CmdType.reply, clientData.streamTree);
             reply(response, treeDTO);
         }
         
     }
 
     private void announceJoin() {
-        JoinAnnounceDTO msg = new JoinAnnounceDTO(thisNode.data, thisNode.parent.data);
+        JoinAnnounceDTO msg = new JoinAnnounceDTO(clientData.thisNode.contents, 
+                                                  clientData.thisNode.parent.contents);
         coMulticast.sendSmthg(msg);
     }
 
     private void handleAnnounce(JoinAnnounceDTO announcement) {
-        streamTree.findTreeNode(announcement.parentNode).addChild(announcement.joinedNode);
+        clientData.streamTree.findTreeNode(announcement.parentNode).addChild(announcement.joinedNode);
     }
 }

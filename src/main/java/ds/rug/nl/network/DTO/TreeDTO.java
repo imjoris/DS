@@ -12,16 +12,17 @@ import ds.rug.nl.tree.TreeNode;
  *
  * @author Bart
  */
-public class JoinResponseDTO extends DTO {
-    public enum ResponseType {
-        accepted,
-        denied
+public class TreeDTO extends DTO {
+    public enum CmdType {
+        request,
+        reply,
     }
-    
-    public ResponseType responseType;
 
-    public JoinResponseDTO(ResponseType responseType) {
-        this.responseType = responseType;
+    public final CmdType cmd;
+    public final TreeNode<NodeInfo> streamTree;
+
+    public TreeDTO(CmdType cmd, TreeNode<NodeInfo> streamTree) {
+        this.cmd = cmd;
+        this.streamTree = streamTree;
     }
-    
 }

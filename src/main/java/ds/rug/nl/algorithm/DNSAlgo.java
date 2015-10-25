@@ -5,7 +5,6 @@ import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DNSDTO;
 import ds.rug.nl.network.DTO.DTO;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;

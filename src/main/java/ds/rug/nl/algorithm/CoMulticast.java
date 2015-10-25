@@ -1,7 +1,6 @@
 package ds.rug.nl.algorithm;
 
-import ds.rug.nl.algorithm.Algorithm;
-import ds.rug.nl.algorithm.BMulticast;
+
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.COmulticastDTO;
 import ds.rug.nl.network.DTO.DTO;

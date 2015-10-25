@@ -32,8 +32,8 @@ public class DNSNode extends Node {
         dnsAlgo = new DNSAlgo(this);
         cmdMessageHandler.registerAlgorithm(DNSDTO.class, dnsAlgo);
 
-        multiAlgo = new BMulticast(this, cmdMessageHandler);
-        cmdMessageHandler.registerAlgorithm(MulticastDTO.class, multiAlgo);
+        bMulticast = new BMulticast(this, cmdMessageHandler);
+        cmdMessageHandler.registerAlgorithm(MulticastDTO.class, bMulticast);
 
         //while(dnsAlgo.hasReceivedIps != true){}
         //if(dnsAlgo.hasReceivedIps == true)

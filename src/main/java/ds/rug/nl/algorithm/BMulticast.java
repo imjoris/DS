@@ -4,7 +4,6 @@ import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.MulticastDTO;
 import ds.rug.nl.threads.CmdMessageHandler;
-import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -103,7 +102,7 @@ public class BMulticast extends Algorithm {
                 data, myLastSendSeqNr, MulticastDTO.cmdType.send
         );
         
-        network.sendMulticast(multiDTOToSend);
+        this.multicast(multiDTOToSend);
         
         mySendSeqNrs.put(myLastSendSeqNr, multiDTOToSend);
     }

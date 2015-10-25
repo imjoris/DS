@@ -11,4 +11,5 @@ public class Config {
     public static String multicastAdres = "224.0.0.3";
     public static int bufferSize = 1024;
     public static String dnsip = "127.0.0.2";
+    public static int timeout = 10;
 }

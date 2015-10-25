@@ -1,8 +1,5 @@
 package ds.rug.nl.network.DTO;
 
-import ds.rug.nl.main.NodeInfo;
-import ds.rug.nl.tree.TreeNode;
-
 /**
  *
  * @author Bart

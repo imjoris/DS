@@ -6,12 +6,9 @@ import ds.rug.nl.main.DNSNode;
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.main.NodeInfo;
 import ds.rug.nl.network.hostInfo;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

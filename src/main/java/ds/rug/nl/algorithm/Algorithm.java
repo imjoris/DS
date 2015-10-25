@@ -6,7 +6,6 @@ import ds.rug.nl.main.NodeInfo;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.Networking;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 
 /**
  *

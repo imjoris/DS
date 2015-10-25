@@ -5,7 +5,6 @@ import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DNSDTO;
 import ds.rug.nl.network.DTO.DTO;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,6 @@ public class DNSAlgo extends Algorithm {
     CountDownLatch ipsLatch;
     public List<String> ips;
     public boolean hasReceivedIps;
-    //public Node node;
 
     public DNSAlgo(Node node) {
         super(node);
@@ -51,10 +49,6 @@ public class DNSAlgo extends Algorithm {
         }
         
         return ips;
-    }
-    
-    public void setDNSIps(){
-        
     }
 
     @Override

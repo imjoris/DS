@@ -3,29 +3,28 @@ package ds.rug.nl.algorithm;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.MulticastDTO;
+import ds.rug.nl.network.VectorClock;
 import ds.rug.nl.threads.CmdMessageHandler;
-import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
 /**
- *
+ * Basic multicast algorithm.
  * @author joris
  */
 public class BMulticast extends Algorithm {
 
     class DTOSeq{
-        
         public int sequenceNumber;
         public DTO dto;
 
         public DTOSeq(int sequenceNumber, DTO dto) {
             this.sequenceNumber = sequenceNumber;
             this.dto = dto;
-        }
-        
+        } 
     }
+    
     Map<String, Integer> sequenceNumbersFromNodes;
     Map<String, DTOSeq> DTOSeqPerSender;
     
@@ -36,7 +35,7 @@ public class BMulticast extends Algorithm {
 
     public BMulticast(Node node, CmdMessageHandler mainHandler){
         super(node);
-        sequenceNumbersFromNodes = new HashMap<String, Integer>();
+        sequenceNumbersFromNodes = new VectorClock();
         mySendSeqNrs = new HashMap<Integer, MulticastDTO>();
         myLastSendSeqNr=0;
         this.mainHandler = mainHandler;
@@ -46,7 +45,6 @@ public class BMulticast extends Algorithm {
     @Override
     public void handle(DTO dto) {
         MulticastDTO multidto = (MulticastDTO) dto;
-        int nodeId;
         int receivedSeq;
 
         if (multidto.command == MulticastDTO.cmdType.request) {
@@ -57,7 +55,7 @@ public class BMulticast extends Algorithm {
         }
 
         receivedSeq = multidto.getSequencenum();
-        Integer mySeqNr = sequenceNumbersFromNodes.get(receivedSeq);
+        Integer mySeqNr = sequenceNumbersFromNodes.get(Integer.toString(multidto.nodeId));
 
         mySeqNr++;
         if (receivedSeq == mySeqNr) {
@@ -78,16 +76,21 @@ public class BMulticast extends Algorithm {
     }
     
     public void deliver(DTO data) {
+        
         //handle the dto the multicast had send
         mainHandler.handleDTO(data);
         
-        // TO-DO: Make this use a guaranteed unique ID
         String sender = Integer.toString(data.nodeId);
-
+        
         //increase the sequence number 
         int seqNodeNow = sequenceNumbersFromNodes.get(sender);
         seqNodeNow++;
+
         sequenceNumbersFromNodes.put(sender, seqNodeNow);
+        
+        if(null == holdBackQ.get(sender)){
+            return;
+        }
         
         DTOSeq dtoWithSeqNumber = holdBackQ.get(sender).peek();
         
@@ -107,4 +110,9 @@ public class BMulticast extends Algorithm {
         
         mySendSeqNrs.put(myLastSendSeqNr, multiDTOToSend);
     }
+    
+    public Map getSendSeq(){
+        return mySendSeqNrs;
+    }
+    
 }

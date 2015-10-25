@@ -1,7 +1,5 @@
 package ds.rug.nl.algorithm;
 
-import ds.rug.nl.algorithm.Algorithm;
-import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.COmulticastDTO;
 import ds.rug.nl.network.DTO.DTO;
@@ -29,7 +27,6 @@ public class CoMulticast extends Algorithm {
     }
 
     public void sendSmthg(DTO data) {
-
         COmulticastDTO pckg = new COmulticastDTO(localVector, data, id);
         bmultiCast.sendMulticast(pckg);
     }
@@ -46,7 +43,6 @@ public class CoMulticast extends Algorithm {
     }
 
     public void deliverDTO(DTO data, String sender) {
-        //TO DO
         localVector.incementValue(sender);
 
         Iterator<Tuple> i = holdBackQ.iterator();

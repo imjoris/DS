@@ -5,14 +5,10 @@
  */
 package ds.rug.nl.main;
 
-import ds.rug.nl.Config;
 import ds.rug.nl.DNSNode;
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.network.Networking;
-import ds.rug.nl.tree.TreeNode;
-import ds.rug.nl.network.DTO.DTO;
-import java.util.Iterator;
 import ds.rug.nl.threads.CmdMessageHandler;
 import java.net.InetAddress;
 import java.util.logging.Level;

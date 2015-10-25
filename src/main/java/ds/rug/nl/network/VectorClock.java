@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ds.rug.nl.network;
 
 import java.util.HashMap;
@@ -37,7 +32,7 @@ public class VectorClock extends HashMap<String, Integer> {
         Iterator<String> sIterator = s.iterator();
         while (sIterator.hasNext()) {
             String key = sIterator.next();
-            if (!(vc.get(s) > this.get(s))) {
+            if (!(vc.get(key) > this.get(key))) {
                 return false;
             }
         }

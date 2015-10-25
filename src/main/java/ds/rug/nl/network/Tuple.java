@@ -17,7 +17,5 @@ public class Tuple {
         this.dto = dto;
         this.id = id;
     }
-  
-  
- 
+
 } 

@@ -13,7 +13,9 @@ import ds.rug.nl.network.DTO.ElectionReplyDTO;
 import java.net.InetSocketAddress;
 
 /**
- *
+ * Handles the following DTOs:
+ * ElectionDTO
+ * 
  * @author angelo
  */
 public class LeaderAlgo extends Algorithm {

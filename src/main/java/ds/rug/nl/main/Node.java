@@ -28,7 +28,7 @@ public abstract class Node extends Thread{
     // kinda ugly that is is here, since we don't want to store the tree for
     // other nodes, just ourselves. Might want to move it somewhere else.
 
-    protected NodeInfo nodeInfo;
+    protected final NodeInfo nodeInfo;
     
     protected CmdMessageHandler cmdMessageHandler;
     protected DNSAlgo dnsAlgo;
@@ -62,6 +62,10 @@ public abstract class Node extends Thread{
     /*########################################
      # GETTERS AND SETTERS
      ##########################################*/
+    public NodeInfo getNodeInfo() {
+        return nodeInfo;
+    }
+    
     public int getNodeId() {
         return nodeInfo.nodeId;
     }

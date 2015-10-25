@@ -8,6 +8,7 @@ package ds.rug.nl;
 import ds.rug.nl.main.NodeInfo;
 import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.algorithm.BMulticast;
+import ds.rug.nl.algorithm.JoinAlgo;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.*;
 import ds.rug.nl.network.hostInfo;
@@ -24,21 +25,22 @@ import java.util.logging.Logger;
 public class Client extends Node {
 
     TreeNode<NodeInfo> streamTree;
+    TreeNode<NodeInfo> thisNode;
 
     public Client(NodeInfo nodeInfo) {
         super(nodeInfo);
         
         System.out.println("Creating client");
-        //this dynamic "getnewip" is not working\
-        //this.ipAddress=network.getNewIp();
-        //this.ipAddress="127.0.0.4";
-        //this.network=new Networking("192.168.0.2");
 
         dnsAlgo = new DNSAlgo(this);
         cmdMessageHandler.registerAlgorithm(DNSDTO.class, dnsAlgo);
 
         multiAlgo = new BMulticast(this, cmdMessageHandler);
         cmdMessageHandler.registerAlgorithm(MulticastDTO.class, multiAlgo);
+        
+        JoinAlgo joinAlgo = new JoinAlgo(this, streamTree, thisNode); 
+        cmdMessageHandler.registerAlgorithm(JoinRequestDTO.class , joinAlgo);
+        cmdMessageHandler.registerAlgorithm(JoinResponseDTO.class, joinAlgo);
     }
 
     public void joinabc() {
@@ -50,7 +52,6 @@ public class Client extends Node {
     public void run() {
         hostInfo info = new hostInfo(this, Config.commandPort);
         network.startReceiving(info);
-        //network.startReceiveMulticasts(Config.multicastAdres, Config.multicastPort, cmdMessageHandler);
         try {
             List<String> ips = dnsAlgo.getDNSIps();
         } catch (UnknownHostException ex) {

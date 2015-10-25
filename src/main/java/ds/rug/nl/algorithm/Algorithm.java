@@ -37,4 +37,8 @@ public abstract class Algorithm {
         dto.nodeId = node.getNodeId();
         network.send(dto, address, port);       
     }
+    
+    public void reply(DTO dtoToSend, DTO originDTO){
+        this.send(dtoToSend, originDTO.getIp(), originDTO.getPort());
+    }
 }

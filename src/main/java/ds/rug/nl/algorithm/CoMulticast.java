@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- *
+ * Handles the following DTOs:
+ * COmulticastDTO, 
+ * 
  * @author angelo
  */
 public class CoMulticast extends Algorithm {
@@ -20,6 +22,7 @@ public class CoMulticast extends Algorithm {
     private ArrayList<Tuple> holdBackQ;
     private String id;
     private BMulticast bmultiCast;
+    
     public CoMulticast(Node node, BMulticast bmulti) {
         super(node);
         this.bmultiCast = bmulti;

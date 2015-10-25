@@ -8,7 +8,7 @@ package ds.rug.nl.algorithm;
 import ds.rug.nl.main.CommonClientData;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.main.NodeInfo;
-import ds.rug.nl.StreamHandler;
+import ds.rug.nl.main.StreamHandler;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.StreamDTO;
 import ds.rug.nl.tree.TreeNode;
@@ -28,7 +28,10 @@ public class StreamAlgo<T> extends Algorithm{
         this.streamHandler = streamHandler;
     }
 
-
+    public void sendData(T data){
+        StreamDTO<T> dto = new StreamDTO(data);
+        handle(dto);
+    }
     
     @Override
     public void handle(DTO message) {

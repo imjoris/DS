@@ -5,12 +5,18 @@
  */
 package ds.rug.nl;
 
+import ds.rug.nl.main.StreamHandler;
 import ds.rug.nl.network.DTO.StreamDTO;
 
 /**
  *
  * @author Bart
  */
-public interface StreamHandler<T> {
-    public void receiveStream(StreamDTO<T> packet);        
+public class IntStreamHandler implements StreamHandler<Integer> {
+
+    @Override
+    public void receiveStream(StreamDTO<Integer> packet) {
+        System.out.println(packet.data);
+    }
+    
 }

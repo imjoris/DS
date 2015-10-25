@@ -17,10 +17,11 @@ import java.util.logging.Logger;
  *
  * @author Bart
  */
-public class App {
-    public static void main(String [] args){
+public class Source {
+    public static void main(String [] args) throws InterruptedException{
+        Client<Integer> client;
         try {
-            StreamHandler sHandle = new IntStreamHandler();
+            StreamHandler<Integer> sHandle = new IntStreamHandler();
             
             String Ip;
             String hostName;
@@ -34,11 +35,19 @@ public class App {
                 hostName = InetAddress.getLocalHost().getHostName();
             NodeInfo nodeInfo = new NodeInfo(Ip, hostName);
             
-            Client client = new Client(nodeInfo, sHandle);
+            client = new Client<Integer>(nodeInfo, sHandle);
+            
+            while (true){
+                client.getStream().sendData(3);
+                Thread.sleep(500);
+            }
         } catch (UnknownHostException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println("IP adress did not resolve");
+            System.exit(1);
         }
+        
+
     }
     
 }

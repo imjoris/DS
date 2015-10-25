@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
@@ -37,7 +38,7 @@ public class CoMulticastTest {
     /**
      * Test of sendSmthg method, of class CoMulticast.
      */
-    @Test
+    @Ignore @Test
     public void testSendSmthg() {
         System.out.println("sendSmthg");
         DTO data = null;
@@ -50,7 +51,7 @@ public class CoMulticastTest {
     /**
      * Test of receiveSmthg method, of class CoMulticast.
      */
-    @Test
+    @Ignore @Test
     public void testReceiveSmthg() {
         System.out.println("receiveSmthg");
         COmulticastDTO msg = null;
@@ -63,7 +64,7 @@ public class CoMulticastTest {
     /**
      * Test of deliverDTO method, of class CoMulticast.
      */
-    @Test
+    @Ignore @Test
     public void testDeliverDTO() {
         System.out.println("deliverDTO");
         DTO data = null;

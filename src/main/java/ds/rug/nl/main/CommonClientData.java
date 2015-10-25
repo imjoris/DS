@@ -13,5 +13,10 @@ import ds.rug.nl.tree.TreeNode;
  */
 public class CommonClientData {
     public TreeNode<NodeInfo> streamTree;
-    public TreeNode<NodeInfo> thisNode;    
+    public TreeNode<NodeInfo> thisNode;  
+
+    public CommonClientData(NodeInfo thisNode) {
+        this.thisNode = new TreeNode(thisNode);
+    }    
+    
 }

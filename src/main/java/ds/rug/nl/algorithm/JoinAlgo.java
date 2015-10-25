@@ -31,6 +31,7 @@ public class JoinAlgo extends Algorithm {
 
     private final CommonClientData clientData;
     private final CoMulticast coMulticast;
+    private final DiscoveryAlgo discovery;
 
     private final CountDownLatch joinLatch;
     private JoinResponseDTO joinResponse;
@@ -39,13 +40,15 @@ public class JoinAlgo extends Algorithm {
 
     public JoinAlgo(Node node,
             CommonClientData clientData,
-            CoMulticast coMulticast) 
+            CoMulticast coMulticast,
+            DiscoveryAlgo discovery) 
     {
         super(node);
         this.clientData = clientData;
         this.coMulticast = coMulticast;
         joinLatch = new CountDownLatch(1);
         treeLatch = new CountDownLatch(1);
+        this.discovery = discovery;
     }
     
     public void registerDTOs(){
@@ -82,7 +85,7 @@ public class JoinAlgo extends Algorithm {
      */
     private void getTree() throws UnknownHostException {
         // This feels like non-dynamic discovery
-        String aPeer = node.getDnsAlgo().getDNSIps().get(0);
+        String aPeer = discovery.getAPeer();
         
         TreeDTO req = new TreeDTO(CmdType.request, null);
         send(req, new NodeInfo(aPeer, null));
@@ -116,7 +119,7 @@ public class JoinAlgo extends Algorithm {
         if (message instanceof JoinResponseDTO)
             handleResponse((JoinResponseDTO) message);
         if (message instanceof JoinAnnounceDTO)
-            handleAnnounce((JoinAnnounceDTO) message);        
+            handleAnnounce((JoinAnnounceDTO) message);
     }
 
     // simple ugly implementation of a 'callback'

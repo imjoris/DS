@@ -52,7 +52,7 @@ public class DNSAlgo extends Algorithm {
     }
 
     @Override
-    public void handle(DTO dto) {
+    public void handleDTO(DTO dto) {
         DNSDTO dntDto = (DNSDTO) dto;
         if (dntDto.command == DNSDTO.cmdType.request) {
             DNSDTO returnDTO = new DNSDTO();

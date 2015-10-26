@@ -41,7 +41,7 @@ public class DiscoveryAlgo extends Algorithm {
     }
 
     @Override
-    public void handle(DTO message) {
+    public void handleDTO(DTO message) {
         DiscoveryDTO msg = (DiscoveryDTO) message;
         if (msg.cmd == DiscoveryDTO.CmdType.reply) {
             replyDto = msg;

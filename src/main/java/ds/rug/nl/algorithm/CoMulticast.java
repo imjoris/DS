@@ -57,7 +57,7 @@ public class CoMulticast extends Algorithm {
     }
 
     @Override
-    public void handle(DTO message) {
+    public void handleDTO(DTO message) {
         COmulticastDTO msg = (COmulticastDTO) message;
     }
 }

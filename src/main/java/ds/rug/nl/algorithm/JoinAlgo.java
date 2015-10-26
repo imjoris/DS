@@ -117,7 +117,7 @@ public class JoinAlgo extends Algorithm {
     }
 
     @Override
-    public void handle(DTO message) {
+    public void handleDTO(DTO message) {
         if (message instanceof NodeStateDTO) {
             handleTree((NodeStateDTO) message);
         }

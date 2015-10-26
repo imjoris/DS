@@ -24,7 +24,15 @@ public abstract class Algorithm {
         this.network = new Networking();
     }
 
-    public abstract void handle(DTO message);
+    public abstract void handleDTO(DTO message);
+    
+    
+    public void handleMsg(DTO dto){
+        node.log.logMsg(dto);
+        handleDTO(dto);
+    }
+    
+    
     
     public void send(DTO dto, String ip){
         try {

@@ -35,7 +35,7 @@ public class BMulticast extends Algorithm implements IReceiver{
     }
     
     @Override
-    public void handle(DTO dto) {
+    public void handleDTO(DTO dto) {
         MulticastDTO multidto = (MulticastDTO) dto;
         int receivedSeq;
 
@@ -105,11 +105,6 @@ public class BMulticast extends Algorithm implements IReceiver{
     
     public Map getSendSeq(){
         return mySendSeqNrs;
-    }
-    
-        @Override
-    public void handleDTO(DTO dto) {
-        handle(dto);
     }
 
     class DTOSeq{

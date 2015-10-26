@@ -26,7 +26,7 @@ public class TestAlgo extends Algorithm{
     }
 
     @Override
-    public void handle(DTO message) {
+    public void handleDTO(DTO message) {
         testdto = (TestDTO) message; 
     }
     

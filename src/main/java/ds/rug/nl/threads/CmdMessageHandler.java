@@ -33,7 +33,9 @@ public class CmdMessageHandler implements IReceiver{
         
         Algorithm algo = mTypeToHandler.get(dto.getClass());
         if(algo != null){
-            algo.handle(dto);
+            algo.handleMsg(dto);
         }
     }
+    
+    
 }

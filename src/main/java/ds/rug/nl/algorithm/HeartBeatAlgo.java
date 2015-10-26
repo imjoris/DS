@@ -51,7 +51,7 @@ public class HeartBeatAlgo extends Algorithm {
     }
     
     @Override
-    public void handle(DTO message) {
+    public void handleDTO(DTO message) {
         GeneralHeartBeatDTO heartBeatmsg = (GeneralHeartBeatDTO) message;
         if(heartBeatmsg.msgType.equals(GeneralHeartBeatDTO.ReplySend.REPLY)){
             doSomething(heartBeatmsg);

@@ -76,14 +76,14 @@ public class CoMulticastTest {
     }
 
     /**
-     * Test of handle method, of class CoMulticast.
+     * Test of handleDTO method, of class CoMulticast.
      */
     @Ignore @Test
     public void testHandle() {
         System.out.println("handle");
         DTO message = null;
         CoMulticast instance = null;
-        instance.handle(message);
+        instance.handleDTO(message);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

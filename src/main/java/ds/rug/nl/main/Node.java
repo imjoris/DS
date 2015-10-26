@@ -5,7 +5,6 @@
  */
 package ds.rug.nl.main;
 
-import ds.rug.nl.algorithm.DNSAlgo;
 import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.network.Networking;
 import ds.rug.nl.threads.CmdMessageHandler;
@@ -29,6 +28,8 @@ public abstract class Node extends Thread{
     // make all these final?
     protected CmdMessageHandler cmdMessageHandler;
     protected BMulticast bMulticast;
+    
+    public final DTOLogger log;
 
     protected boolean isRunning;
 
@@ -37,6 +38,7 @@ public abstract class Node extends Thread{
         cmdMessageHandler = new CmdMessageHandler();
         network = new Networking();
         isRunning = false;
+        this.log = new DTOLogger();
     }
     
     

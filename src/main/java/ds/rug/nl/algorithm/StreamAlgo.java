@@ -30,11 +30,11 @@ public class StreamAlgo<T> extends Algorithm{
 
     public void sendData(T data){
         StreamDTO<T> dto = new StreamDTO(data);
-        handle(dto);
+        handleDTO(dto);
     }
     
     @Override
-    public void handle(DTO message) {
+    public void handleDTO(DTO message) {
         for(TreeNode<NodeInfo> childNode: clientData.thisNode.children)
             send(message, childNode.contents);
         

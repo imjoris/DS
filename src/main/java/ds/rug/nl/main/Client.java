@@ -61,6 +61,7 @@ public class Client<T> extends Node {
     public void run() {
         hostInfo info = new hostInfo(this, Config.commandPort);
         network.startReceiving(info);
+        network.startReceiveMulticasts(info, bMulticast);
         try {
             joinAlgo.joinTree();
         } catch (UnknownHostException ex) {

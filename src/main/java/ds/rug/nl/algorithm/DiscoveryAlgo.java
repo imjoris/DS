@@ -17,15 +17,16 @@ import java.util.logging.Logger;
  * @author Bart
  */
 public class DiscoveryAlgo extends Algorithm {
-    
+
     private CountDownLatch replyLatch;
     private DiscoveryDTO replyDto;
 
     public DiscoveryAlgo(Node node) {
         super(node);
     }
-    
-    public String getAPeer(){
+
+    public String getAPeer() {
+        replyLatch = new CountDownLatch(1);
         this.multicast(new DiscoveryDTO(DiscoveryDTO.CmdType.request));
         try {
             replyLatch.await();
@@ -35,16 +36,16 @@ public class DiscoveryAlgo extends Algorithm {
         return replyDto.getIp().getHostAddress();
 
     }
-    
+
     @Override
     public void handle(DTO message) {
         DiscoveryDTO msg = (DiscoveryDTO) message;
-        if (msg.cmd == DiscoveryDTO.CmdType.reply){
-            replyLatch.countDown();
+        if (msg.cmd == DiscoveryDTO.CmdType.reply) {
             replyDto = msg;
+            replyLatch.countDown();
         } else {
             reply(new DiscoveryDTO(DiscoveryDTO.CmdType.reply), msg);
         }
     }
-    
+
 }

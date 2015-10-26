@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
  * @author Bart
  */
 public class NodeInfo implements java.io.Serializable {
+
     protected final InetAddress ipAddress;
     protected final String name;
     protected final int nodeId;
@@ -21,6 +22,18 @@ public class NodeInfo implements java.io.Serializable {
         this.ipAddress = InetAddress.getByName(ipAddress);
         this.name = name;
         this.nodeId = ipAddress.hashCode();
+    }
+
+    public NodeInfo(InetAddress ipAddress, String name) throws UnknownHostException {
+        this.ipAddress = ipAddress;
+        this.name = name;
+        this.nodeId = ipAddress.hashCode();
+    }
+
+    public NodeInfo(Node node) {
+        this.ipAddress = node.getIpAddress();
+        this.name = node.getMachineName();
+        this.nodeId = node.getNodeId();
     }
 
     @Override
@@ -64,5 +77,5 @@ public class NodeInfo implements java.io.Serializable {
     public int getNodeId() {
         return nodeId;
     }
-    
+
 }

@@ -13,6 +13,13 @@ import java.net.InetAddress;
         public InetAddress ip;
         public int port;
         public IReceiver handler;
+
+    public hostInfo(String hostname, InetAddress ip, int port, IReceiver handler) {
+        this.hostname = hostname;
+        this.ip = ip;
+        this.port = port;
+        this.handler = handler;
+    }
         
         public hostInfo(Node node, int port){
             this.hostname = node.getMachineName();
@@ -20,4 +27,5 @@ import java.net.InetAddress;
             this.port = port;
             this.handler = node.getCmdMessageHandler();
         }
+        
     }

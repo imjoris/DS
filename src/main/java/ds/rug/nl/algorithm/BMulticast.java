@@ -4,6 +4,7 @@ import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.MulticastDTO;
 import ds.rug.nl.threads.CmdMessageHandler;
+import ds.rug.nl.threads.IReceiver;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -12,7 +13,12 @@ import java.util.Map;
  * Basic multicast algorithm.
  * @author joris
  */
-public class BMulticast extends Algorithm {
+public class BMulticast extends Algorithm implements IReceiver{
+
+    @Override
+    public void handleDTO(DTO dto) {
+        handle(dto);
+    }
 
     class DTOSeq{
         public int sequenceNumber;
@@ -46,7 +52,7 @@ public class BMulticast extends Algorithm {
         MulticastDTO multidto = (MulticastDTO) dto;
         int receivedSeq;
 
-        if (multidto.command == MulticastDTO.cmdType.request) {
+        if (multidto.command != null && multidto.command == MulticastDTO.cmdType.request) {
                 // resend the data sent with the basic multicast
             // with sequence number receivedSeq.
             // i'm not sure yet where this data should be stored, 

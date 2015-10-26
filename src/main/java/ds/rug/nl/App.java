@@ -36,6 +36,7 @@ public class App {
             NodeInfo nodeInfo = new NodeInfo(Ip, hostName);
             
             Client client = new Client(nodeInfo, sHandle);
+            client.start();
         } catch (UnknownHostException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println("IP adress did not resolve");

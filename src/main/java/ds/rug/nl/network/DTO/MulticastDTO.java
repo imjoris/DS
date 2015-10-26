@@ -1,6 +1,7 @@
 package ds.rug.nl.network.DTO;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  *
@@ -9,11 +10,12 @@ import java.util.ArrayList;
 public class MulticastDTO extends DTO {
     public enum cmdType{
         request,
+        response,
         send
     }
-    public String jsonDTOData;
     public int sequencenum;
     public ArrayList<Integer> requestSeqNums;
+    public Map<Integer, DTO> responseSeqNums;
     DTO dto;
     
     public ArrayList<Integer> getRequestSeqNums() {

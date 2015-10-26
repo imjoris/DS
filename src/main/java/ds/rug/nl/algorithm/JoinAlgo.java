@@ -19,12 +19,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Handles the following DTOs:
- *   JoinRequestDTO,
- *   JoinResponseDTO,
- *   TreeDTO,
- *   JoinAnnounceDTO
- * 
+ * Handles the following DTOs: JoinRequestDTO, JoinResponseDTO, TreeDTO,
+ * JoinAnnounceDTO
+ *
  * @author Bart
  */
 public class JoinAlgo extends Algorithm {
@@ -33,25 +30,23 @@ public class JoinAlgo extends Algorithm {
     private final CoMulticast coMulticast;
     private final DiscoveryAlgo discovery;
 
-    private final CountDownLatch joinLatch;
+    private CountDownLatch joinLatch;
     private JoinResponseDTO joinResponse;
-    private final CountDownLatch treeLatch;
+    private CountDownLatch treeLatch;
     private TreeDTO treeResponse;
 
     public JoinAlgo(Node node,
             CommonClientData clientData,
             CoMulticast coMulticast,
-            DiscoveryAlgo discovery) 
-    {
+            DiscoveryAlgo discovery) {
         super(node);
         this.clientData = clientData;
         this.coMulticast = coMulticast;
-        joinLatch = new CountDownLatch(1);
-        treeLatch = new CountDownLatch(1);
+
         this.discovery = discovery;
     }
-    
-    public void registerDTOs(){
+
+    public void registerDTOs() {
         CmdMessageHandler cmdHandler = this.node.getCmdMessageHandler();
         cmdHandler.registerAlgorithm(JoinRequestDTO.class, this);
         cmdHandler.registerAlgorithm(JoinResponseDTO.class, this);
@@ -67,37 +62,43 @@ public class JoinAlgo extends Algorithm {
         while (highestLeaves.hasNext()) {
             TreeNode<NodeInfo> leaf = highestLeaves.next();
             NodeInfo leafNode = leaf.contents;
-
-            if (requestAttach(leafNode)) {
+            
+            if (!leafNode.equals(clientData.thisNode.contents) && requestAttach(leafNode)) {
                 clientData.thisNode = leaf.addChild(this.node.getNodeInfo());
                 announceJoin();
             }
             return;
         }
+
         // if we get here, none of the leaves were available, so we restart
         // this should be rare, so recursion should rarely happen and it is more
         // legible than a while (true)
         this.joinTree();
     }
-    
+
     /**
      * Sets this.streamTree
      */
     private void getTree() throws UnknownHostException {
         // This feels like non-dynamic discovery
         String aPeer = discovery.getAPeer();
-        
+        treeLatch = new CountDownLatch(1);
         TreeDTO req = new TreeDTO(CmdType.request, null);
-        send(req, new NodeInfo(aPeer, null));
+        send(req, aPeer);
         try {
             treeLatch.await();
         } catch (InterruptedException ex) {
             Logger.getLogger(JoinAlgo.class.getName()).log(Level.SEVERE, null, ex);
         }
-        clientData.streamTree = treeResponse.streamTree;    
+        if (clientData.streamTree == null) {
+            clientData.streamTree = new TreeNode<NodeInfo>(new NodeInfo(treeResponse.ip, treeResponse.nodeName));
+        } else {
+            clientData.streamTree = treeResponse.streamTree;
+        }
     }
 
     private boolean requestAttach(NodeInfo leafNode) {
+        joinLatch = new CountDownLatch(1);
         JoinRequestDTO request = new JoinRequestDTO(this.node.getNodeInfo());
         send(request, leafNode);
         // Should be promise / future, perhaps on algorithm level
@@ -112,14 +113,18 @@ public class JoinAlgo extends Algorithm {
 
     @Override
     public void handle(DTO message) {
-        if (message instanceof TreeDTO)
-            handleTree((TreeDTO) message); 
-        if (message instanceof JoinRequestDTO)
+        if (message instanceof TreeDTO) {
+            handleTree((TreeDTO) message);
+        }
+        if (message instanceof JoinRequestDTO) {
             handleRequest((JoinRequestDTO) message);
-        if (message instanceof JoinResponseDTO)
+        }
+        if (message instanceof JoinResponseDTO) {
             handleResponse((JoinResponseDTO) message);
-        if (message instanceof JoinAnnounceDTO)
+        }
+        if (message instanceof JoinAnnounceDTO) {
             handleAnnounce((JoinAnnounceDTO) message);
+        }
     }
 
     // simple ugly implementation of a 'callback'
@@ -152,22 +157,22 @@ public class JoinAlgo extends Algorithm {
     }
 
     private void handleTree(TreeDTO treeDTO) {
-        if (treeDTO.cmd == CmdType.reply){
+        if (treeDTO.cmd == CmdType.reply) {
             treeResponse = treeDTO;
             treeLatch.countDown();
             // latch is set in this.getTree()
             return;
         }
-        if (treeDTO.cmd == CmdType.request){
+        if (treeDTO.cmd == CmdType.request) {
             TreeDTO response = new TreeDTO(CmdType.reply, clientData.streamTree);
             reply(response, treeDTO);
         }
-        
+
     }
 
     private void announceJoin() {
-        JoinAnnounceDTO msg = new JoinAnnounceDTO(clientData.thisNode.contents, 
-                                                  clientData.thisNode.parent.contents);
+        JoinAnnounceDTO msg = new JoinAnnounceDTO(clientData.thisNode.contents,
+                clientData.thisNode.parent.contents);
         coMulticast.sendSmthg(msg);
     }
 

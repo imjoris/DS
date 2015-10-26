@@ -256,8 +256,8 @@ public class Networking {
 //      socket.receive(packet);
 
                             ByteArrayInputStream baos = new ByteArrayInputStream(b);
-                            ObjectInputStream oos = new ObjectInputStream(baos);
-                            DTO dto = (DTO) oos.readObject();
+                            ObjectInputStream ois = new ObjectInputStream(baos);
+                            DTO dto = (DTO) ois.readObject();
 
                             Thread handlerThread = new mythread2(handler, dto);
                             executor.execute(handlerThread);

@@ -49,7 +49,6 @@ public class MulticastTest {
         hostInfo info = new hostInfo("myhostname", InetAddress.getByName("127.0.0.2"), Config.multicastPort, receiver);
         hostInfo info2 = new hostInfo("myhostname2", InetAddress.getByName("127.0.0.3"), Config.multicastPort, receiver2);
         
-        
         network.startReceiveMulticasts(info, receiver);
         network.startReceiveMulticasts(info2, receiver2);
         

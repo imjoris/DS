@@ -22,7 +22,7 @@ public class NodeInfo implements java.io.Serializable {
     public NodeInfo(String ipAddress, String name) throws UnknownHostException {
         this.ipAddress = InetAddress.getByName(ipAddress);
         this.name = name;
-        this.nodeId = ipAddress.hashCode();
+        this.nodeId = this.ipAddress.hashCode();
     }
 
     public NodeInfo(InetAddress ipAddress, String name) throws UnknownHostException {

@@ -18,23 +18,26 @@ import java.util.logging.Logger;
  * @author Bart
  */
 public class App {
-    public static void main(String [] args){
+
+    public static void main(String[] args) {
         System.out.println("wazza");
         try {
             StreamHandler sHandle = new IntStreamHandler();
-            
+
             String Ip;
             String hostName;
-            if (args.length > 1)
+            if (args.length > 1) {
                 Ip = args[1];
-            else
+            } else {
                 Ip = InetAddress.getLocalHost().getHostAddress();
-            if (args.length > 2)
+            }
+            if (args.length > 2) {
                 hostName = args[2];
-            else
+            } else {
                 hostName = InetAddress.getLocalHost().getHostName();
+            }
             NodeInfo nodeInfo = new NodeInfo(Ip, hostName);
-            
+
             Client client = new Client(nodeInfo, sHandle);
             client.start();
         } catch (UnknownHostException ex) {
@@ -42,5 +45,5 @@ public class App {
             System.err.println("IP adress did not resolve");
         }
     }
-    
+
 }

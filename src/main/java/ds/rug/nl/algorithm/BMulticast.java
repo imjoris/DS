@@ -56,7 +56,7 @@ public class BMulticast extends Algorithm implements IReceiver{
 
         mySeqNr++;
         if (receivedSeq == mySeqNr) {
-            deliver(dto);
+            deliver(multidto.dto);
         } else if (receivedSeq < mySeqNr) {
             //reject message because it has been delivered before
         } else if (receivedSeq > mySeqNr) {
@@ -110,7 +110,4 @@ public class BMulticast extends Algorithm implements IReceiver{
     public Map getSendSeq(){
         return mySendSeqNrs;
     }
-
-    
-    
 }

@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 
 /**
  * Handles the following DTOs: JoinRequestDTO, JoinResponseDTO, NodeStateDTO,
- JoinAnnounceDTO
+ * JoinAnnounceDTO
  *
  * @author Bart
  */
@@ -41,7 +41,7 @@ public class JoinAlgo extends Algorithm {
             CoMulticast coMulticast,
             DiscoveryAlgo discovery,
             LeaderAlgo leaderAl
-            ) {
+    ) {
         super(node);
         this.clientData = clientData;
         this.coMulticast = coMulticast;
@@ -65,7 +65,7 @@ public class JoinAlgo extends Algorithm {
         while (highestLeaves.hasNext()) {
             TreeNode<NodeInfo> leaf = highestLeaves.next();
             NodeInfo leafNode = leaf.contents;
-            
+
             if (!leafNode.equals(clientData.thisNode.contents) && requestAttach(leafNode)) {
                 clientData.thisNode = leaf.addChild(this.node.getNodeInfo());
                 announceJoin();
@@ -92,12 +92,8 @@ public class JoinAlgo extends Algorithm {
         } catch (InterruptedException ex) {
             Logger.getLogger(JoinAlgo.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (clientData.streamTree == null) {
-            clientData.streamTree = new TreeNode<NodeInfo>(new NodeInfo(treeResponse.ip, treeResponse.nodeName));
-        } else {
-            clientData.streamTree = treeResponse.streamTree;
-        }
-        
+        clientData.streamTree = treeResponse.streamTree;
+
         clientData.bVector = treeResponse.bmvc;
         clientData.cVector = treeResponse.covc;
     }
@@ -142,7 +138,7 @@ public class JoinAlgo extends Algorithm {
         if (this.fullNode()) {
             joinResponse = new JoinResponseDTO(denied, null);
         } else {
-            this.addChild(message.nodeInfo);
+            //
             joinResponse = new JoinResponseDTO(accepted, leaderAl.getNeighbour());
         }
         reply(joinResponse, message);
@@ -154,12 +150,6 @@ public class JoinAlgo extends Algorithm {
         }
     }
 
-    private void addChild(NodeInfo nodeInfo) {
-        synchronized (clientData) {
-            clientData.thisNode.addChild(nodeInfo);
-        }
-    }
-
     private void handleTree(NodeStateDTO treeDTO) {
         if (treeDTO.cmd == CmdType.reply) {
             treeResponse = treeDTO;
@@ -168,8 +158,9 @@ public class JoinAlgo extends Algorithm {
             return;
         }
         if (treeDTO.cmd == CmdType.request) {
-            if (clientData.streamTree == null)
+            if (clientData.streamTree == null) {
                 return;
+            }
             NodeStateDTO response = new NodeStateDTO(CmdType.reply, clientData.streamTree, clientData.bVector, clientData.cVector);
             reply(response, treeDTO);
         }
@@ -183,6 +174,7 @@ public class JoinAlgo extends Algorithm {
     }
 
     private void handleAnnounce(JoinAnnounceDTO announcement) {
-        clientData.streamTree.findTreeNode(announcement.parentNode).addChild(announcement.joinedNode);
+        TreeNode<NodeInfo> treeNode = clientData.streamTree.findTreeNode(announcement.parentNode);
+        treeNode.addChild(announcement.joinedNode);
     }
 }

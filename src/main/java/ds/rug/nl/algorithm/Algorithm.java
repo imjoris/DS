@@ -61,7 +61,7 @@ public abstract class Algorithm {
         network.sendMulticast(dto);
     }
     
-    private DTO setDTONodeInfo(DTO dto){
+    protected DTO setDTONodeInfo(DTO dto){
         dto.ip = node.getIpAddress();
         dto.port = Config.commandPort;
         dto.nodeName = node.getName();

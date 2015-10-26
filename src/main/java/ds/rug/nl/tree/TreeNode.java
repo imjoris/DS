@@ -66,6 +66,9 @@ public class TreeNode<T> implements java.io.Serializable{
      * @return the node containing item
      */
     public TreeNode<T> findTreeNode(T item) {
+        if(item.equals(this.contents)){
+            return this;
+        }
         for (TreeNode<T> child : this.children) {
             if (item.equals(child.contents))
                 return child;

@@ -17,7 +17,6 @@ import java.util.Iterator;
 public class CoMulticast extends Algorithm {
 
     private ArrayList<Tuple> holdBackQ;
-    private Integer id;
     private BMulticast bmultiCast;
     private final CommonClientData clientData;
     
@@ -25,10 +24,13 @@ public class CoMulticast extends Algorithm {
         super(node);
         this.bmultiCast = bmulti;
         this.clientData = clientData;
+        this.holdBackQ = new ArrayList<Tuple>();
     }
 
     public void sendSmthg(DTO data) {
-        COmulticastDTO pckg = new COmulticastDTO(clientData.cVector, data, id);
+        clientData.cVector.incementValue(node.getNodeId());
+        COmulticastDTO pckg = new COmulticastDTO(clientData.cVector, data);
+        pckg = (COmulticastDTO)this.setDTONodeInfo(pckg);
         bmultiCast.sendMulticast(pckg);
     }
 
@@ -44,8 +46,10 @@ public class CoMulticast extends Algorithm {
     }
 
     public void deliverDTO(DTO data, Integer sender) {
+        this.node.getCmdMessageHandler().handleDTO(data);
+        
         clientData.cVector.incementValue(sender);
-
+        
         Iterator<Tuple> i = holdBackQ.iterator();
         while (i.hasNext()) {
             Tuple tmp = i.next();
@@ -58,6 +62,6 @@ public class CoMulticast extends Algorithm {
 
     @Override
     public void handleDTO(DTO message) {
-        COmulticastDTO msg = (COmulticastDTO) message;
+        receiveSmthg((COmulticastDTO) message);
     }
 }

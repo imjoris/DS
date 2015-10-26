@@ -9,7 +9,7 @@ public class Config {
     public static int commandPort = 12321;
     public static int streamPort = 9004;
     public static String multicastAdres = "224.0.0.3";
-    public static int bufferSize = 1024;
+    public static int bufferSize = 10000;
     public static String dnsip = "127.0.0.2";
     public static int timeout = 10;
 }

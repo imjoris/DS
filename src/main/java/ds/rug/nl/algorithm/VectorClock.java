@@ -1,6 +1,7 @@
 package ds.rug.nl.algorithm;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -21,8 +22,8 @@ public class VectorClock extends HashMap<Integer, Integer> {
 
     public Boolean isNext(VectorClock vc, Integer senderKey) {
 
-        Set<Integer> s = this.keySet();
-        s.addAll(vc.keySet());
+        Set<Integer> s = new HashSet<Integer>(this.keySet());
+        s.addAll(new HashSet<Integer>(vc.keySet()));
 
         s.remove(senderKey);
         if (!(this.get(senderKey) + 1 == vc.get(senderKey))) {
@@ -40,7 +41,7 @@ public class VectorClock extends HashMap<Integer, Integer> {
     }
     
     public void incementValue(Integer id){
-        super.put(id, super.get(id)+1);
+        super.put(id, get(id)+1);
     }
 
 }

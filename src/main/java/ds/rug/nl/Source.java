@@ -39,7 +39,7 @@ public class Source {
             NodeInfo nodeInfo = new NodeInfo(Ip, hostName);
 
             client = new Client<Integer>(nodeInfo, sHandle);
-
+            client.setFirstNode(true);
             class keepSendingThread extends Thread {
 
                 Client client;
@@ -49,6 +49,7 @@ public class Source {
                 }
 
                 public void run() {
+                    client.start();
                     while (true) {
                         client.getStream().sendData(3);
                         try {
@@ -61,7 +62,7 @@ public class Source {
             }
             keepSendingThread sendThread = new keepSendingThread(client);
             sendThread.start();
-            
+
         } catch (UnknownHostException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println("IP adress did not resolve");

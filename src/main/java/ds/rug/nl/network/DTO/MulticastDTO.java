@@ -17,7 +17,7 @@ public class MulticastDTO extends DTO {
     }
     public int sequencenum;
     public ArrayList<Integer> requestSeqNums;
-q    public LinkedList<DTOSeq> responseDTOseq;
+    public LinkedList<DTOSeq> responseDTOseq;
     DTO dto;
     
     public ArrayList<Integer> getRequestSeqNums() {

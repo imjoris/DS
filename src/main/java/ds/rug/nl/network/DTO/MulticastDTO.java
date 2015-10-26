@@ -1,6 +1,8 @@
 package ds.rug.nl.network.DTO;
 
+import ds.rug.nl.algorithm.DTOSeq;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -15,7 +17,7 @@ public class MulticastDTO extends DTO {
     }
     public int sequencenum;
     public ArrayList<Integer> requestSeqNums;
-    public Map<Integer, DTO> responseSeqNums;
+q    public LinkedList<DTOSeq> responseDTOseq;
     DTO dto;
     
     public ArrayList<Integer> getRequestSeqNums() {

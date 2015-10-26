@@ -40,10 +40,15 @@ public class BMulticast extends Algorithm implements IReceiver{
         int receivedSeq;
 
         if (multidto.command != null && multidto.command == MulticastDTO.cmdType.request) {
-                // resend the data sent with the basic multicast
-            // with sequence number receivedSeq.
-            // i'm not sure yet where this data should be stored, 
-            // either networking or node.
+            MulticastDTO mdto = new MulticastDTO();
+            LinkedList<DTOSeq> list = new LinkedList<DTOSeq>();
+            
+            for(Integer seqNum : mdto.requestSeqNums){
+                DTOSeq responseDTOseq = new DTOSeq(seqNum, mySendSeqNrs.get(seqNum));
+                list.add(responseDTOseq);
+            }
+            mdto.responseDTOseq = list;
+            reply(mdto, dto);
         }
 
         receivedSeq = multidto.getSequencenum();
@@ -61,9 +66,8 @@ public class BMulticast extends Algorithm implements IReceiver{
             requestMissingIds.command = MulticastDTO.cmdType.request;
             for (int i = mySeqNr + 1; i < receivedSeq; i++) {
                 requestMissingIds.getRequestSeqNums().add(i);
-                //network.send(resetreq, multidto.getNodeId(), multidto.getNodeport()); THIS DOES NOT WORK (ANGELO)
             }
-            send(dto, multidto.ip, multidto.port);
+            send(requestMissingIds, multidto.ip, multidto.port);
         }
     }
     
@@ -107,14 +111,6 @@ public class BMulticast extends Algorithm implements IReceiver{
         return mySendSeqNrs;
     }
 
-    class DTOSeq{
-        public int sequenceNumber;
-        public DTO dto;
-
-        public DTOSeq(int sequenceNumber, DTO dto) {
-            this.sequenceNumber = sequenceNumber;
-            this.dto = dto;
-        } 
-    }
+    
     
 }

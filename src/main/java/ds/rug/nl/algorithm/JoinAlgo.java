@@ -168,6 +168,8 @@ public class JoinAlgo extends Algorithm {
             return;
         }
         if (treeDTO.cmd == CmdType.request) {
+            if (clientData.streamTree == null)
+                return;
             NodeStateDTO response = new NodeStateDTO(CmdType.reply, clientData.streamTree, clientData.bVector, clientData.cVector);
             reply(response, treeDTO);
         }

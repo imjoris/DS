@@ -1,5 +1,6 @@
 package ds.rug.nl.algorithm;
 
+import ds.rug.nl.main.CommonClientData;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.COmulticastDTO;
 import ds.rug.nl.network.DTO.DTO;
@@ -15,18 +16,19 @@ import java.util.Iterator;
  */
 public class CoMulticast extends Algorithm {
 
-    private VectorClock localVector; // <ID, Counter>
     private ArrayList<Tuple> holdBackQ;
     private Integer id;
     private BMulticast bmultiCast;
+    private final CommonClientData clientData;
     
-    public CoMulticast(Node node, BMulticast bmulti) {
+    public CoMulticast(Node node, BMulticast bmulti, CommonClientData clientData) {
         super(node);
         this.bmultiCast = bmulti;
+        this.clientData = clientData;
     }
 
     public void sendSmthg(DTO data) {
-        COmulticastDTO pckg = new COmulticastDTO(localVector, data, id);
+        COmulticastDTO pckg = new COmulticastDTO(clientData.cVector, data, id);
         bmultiCast.sendMulticast(pckg);
     }
 
@@ -34,7 +36,7 @@ public class CoMulticast extends Algorithm {
         VectorClock rcvVector = msg.getVectorClock();
         DTO data = msg.getMessage();
 
-        if (localVector.isNext(rcvVector, msg.getSender())) {
+        if (clientData.cVector.isNext(rcvVector, msg.getSender())) {
             deliverDTO(data, msg.getSender());
         } else {
             holdBackQ.add(new Tuple(rcvVector, data, msg.getSender()));
@@ -42,12 +44,12 @@ public class CoMulticast extends Algorithm {
     }
 
     public void deliverDTO(DTO data, Integer sender) {
-        localVector.incementValue(sender);
+        clientData.cVector.incementValue(sender);
 
         Iterator<Tuple> i = holdBackQ.iterator();
         while (i.hasNext()) {
             Tuple tmp = i.next();
-            if (localVector.isNext(tmp.vectorClock, tmp.id)) {
+            if (clientData.cVector.isNext(tmp.vectorClock, tmp.id)) {
                 deliverDTO(data, tmp.id);
                 i.remove();
             }

@@ -4,11 +4,11 @@ import ds.rug.nl.algorithm.DiscoveryAlgo;
 import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.algorithm.CoMulticast;
 import ds.rug.nl.algorithm.JoinAlgo;
+import ds.rug.nl.algorithm.LeaderAlgo;
 import ds.rug.nl.algorithm.StreamAlgo;
 import ds.rug.nl.network.DTO.*;
 import ds.rug.nl.network.hostInfo;
 import java.net.UnknownHostException;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,6 +24,7 @@ public class Client<T> extends Node {
     private final CoMulticast coMulticast;
     private final DiscoveryAlgo discoveryAlgo;
     private final JoinAlgo joinAlgo;
+    private final LeaderAlgo leaderAlgo;
     private final StreamAlgo<T> streamAlgo;
 
     public Client(NodeInfo nodeInfo, StreamHandler streamHandler) {
@@ -32,16 +33,19 @@ public class Client<T> extends Node {
         
         System.out.println("Creating client");
 
-        bMulticast = new BMulticast(this, cmdMessageHandler);
+        bMulticast = new BMulticast(this, cmdMessageHandler, clientData);
         cmdMessageHandler.registerAlgorithm(MulticastDTO.class, bMulticast);
         
-        coMulticast = new CoMulticast(this, bMulticast);
+        coMulticast = new CoMulticast(this, bMulticast, clientData);
         cmdMessageHandler.registerAlgorithm(COmulticastDTO.class, coMulticast);
         
         discoveryAlgo = new DiscoveryAlgo(this);
         cmdMessageHandler.registerAlgorithm(DiscoveryDTO.class, discoveryAlgo);
         
-        joinAlgo = new JoinAlgo(this, clientData, coMulticast, discoveryAlgo); 
+        leaderAlgo = new LeaderAlgo(this, bMulticast);
+        
+        
+        joinAlgo = new JoinAlgo(this, clientData, coMulticast, discoveryAlgo, leaderAlgo); 
         joinAlgo.registerDTOs();
         
         streamAlgo = new StreamAlgo<T>(this, clientData, streamHandler);

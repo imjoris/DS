@@ -5,6 +5,7 @@
  */
 package ds.rug.nl.main;
 
+import ds.rug.nl.network.DTO.DTO;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -34,6 +35,12 @@ public class NodeInfo implements java.io.Serializable {
         this.ipAddress = node.getIpAddress();
         this.name = node.getMachineName();
         this.nodeId = node.getNodeId();
+    }
+    
+    public NodeInfo(DTO msg){
+        this.ipAddress = msg.ip;
+        this.name = msg.nodeName;
+        this.nodeId = msg.nodeId;
     }
 
     @Override

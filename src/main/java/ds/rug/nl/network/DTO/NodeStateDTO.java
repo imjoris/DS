@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ds.rug.nl.network.DTO;
 
+import ds.rug.nl.algorithm.VectorClock;
 import ds.rug.nl.main.NodeInfo;
 import ds.rug.nl.tree.TreeNode;
 
@@ -12,7 +8,7 @@ import ds.rug.nl.tree.TreeNode;
  *
  * @author Bart
  */
-public class TreeDTO extends DTO {
+public class NodeStateDTO extends DTO {
     public enum CmdType {
         request,
         reply,
@@ -20,9 +16,13 @@ public class TreeDTO extends DTO {
 
     public final CmdType cmd;
     public final TreeNode<NodeInfo> streamTree;
+    public final VectorClock bmvc;
+    public final VectorClock covc;
 
-    public TreeDTO(CmdType cmd, TreeNode<NodeInfo> streamTree) {
+    public NodeStateDTO(CmdType cmd, TreeNode<NodeInfo> streamTree, VectorClock bmvc, VectorClock covc) {
         this.cmd = cmd;
         this.streamTree = streamTree;
+        this.bmvc = bmvc;
+        this.covc = covc;
     }
 }

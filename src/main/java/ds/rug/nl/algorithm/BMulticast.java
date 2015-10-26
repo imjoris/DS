@@ -1,5 +1,6 @@
 package ds.rug.nl.algorithm;
 
+import ds.rug.nl.main.CommonClientData;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.MulticastDTO;
@@ -15,36 +16,22 @@ import java.util.Map;
  */
 public class BMulticast extends Algorithm implements IReceiver{
 
-    @Override
-    public void handleDTO(DTO dto) {
-        handle(dto);
-    }
-
-    class DTOSeq{
-        public int sequenceNumber;
-        public DTO dto;
-
-        public DTOSeq(int sequenceNumber, DTO dto) {
-            this.sequenceNumber = sequenceNumber;
-            this.dto = dto;
-        } 
-    }
-    
-    Map<Integer, Integer> sequenceNumbersFromNodes;
     Map<String, DTOSeq> DTOSeqPerSender;
     
     int myLastSendSeqNr;
     Map<Integer, LinkedList<DTOSeq>> holdBackQ;
     Map<Integer, MulticastDTO> mySendSeqNrs;
     CmdMessageHandler mainHandler;
+    
+    private final CommonClientData clientData;
 
-    public BMulticast(Node node, CmdMessageHandler mainHandler){
+    public BMulticast(Node node, CmdMessageHandler mainHandler, CommonClientData clientData){
         super(node);
-        sequenceNumbersFromNodes = new VectorClock();
         mySendSeqNrs = new HashMap<Integer, MulticastDTO>();
         myLastSendSeqNr=0;
         this.mainHandler = mainHandler;
         holdBackQ = new HashMap<Integer, LinkedList<DTOSeq>>();
+        this.clientData = clientData;
     }
     
     @Override
@@ -60,7 +47,7 @@ public class BMulticast extends Algorithm implements IReceiver{
         }
 
         receivedSeq = multidto.getSequencenum();
-        Integer mySeqNr = sequenceNumbersFromNodes.get(multidto.nodeId);
+        Integer mySeqNr = clientData.bVector.get(multidto.nodeId);
 
         mySeqNr++;
         if (receivedSeq == mySeqNr) {
@@ -88,10 +75,10 @@ public class BMulticast extends Algorithm implements IReceiver{
         Integer sender = data.nodeId;
         
         //increase the sequence number 
-        int seqNodeNow = sequenceNumbersFromNodes.get(sender);
+        int seqNodeNow = clientData.bVector.get(sender);
         seqNodeNow++;
 
-        sequenceNumbersFromNodes.put(sender, seqNodeNow);
+        clientData.bVector.put(sender, seqNodeNow);
         
         if(null == holdBackQ.get(sender)){
             return;
@@ -118,6 +105,21 @@ public class BMulticast extends Algorithm implements IReceiver{
     
     public Map getSendSeq(){
         return mySendSeqNrs;
+    }
+    
+        @Override
+    public void handleDTO(DTO dto) {
+        handle(dto);
+    }
+
+    class DTOSeq{
+        public int sequenceNumber;
+        public DTO dto;
+
+        public DTOSeq(int sequenceNumber, DTO dto) {
+            this.sequenceNumber = sequenceNumber;
+            this.dto = dto;
+        } 
     }
     
 }

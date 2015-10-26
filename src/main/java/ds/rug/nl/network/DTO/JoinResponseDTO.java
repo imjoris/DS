@@ -1,5 +1,7 @@
 package ds.rug.nl.network.DTO;
 
+import ds.rug.nl.main.NodeInfo;
+
 /**
  *
  * @author Bart
@@ -10,10 +12,12 @@ public class JoinResponseDTO extends DTO {
         denied
     }
     
-    public ResponseType responseType;
+    public final ResponseType responseType;
+    public final NodeInfo rightNeighbour;
 
-    public JoinResponseDTO(ResponseType responseType) {
+    public JoinResponseDTO(ResponseType responseType, NodeInfo rightNeighbour) {
         this.responseType = responseType;
+        this.rightNeighbour = rightNeighbour;
     }
     
 }

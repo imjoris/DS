@@ -8,8 +8,8 @@ import ds.rug.nl.network.DTO.JoinAnnounceDTO;
 import ds.rug.nl.network.DTO.JoinRequestDTO;
 import ds.rug.nl.network.DTO.JoinResponseDTO;
 import static ds.rug.nl.network.DTO.JoinResponseDTO.ResponseType.*;
-import ds.rug.nl.network.DTO.TreeDTO;
-import ds.rug.nl.network.DTO.TreeDTO.CmdType;
+import ds.rug.nl.network.DTO.NodeStateDTO;
+import ds.rug.nl.network.DTO.NodeStateDTO.CmdType;
 import ds.rug.nl.threads.CmdMessageHandler;
 import ds.rug.nl.tree.TreeNode;
 import java.net.UnknownHostException;
@@ -19,8 +19,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Handles the following DTOs: JoinRequestDTO, JoinResponseDTO, TreeDTO,
- * JoinAnnounceDTO
+ * Handles the following DTOs: JoinRequestDTO, JoinResponseDTO, NodeStateDTO,
+ JoinAnnounceDTO
  *
  * @author Bart
  */
@@ -29,20 +29,23 @@ public class JoinAlgo extends Algorithm {
     private final CommonClientData clientData;
     private final CoMulticast coMulticast;
     private final DiscoveryAlgo discovery;
+    private final LeaderAlgo leaderAl;
 
     private CountDownLatch joinLatch;
     private JoinResponseDTO joinResponse;
     private CountDownLatch treeLatch;
-    private TreeDTO treeResponse;
+    private NodeStateDTO treeResponse;
 
     public JoinAlgo(Node node,
             CommonClientData clientData,
             CoMulticast coMulticast,
-            DiscoveryAlgo discovery) {
+            DiscoveryAlgo discovery,
+            LeaderAlgo leaderAl
+            ) {
         super(node);
         this.clientData = clientData;
         this.coMulticast = coMulticast;
-
+        this.leaderAl = leaderAl;
         this.discovery = discovery;
     }
 
@@ -50,7 +53,7 @@ public class JoinAlgo extends Algorithm {
         CmdMessageHandler cmdHandler = this.node.getCmdMessageHandler();
         cmdHandler.registerAlgorithm(JoinRequestDTO.class, this);
         cmdHandler.registerAlgorithm(JoinResponseDTO.class, this);
-        cmdHandler.registerAlgorithm(TreeDTO.class, this);
+        cmdHandler.registerAlgorithm(NodeStateDTO.class, this);
         cmdHandler.registerAlgorithm(JoinAnnounceDTO.class, this);
     }
 
@@ -80,10 +83,9 @@ public class JoinAlgo extends Algorithm {
      * Sets this.streamTree
      */
     private void getTree() throws UnknownHostException {
-        // This feels like non-dynamic discovery
         String aPeer = discovery.getAPeer();
         treeLatch = new CountDownLatch(1);
-        TreeDTO req = new TreeDTO(CmdType.request, null);
+        NodeStateDTO req = new NodeStateDTO(CmdType.request, null, null, null);
         send(req, aPeer);
         try {
             treeLatch.await();
@@ -95,6 +97,9 @@ public class JoinAlgo extends Algorithm {
         } else {
             clientData.streamTree = treeResponse.streamTree;
         }
+        
+        clientData.bVector = treeResponse.bmvc;
+        clientData.cVector = treeResponse.covc;
     }
 
     private boolean requestAttach(NodeInfo leafNode) {
@@ -113,8 +118,8 @@ public class JoinAlgo extends Algorithm {
 
     @Override
     public void handle(DTO message) {
-        if (message instanceof TreeDTO) {
-            handleTree((TreeDTO) message);
+        if (message instanceof NodeStateDTO) {
+            handleTree((NodeStateDTO) message);
         }
         if (message instanceof JoinRequestDTO) {
             handleRequest((JoinRequestDTO) message);
@@ -133,13 +138,12 @@ public class JoinAlgo extends Algorithm {
         joinLatch.countDown();
     }
 
-    // TO-DO make this not crash when the node still has no tree
     private void handleRequest(JoinRequestDTO message) {
         if (this.fullNode()) {
-            joinResponse = new JoinResponseDTO(denied);
+            joinResponse = new JoinResponseDTO(denied, null);
         } else {
             this.addChild(message.nodeInfo);
-            joinResponse = new JoinResponseDTO(accepted);
+            joinResponse = new JoinResponseDTO(accepted, leaderAl.getNeighbour());
         }
         reply(joinResponse, message);
     }
@@ -156,7 +160,7 @@ public class JoinAlgo extends Algorithm {
         }
     }
 
-    private void handleTree(TreeDTO treeDTO) {
+    private void handleTree(NodeStateDTO treeDTO) {
         if (treeDTO.cmd == CmdType.reply) {
             treeResponse = treeDTO;
             treeLatch.countDown();
@@ -164,7 +168,7 @@ public class JoinAlgo extends Algorithm {
             return;
         }
         if (treeDTO.cmd == CmdType.request) {
-            TreeDTO response = new TreeDTO(CmdType.reply, clientData.streamTree);
+            NodeStateDTO response = new NodeStateDTO(CmdType.reply, clientData.streamTree, clientData.bVector, clientData.cVector);
             reply(response, treeDTO);
         }
 

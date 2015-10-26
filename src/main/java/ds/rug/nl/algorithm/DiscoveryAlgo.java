@@ -5,6 +5,7 @@
  */
 package ds.rug.nl.algorithm;
 
+import ds.rug.nl.main.CommonClientData;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.DiscoveryDTO;
@@ -20,9 +21,11 @@ public class DiscoveryAlgo extends Algorithm {
 
     private CountDownLatch replyLatch;
     private DiscoveryDTO replyDto;
+    CommonClientData clientData;
 
-    public DiscoveryAlgo(Node node) {
+    public DiscoveryAlgo(Node node, CommonClientData clientData) {
         super(node);
+        this.clientData = clientData;
     }
 
     public String getAPeer() {
@@ -44,6 +47,8 @@ public class DiscoveryAlgo extends Algorithm {
             replyDto = msg;
             replyLatch.countDown();
         } else {
+            if (clientData.streamTree == null)
+                return;
             reply(new DiscoveryDTO(DiscoveryDTO.CmdType.reply), msg);
         }
     }

@@ -78,7 +78,7 @@ public class CoMulticastTest {
     /**
      * Test of handle method, of class CoMulticast.
      */
-    @Test
+    @Ignore @Test
     public void testHandle() {
         System.out.println("handle");
         DTO message = null;

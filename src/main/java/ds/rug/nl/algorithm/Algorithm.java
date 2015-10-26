@@ -6,6 +6,9 @@ import ds.rug.nl.main.NodeInfo;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.Networking;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -23,6 +26,13 @@ public abstract class Algorithm {
 
     public abstract void handle(DTO message);
     
+    public void send(DTO dto, String ip){
+        try {
+            this.send(dto, InetAddress.getByName(ip), Config.commandPort);
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Algorithm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     public void send(DTO dto, NodeInfo otherNode){
         this.send(dto, otherNode, Config.commandPort);
     }   
@@ -30,10 +40,7 @@ public abstract class Algorithm {
         this.send(dto, otherNode.getIpAddress(), port);
     } 
     public void send(DTO dto, InetAddress address, int port){
-        dto.ip = node.getIpAddress();
-        dto.port = Config.commandPort;
-        dto.nodeName = node.getName();
-        dto.nodeId = node.getNodeId();
+        dto = setDTONodeInfo(dto);
         network.send(dto, address, port);       
     }
     
@@ -42,6 +49,15 @@ public abstract class Algorithm {
     }
     
     public void multicast(DTO dto){
+        dto = setDTONodeInfo(dto);
         network.sendMulticast(dto);
+    }
+    
+    private DTO setDTONodeInfo(DTO dto){
+        dto.ip = node.getIpAddress();
+        dto.port = Config.commandPort;
+        dto.nodeName = node.getName();
+        dto.nodeId = node.getNodeId();
+        return dto;
     }
 }

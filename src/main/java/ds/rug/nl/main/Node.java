@@ -28,7 +28,6 @@ public abstract class Node extends Thread{
     
     // make all these final?
     protected CmdMessageHandler cmdMessageHandler;
-    protected DNSAlgo dnsAlgo;
     protected BMulticast bMulticast;
 
     protected boolean isRunning;
@@ -47,7 +46,7 @@ public abstract class Node extends Thread{
             try {
                 Thread.sleep(500);
             } catch (InterruptedException ex) {
-                Logger.getLogger(DNSNode.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -77,14 +76,6 @@ public abstract class Node extends Thread{
 
     public void setCmdMessageHandler(CmdMessageHandler cmdMessageHandler) {
         this.cmdMessageHandler = cmdMessageHandler;
-    }
-
-    public DNSAlgo getDnsAlgo() {
-        return dnsAlgo;
-    }
-
-    public void setDnsAlgo(DNSAlgo dnsAlgo) {
-        this.dnsAlgo = dnsAlgo;
     }
 
     public InetAddress getIpAddress() {

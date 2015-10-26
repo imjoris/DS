@@ -1,6 +1,6 @@
 package ds.rug.nl.main;
 
-import ds.rug.nl.algorithm.DNSAlgo;
+import ds.rug.nl.algorithm.DiscoveryAlgo;
 import ds.rug.nl.algorithm.BMulticast;
 import ds.rug.nl.algorithm.CoMulticast;
 import ds.rug.nl.algorithm.JoinAlgo;
@@ -20,26 +20,28 @@ public class Client<T> extends Node {
 
     // Variables are shared with multiple algorithms
     private final CommonClientData clientData;
+    
     private final CoMulticast coMulticast;
+    private final DiscoveryAlgo discoveryAlgo;
     private final JoinAlgo joinAlgo;
     private final StreamAlgo<T> streamAlgo;
 
     public Client(NodeInfo nodeInfo, StreamHandler streamHandler) {
         super(nodeInfo);
-        clientData = new CommonClientData();
+        clientData = new CommonClientData(nodeInfo);
         
         System.out.println("Creating client");
-
-        dnsAlgo = new DNSAlgo(this);
-        cmdMessageHandler.registerAlgorithm(DNSDTO.class, dnsAlgo);
 
         bMulticast = new BMulticast(this, cmdMessageHandler);
         cmdMessageHandler.registerAlgorithm(MulticastDTO.class, bMulticast);
         
         coMulticast = new CoMulticast(this, bMulticast);
-        cmdMessageHandler.registerAlgorithm(COmulticastDTO.class, coMulticast);        
+        cmdMessageHandler.registerAlgorithm(COmulticastDTO.class, coMulticast);
         
-        joinAlgo = new JoinAlgo(this, clientData, coMulticast); 
+        discoveryAlgo = new DiscoveryAlgo(this);
+        cmdMessageHandler.registerAlgorithm(DiscoveryDTO.class, discoveryAlgo);
+        
+        joinAlgo = new JoinAlgo(this, clientData, coMulticast, discoveryAlgo); 
         joinAlgo.registerDTOs();
         
         streamAlgo = new StreamAlgo<T>(this, clientData, streamHandler);
@@ -59,15 +61,11 @@ public class Client<T> extends Node {
     public void run() {
         hostInfo info = new hostInfo(this, Config.commandPort);
         network.startReceiving(info);
+        network.startReceiveMulticasts(info, bMulticast);
         try {
-            List<String> ips = dnsAlgo.getDNSIps();
             joinAlgo.joinTree();
-            // hartbeat stuff?
         } catch (UnknownHostException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-        
     }
 }

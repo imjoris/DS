@@ -51,6 +51,8 @@ public class Networking {
             this.dto = dto;
         }
 
+        
+        @Override
         public void run() {
             handler.handleDTO(dto);
         }
@@ -210,15 +212,15 @@ public class Networking {
         }
     }
 
-    public void startReceiveMulticasts(String ip, int port, IReceiver multicastMessageHandler) {
-
+    public void startReceiveMulticasts(hostInfo hostinfo, IReceiver handler) {
+        
         class mythread extends Thread {
 
             IReceiver handler;
-            String ip;
+            InetAddress ip;
             int port;
 
-            public mythread(String ip, int port, IReceiver handler) {
+            public mythread(InetAddress ip, int port, IReceiver handler) {
                 this.handler = handler;
                 this.ip = ip;
                 this.port = port;
@@ -272,7 +274,7 @@ public class Networking {
 
             }
         }
-        Thread multicastListenThread = new mythread(ip, port, multicastMessageHandler);
+        Thread multicastListenThread = new mythread(hostinfo.ip, hostinfo.port, hostinfo.handler);
         executor.execute(multicastListenThread);
     }
 

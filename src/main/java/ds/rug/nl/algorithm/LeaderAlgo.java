@@ -2,6 +2,7 @@ package ds.rug.nl.algorithm;
 
 import ds.rug.nl.main.Node;
 import ds.rug.nl.main.NodeInfo;
+import ds.rug.nl.network.DTO.ClaimLeadershipDTO;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.ElectionDTO;
 import ds.rug.nl.network.DTO.ElectionReplyDTO;
@@ -26,12 +27,16 @@ public class LeaderAlgo extends Algorithm {
     private NodeInfo leftNeighbour;
     private NodeInfo rightNeighbour;
     private int id;
+    private NodeInfo leader;
+    private BMulticast bMulticast;
 
-    public LeaderAlgo(Node node, int id, NodeInfo leftNeighbour, NodeInfo rightNeighbour) {
+    public LeaderAlgo(Node node, int id, NodeInfo leftNeighbour, NodeInfo rightNeighbour, BMulticast bMulticast) {
         super(node);
         this.leftNeighbour = leftNeighbour;
         this.rightNeighbour = rightNeighbour;
         this.id = id;
+        this.leader = null;
+        this.bMulticast = bMulticast;
     }
 
     public void LeaderElection() {
@@ -51,13 +56,21 @@ public class LeaderAlgo extends Algorithm {
         if (message instanceof ElectionDTO) {
             handleElection((ElectionDTO) message, dir);
         }
+        if(message instanceof ClaimLeadershipDTO){
+            ClaimLeadershipDTO msg = (ClaimLeadershipDTO) message;
+            leader = msg.leaderNode;
+        }
+    }
+    
+    public NodeInfo getLeader(){
+        return leader;
     }
 
     private void handleElection(ElectionDTO eleMsg, Direction dir) {
         if (eleMsg.candidate < id) //&& (eleMsg.hopCount < Math.pow(2, eleMsg.phaseNumebr)
             return;
         if (eleMsg.candidate == id) {
-            anounceLeader();
+            claimLeader();
             return;
         }
         if (eleMsg.hopCount > Math.pow(2, eleMsg.phaseNumebr))
@@ -70,8 +83,11 @@ public class LeaderAlgo extends Algorithm {
         passOn(eleMsg, dir);
     }
 
-    public int anounceLeader() {
-        return 0;
+    public void claimLeader() {
+        
+        ClaimLeadershipDTO message = new ClaimLeadershipDTO(node.getNodeInfo());
+        bMulticast.sendMulticast(message);
+
     }
     
     private NodeInfo getNeighbour(Direction dir){

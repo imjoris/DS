@@ -24,7 +24,6 @@ public class Client<T> extends Node {
     private final CoMulticast coMulticast;
     private final DiscoveryAlgo discoveryAlgo;
     private final JoinAlgo joinAlgo;
-    private final LeaderAlgo leaderAlgo;
     private final StreamAlgo<T> streamAlgo;
 
     public Client(NodeInfo nodeInfo, StreamHandler streamHandler) {
@@ -39,13 +38,11 @@ public class Client<T> extends Node {
         coMulticast = new CoMulticast(this, bMulticast, clientData);
         cmdMessageHandler.registerAlgorithm(COmulticastDTO.class, coMulticast);
         
-        discoveryAlgo = new DiscoveryAlgo(this);
+        discoveryAlgo = new DiscoveryAlgo(this, clientData);
         cmdMessageHandler.registerAlgorithm(DiscoveryDTO.class, discoveryAlgo);
         
-        leaderAlgo = new LeaderAlgo(this, bMulticast);
         
-        
-        joinAlgo = new JoinAlgo(this, clientData, coMulticast, discoveryAlgo, leaderAlgo); 
+        joinAlgo = new JoinAlgo(this, clientData, coMulticast, discoveryAlgo); 
         joinAlgo.registerDTOs();
         
         streamAlgo = new StreamAlgo<T>(this, clientData, streamHandler);

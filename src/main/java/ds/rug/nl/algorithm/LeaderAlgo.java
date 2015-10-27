@@ -2,15 +2,17 @@ package ds.rug.nl.algorithm;
 
 import ds.rug.nl.main.Node;
 import ds.rug.nl.main.NodeInfo;
-import ds.rug.nl.network.DTO.ClaimLeadershipDTO;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.ElectionDTO;
-import ds.rug.nl.network.DTO.ElectionReplyDTO;
-import ds.rug.nl.network.DTO.ElectionRingDTO;
-import ds.rug.nl.threads.CmdMessageHandler;
+import ds.rug.nl.network.DTO.RingInsertDTO;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+
 
 /**
  * Handles the following DTOs: ElectionDTO
@@ -18,165 +20,142 @@ import java.util.logging.Logger;
  * @author angelo
  */
 public class LeaderAlgo extends Algorithm {
-
-    enum Direction {
-
-        LEFT,
-        RIGHT;
-
-        public Direction getOpposite() {
-            return this == LEFT ? RIGHT : LEFT;
+    
+    private NodeInfo nextNode;
+    private NodeInfo currentLeader;
+    
+    private final CountDownLatch insertLatch;
+    private RingInsertDTO insertMessage;
+    private ElectionLock electionLock = new ElectionLock();
+    private boolean participant;
+    
+    private static class ElectionLock {
+        private enum State {
+            OPEN,
+            ELECTION,
+            JOINING,
         }
+        
+        Lock lock;
+        Condition notElecting;
+        Condition notHandling;
+        State state;
+
+        public ElectionLock() {
+            this.lock = new ReentrantLock();
+            this.notElecting = lock.newCondition();
+            this.notHandling = lock.newCondition();
+            
+            this.state = State.OPEN;
+        }
+        
+        public void EnterElection(){
+            lock.lock();
+            try {
+                while (state != State.JOINING)
+                    notHandling.await();
+                state = State.ELECTION;
+            } catch (InterruptedException ex) {
+                Logger.getLogger(LeaderAlgo.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                lock.unlock();
+            }
+        }
+        
+        public void LeaveElection(){
+            lock.lock();
+            if (state == State.ELECTION)
+                state = State.OPEN;
+            notElecting.signalAll();
+            lock.unlock();
+        }
+        
+         public void EnterJoining(){
+            lock.lock();
+            try {
+                while (state != State.ELECTION)
+                    notElecting.await();
+                state = State.ELECTION;
+            } catch (InterruptedException ex) {
+                Logger.getLogger(LeaderAlgo.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                lock.unlock();
+            }
+        }
+        
+        public void LeaveJoining(){
+            lock.lock();
+            if (state == State.JOINING)
+                state = State.OPEN;
+            notElecting.signalAll();
+            lock.unlock();
+        }                       
     }
 
-    private NodeInfo leftNeighbour;
-    private NodeInfo rightNeighbour;
-    private int id;
-    private NodeInfo leader;
-    private BMulticast bMulticast;
-    private CountDownLatch electionLatch;
-    private Boolean inElection;
-
-    public LeaderAlgo(Node node, BMulticast bMulticast) {
+    public LeaderAlgo(Node node) {
         super(node);
-        this.leftNeighbour = null;
-        this.rightNeighbour = null;
-        this.id = node.getNodeId();
-        this.leader = null;
-        this.bMulticast = bMulticast;
-        this.inElection = false;
-        this.electionLatch = new CountDownLatch(1);
+        nextNode = null;
+        currentLeader = null;
+        insertLatch = new CountDownLatch(1);
     }
-
-    public void LeaderElection() {
-
-    }
-
-    public void registerDTOs() {
-        CmdMessageHandler cmdHandler = this.node.getCmdMessageHandler();
-        cmdHandler.registerAlgorithm(ElectionDTO.class, this);
-        cmdHandler.registerAlgorithm(ElectionReplyDTO.class, this);
-        cmdHandler.registerAlgorithm(ClaimLeadershipDTO.class, this);
-        cmdHandler.registerAlgorithm(ElectionRingDTO.class, this);
+    
+    public synchronized void requestInsert(NodeInfo node){
+        send(new RingInsertDTO(RingInsertDTO.CmdType.REQUEST, this.node.getNodeInfo()), node);
+        try {
+            insertLatch.await();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(LeaderAlgo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        // here we received the response in this.insertMessage
+        this.nextNode = insertMessage.newNeighbour;        
     }
 
     @Override
     public void handleDTO(DTO message) {
-        Direction dir = null;
-        if (message.nodeName.equals(leftNeighbour.getName())) {
-            dir = Direction.LEFT;
-        }
-        if (message.nodeName.equals(rightNeighbour.getName())) {
-            dir = Direction.RIGHT;
-        }
-        if (dir == null) {
-            return;
-        }
+        if (message instanceof ElectionDTO)
+            handleElection((ElectionDTO) message);
+        if (message instanceof RingInsertDTO)
+            handleRingInsert((RingInsertDTO) message);
 
-        if (message instanceof ElectionDTO) {
-            handleElection((ElectionDTO) message, dir);
-        }
-        if (message instanceof ClaimLeadershipDTO) {
-            ClaimLeadershipDTO msg = (ClaimLeadershipDTO) message;
-            leader = msg.leaderNode;
-        }
-        if (message instanceof ElectionRingDTO) {
-            handleRingJoin((ElectionRingDTO) message);
+    }
+    
+    private void handleElection(ElectionDTO message){
+        electionLock.EnterElection();
+        switch (message.cmd){
+            case ELECTION:                
+                if (node.getNodeId() < message.BestNode.getNodeId())
+                    send(message, nextNode);
+                else if (node.getNodeId() == message.BestNode.getNodeId())
+                    send(new ElectionDTO(node.getNodeInfo(), ElectionDTO.CmdType.LEADER), nextNode);
+                else if (!participant)
+                    send(new ElectionDTO(node.getNodeInfo(), ElectionDTO.CmdType.ELECTION), nextNode);
+                participant = true;
+            break;
+            case LEADER:
+                currentLeader = message.BestNode;
+                if (node.getNodeId() != currentLeader.getNodeId())
+                    send(message, nextNode);
+                participant = false;
+                electionLock.LeaveElection();
+            break;
         }
     }
-
-    @SuppressWarnings("empty-statement")
-    private void handleRingJoin(ElectionRingDTO message) {
-        switch (message.cmd) {
+    
+    private synchronized void handleRingInsert(RingInsertDTO message){
+        switch (message.cmd){
             case REQUEST:
-                while (inElection) {
-                    try {
-                        electionLatch.await();
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(LeaderAlgo.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-
-                synchronized (this) {
-                    if (message.dir == ElectionRingDTO.Direction.LEFT) {
-                        send(new ElectionRingDTO(ElectionRingDTO.cmdType.NEWNEIGHBOUR, null), leftNeighbour);
-                        leftNeighbour = new NodeInfo(message);
-                    } else {
-                        send(new ElectionRingDTO(ElectionRingDTO.cmdType.NEWNEIGHBOUR, null), rightNeighbour);
-                        rightNeighbour = new NodeInfo(message);
-                    }
-                    reply(new ElectionRingDTO(ElectionRingDTO.cmdType.ACCEPT, null), message);
-                }
-                break;
+                electionLock.EnterJoining();
+                reply(new RingInsertDTO(RingInsertDTO.CmdType.ACCEPT, nextNode), message);
+                nextNode = message.newNeighbour;
+            break;
             case ACCEPT:
-                
-                break;
-            case DISCONNECT:
-                
-                break;
-            case NEWNEIGHBOUR:
-                
-                break;
-            case NEIGHBOURACKNOELEDGE:
-                
-                break;
-                
+                insertMessage = message;
+                insertLatch.countDown();
+            break;
+            case ACCEPT_ACK:
+                electionLock.LeaveJoining();
+            break;
         }
-
-    }
-
-    public void joinRing(NodeInfo leftNeighbour, NodeInfo rightNeighbour) {
-
-    }
-
-    public NodeInfo getLeader() {
-        return leader;
-    }
-
-    private void handleElection(ElectionDTO eleMsg, Direction dir) {
-        synchronized (this) {
-            if (eleMsg.candidate < id) //&& (eleMsg.hopCount < Math.pow(2, eleMsg.phaseNumebr)
-            {
-                return;
-            }
-            if (eleMsg.candidate == id) {
-                claimLeader();
-                return;
-            }
-            if (eleMsg.hopCount > Math.pow(2, eleMsg.phaseNumebr)) {
-                return;
-            }
-            if (eleMsg.hopCount == Math.pow(2, eleMsg.phaseNumebr)) {
-                reply(eleMsg.candidate, eleMsg.phaseNumebr, dir.getOpposite());
-                return;
-            }
-
-            passOn(eleMsg, dir);
-        }
-    }
-
-    public void claimLeader() {
-
-        ClaimLeadershipDTO message = new ClaimLeadershipDTO(node.getNodeInfo());
-        bMulticast.sendMulticast(message);
-
-    }
-
-    private NodeInfo getNeighbour(Direction dir) {
-        return dir == Direction.LEFT ? leftNeighbour : rightNeighbour;
-    }
-
-    private void reply(int candidate, int phaseNumebr, Direction dir) {
-        ElectionReplyDTO message = new ElectionReplyDTO(candidate, phaseNumebr);
-        send(message, getNeighbour(dir));
-    }
-
-    private void passOn(ElectionDTO eleMsg, Direction dir) {
-        ElectionDTO message = new ElectionDTO(eleMsg.candidate, eleMsg.phaseNumebr, eleMsg.hopCount + 1);
-        send(message, getNeighbour(dir));
-    }
-
-    public NodeInfo getNeighbour() {
-        return this.rightNeighbour;
+        
     }
 }

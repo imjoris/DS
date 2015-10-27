@@ -11,18 +11,21 @@ import ds.rug.nl.main.NodeInfo;
  *
  * @author s2063239
  */
-public class ElectionDTO extends DTO {
+public class RingInsertDTO extends DTO {
     public enum CmdType {
-        ELECTION,
-        LEADER,
+        REQUEST,
+        ACCEPT,
+        ACCEPT_ACK,
     }
     
-    public final NodeInfo BestNode;
     public final CmdType cmd;
+    public final NodeInfo newNeighbour;
 
-    public ElectionDTO(NodeInfo bestId, CmdType cmd) {
-        this.BestNode = bestId;
+    public RingInsertDTO(CmdType cmd, NodeInfo newNeighbour) {
         this.cmd = cmd;
+        this.newNeighbour = newNeighbour;
     }
+    
+    
     
 }

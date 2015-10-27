@@ -29,7 +29,6 @@ public class JoinAlgo extends Algorithm {
     private final CommonClientData clientData;
     private final CoMulticast coMulticast;
     private final DiscoveryAlgo discovery;
-    private final LeaderAlgo leaderAl;
 
     private CountDownLatch joinLatch;
     private JoinResponseDTO joinResponse;
@@ -39,13 +38,11 @@ public class JoinAlgo extends Algorithm {
     public JoinAlgo(Node node,
             CommonClientData clientData,
             CoMulticast coMulticast,
-            DiscoveryAlgo discovery,
-            LeaderAlgo leaderAl
+            DiscoveryAlgo discovery
             ) {
         super(node);
         this.clientData = clientData;
         this.coMulticast = coMulticast;
-        this.leaderAl = leaderAl;
         this.discovery = discovery;
     }
 
@@ -140,10 +137,10 @@ public class JoinAlgo extends Algorithm {
 
     private void handleRequest(JoinRequestDTO message) {
         if (this.fullNode()) {
-            joinResponse = new JoinResponseDTO(denied, null);
+            joinResponse = new JoinResponseDTO(denied);
         } else {
             this.addChild(message.nodeInfo);
-            joinResponse = new JoinResponseDTO(accepted, leaderAl.getNeighbour());
+            joinResponse = new JoinResponseDTO(accepted);
         }
         reply(joinResponse, message);
     }

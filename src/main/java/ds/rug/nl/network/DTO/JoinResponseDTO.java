@@ -13,11 +13,9 @@ public class JoinResponseDTO extends DTO {
     }
     
     public final ResponseType responseType;
-    public final NodeInfo rightNeighbour;
 
-    public JoinResponseDTO(ResponseType responseType, NodeInfo rightNeighbour) {
+    public JoinResponseDTO(ResponseType responseType) {
         this.responseType = responseType;
-        this.rightNeighbour = rightNeighbour;
     }
     
 }

@@ -12,6 +12,8 @@ public class CommonClientData {
     public TreeNode<NodeInfo> thisNode;
     public VectorClock bVector;
     public VectorClock cVector;
+    public NodeInfo leftNeighbour;
+    public NodeInfo rightNeighbour;
 
     public CommonClientData(NodeInfo thisNode) {
         this.thisNode = new TreeNode(thisNode);

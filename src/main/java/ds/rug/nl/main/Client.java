@@ -46,8 +46,8 @@ public class Client<T> extends Node {
         cmdMessageHandler.registerAlgorithm(DiscoveryDTO.class, discoveryAlgo);
         
         leaderAlgo = new LeaderAlgo(this);
-        cmdMessageHandler.registerAlgorithm(ElectionDTO.class, discoveryAlgo);
-        cmdMessageHandler.registerAlgorithm(RingInsertDTO.class, discoveryAlgo);
+        cmdMessageHandler.registerAlgorithm(ElectionDTO.class, leaderAlgo);
+        cmdMessageHandler.registerAlgorithm(RingInsertDTO.class, leaderAlgo);
         
         joinAlgo = new JoinAlgo(this, clientData, coMulticast, discoveryAlgo, leaderAlgo);
         joinAlgo.registerDTOs();

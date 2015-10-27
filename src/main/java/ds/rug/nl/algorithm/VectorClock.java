@@ -29,19 +29,20 @@ public class VectorClock extends HashMap<Integer, Integer> {
         if (!(this.get(senderKey) + 1 == vc.get(senderKey))) {
             return false;
         }
-
+        
+        System.out.println(senderKey.toString() + " got to poit 1");
         Iterator<Integer> sIterator = s.iterator();
         while (sIterator.hasNext()) {
             Integer key = sIterator.next();
-            if (!(vc.get(key) > this.get(key))) {
+            if (!(vc.get(key) >= this.get(key))) {
+                System.out.println(senderKey.toString() +" point 2: did not accept the vector clock");
                 return false;
             }
         }
         return true;
     }
     
-    public void incementValue(Integer id){
+    public void incrementValue(Integer id){
         super.put(id, get(id)+1);
     }
-
 }

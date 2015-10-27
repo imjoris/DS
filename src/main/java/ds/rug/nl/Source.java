@@ -50,8 +50,10 @@ public class Source {
 
                 public void run() {
                     client.start();
+                    int i = 0;
                     while (true) {
-                        client.getStream().sendData(3);
+                        i++;
+                        client.getStream().sendData(i);
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException ex) {

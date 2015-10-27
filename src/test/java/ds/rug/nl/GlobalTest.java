@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 package ds.rug.nl;
+
+import ds.rug.nl.network.Networking;
 import org.junit.Test;
 
 /**
@@ -13,10 +15,14 @@ import org.junit.Test;
 public class GlobalTest {
 
     @Test
-    public void test() throws InterruptedException{
-        Source.main(new String[] {"myhost1", "127.0.0.2"});
-        App.main(new String[] {"myclient1", "127.0.0.3"});
-        App.main(new String[] {"myclient2", "127.0.0.4"});
-        while(true){}
+    public void test() throws InterruptedException {
+        Source.main(new String[]{"myhost1", "127.0.0.2"});
+        Thread.sleep(5000);
+        Networking network = new Networking();
+        for (int i = 0; i <2 ; i++) {
+            App.main(new String[]{"myclient"+(i+3), Networking.nextIpAddress("127.0.0."+(i+2))});
+        }
+        while (true) {
+        }
     }
 }

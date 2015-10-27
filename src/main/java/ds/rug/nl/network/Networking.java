@@ -95,16 +95,16 @@ public class Networking {
                     serversock.setReuseAddress(false);
 
                     serversock.bind(new InetSocketAddress(host.ip, Config.commandPort));
-                    System.out.println(host.hostname + " is waiting for clients on " + serversock.getInetAddress().getHostName() + " port "
-                            + serversock.getLocalPort() + "...");
+//                    System.out.println(host.hostname + " is waiting for clients on " + serversock.getInetAddress().getHostName() + " port "
+//                            + serversock.getLocalPort() + "...");
 
                     ExecutorService executor = Executors.newFixedThreadPool(5);
 
                     while (true) {
                         try {
                             Socket callsocket = serversock.accept();
-                            System.out.println(host.hostname + "accepted incomming connection from "
-                                    + callsocket.getRemoteSocketAddress());
+//                            System.out.println(host.hostname + "accepted incomming connection from "
+//                                    + callsocket.getRemoteSocketAddress());
 
                             ObjectInputStream in = new ObjectInputStream(callsocket.getInputStream());
                             DTO objectReceived = (DTO) in.readObject();
@@ -241,8 +241,8 @@ public class Networking {
                         try {
                             socket.receive(dgram); // blocks until a datagram is received
 
-                            System.err.println("Received " + dgram.getLength()
-                                    + " bytes from " + dgram.getAddress());
+//                            System.err.println("Received " + dgram.getLength()
+//                                    + " bytes from " + dgram.getAddress());
                             dgram.setLength(b.length); // must reset length field!
                             int len = 0;
 //      // byte[] -> int

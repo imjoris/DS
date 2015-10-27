@@ -77,7 +77,7 @@ public class NodeInfo implements java.io.Serializable {
         return ipAddress;
     }
 
-    public String getName() {
+    public String getNodeName() {
         return name;
     }
 

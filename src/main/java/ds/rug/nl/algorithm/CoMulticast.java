@@ -28,17 +28,22 @@ public class CoMulticast extends Algorithm {
     }
 
     public void sendSmthg(DTO data) {
-        clientData.cVector.incementValue(node.getNodeId());
+        clientData.cVector.incrementValue(node.getNodeId());
         COmulticastDTO pckg = new COmulticastDTO(clientData.cVector, data);
         pckg = (COmulticastDTO)this.setDTONodeInfo(pckg);
+        System.out.println("Node " + node.getIpAddress() + " sending comulticast with vector " + clientData.cVector.get(node.getNodeId()).toString());
         bmultiCast.sendMulticast(pckg);
     }
 
     public void receiveSmthg(COmulticastDTO msg) {
         VectorClock rcvVector = msg.getVectorClock();
         DTO data = msg.getMessage();
-
+        
+        System.out.print(node.getIpAddress() + " received comulticast from " + msg.getIp() + " with vector " + msg.getVectorClock().get(msg.getSender()) + ".");
+        System.out.println(" Local vectorclock of node is " + clientData.cVector.get(msg.getSender()).toString());
+        
         if (clientData.cVector.isNext(rcvVector, msg.getSender())) {
+            System.out.println(node.getIpAddress() + " delivered comulti from " + msg.getIp());
             deliverDTO(data, msg.getSender());
         } else {
             holdBackQ.add(new Tuple(rcvVector, data, msg.getSender()));
@@ -48,7 +53,7 @@ public class CoMulticast extends Algorithm {
     public void deliverDTO(DTO data, Integer sender) {
         this.node.getCmdMessageHandler().handleDTO(data);
         
-        clientData.cVector.incementValue(sender);
+        clientData.cVector.incrementValue(sender);
         
         Iterator<Tuple> i = holdBackQ.iterator();
         while (i.hasNext()) {

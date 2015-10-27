@@ -31,6 +31,7 @@ public class JoinAlgo extends Algorithm {
     private final CommonClientData clientData;
     private final CoMulticast coMulticast;
     private final DiscoveryAlgo discovery;
+    private final LeaderAlgo leaderAlgo;
 
     private CountDownLatch joinLatch;
     private JoinResponseDTO joinResponse;
@@ -42,13 +43,15 @@ public class JoinAlgo extends Algorithm {
     public JoinAlgo(Node node,
             CommonClientData clientData,
             CoMulticast coMulticast,
-            DiscoveryAlgo discovery
+            DiscoveryAlgo discovery,
+            LeaderAlgo leaderAlgo
             ) {
 
         super(node);
         this.clientData = clientData;
         this.coMulticast = coMulticast;
         this.discovery = discovery;
+        this.leaderAlgo = leaderAlgo;
         this.joinAnnounceQueue = new LinkedList<JoinAnnounceDTO>();
         this.treeLatch = new CountDownLatch(1);
         this.joinLatch = new CountDownLatch(1);
@@ -74,9 +77,9 @@ public class JoinAlgo extends Algorithm {
             if ((!leafNode.equals(clientData.thisNode.contents)) && requestAttach(leafNode)) {
                 clientData.thisNode = leaf.addChild(this.node.getNodeInfo());
                 announceJoin();
+                leaderAlgo.requestInsert(leafNode);
                 return;
-            }
-            
+            }            
         }
 
         // if we get here, none of the leaves were available, so we restart

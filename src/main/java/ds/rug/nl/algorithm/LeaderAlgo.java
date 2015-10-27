@@ -26,9 +26,9 @@ public class LeaderAlgo extends Algorithm {
     
     private final CountDownLatch insertLatch;
     private RingInsertDTO insertMessage;
-    private ElectionLock electionLock = new ElectionLock();
+    private final ElectionLock electionLock;
     private boolean participant;
-    
+
     private static class ElectionLock {
         private enum State {
             OPEN,
@@ -97,6 +97,7 @@ public class LeaderAlgo extends Algorithm {
         nextNode = null;
         currentLeader = null;
         insertLatch = new CountDownLatch(1);
+        electionLock = new ElectionLock();
     }
     
     public synchronized void requestInsert(NodeInfo node){
@@ -135,6 +136,8 @@ public class LeaderAlgo extends Algorithm {
                 currentLeader = message.BestNode;
                 if (node.getNodeId() != currentLeader.getNodeId())
                     send(message, nextNode);
+                else
+                    becomeLeader();
                 participant = false;
                 electionLock.LeaveElection();
             break;
@@ -157,5 +160,10 @@ public class LeaderAlgo extends Algorithm {
             break;
         }
         
+    }
+    
+    
+    private void becomeLeader() {
+        System.out.println("I AM GOOOOOOD\nwheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
     }
 }

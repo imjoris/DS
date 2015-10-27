@@ -48,7 +48,7 @@ public abstract class Algorithm {
         this.send(dto, otherNode.getIpAddress(), port);
     } 
     public void send(DTO dto, InetAddress address, int port){
-        dto = setDTONodeInfo(dto);
+        setDTONodeInfo(dto);
         network.send(dto, address, port);       
     }
     
@@ -57,15 +57,14 @@ public abstract class Algorithm {
     }
     
     public void multicast(DTO dto){
-        dto = setDTONodeInfo(dto);
+        setDTONodeInfo(dto);
         network.sendMulticast(dto);
     }
     
-    protected DTO setDTONodeInfo(DTO dto){
-        dto.ip = node.getIpAddress();
-        dto.port = Config.commandPort;
-        dto.nodeName = node.getName();
-        dto.nodeId = node.getNodeId();
-        return dto;
+    protected void setDTONodeInfo(DTO dto){
+        dto.setIp(node.getIpAddress());
+        dto.setPort(Config.commandPort);
+        dto.setNodeName(node.getName());
+        dto.setNodeId(node.getNodeId());
     }
 }

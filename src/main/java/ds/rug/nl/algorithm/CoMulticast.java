@@ -30,7 +30,7 @@ public class CoMulticast extends Algorithm {
     public void sendSmthg(DTO data) {
         clientData.cVector.incrementValue(node.getNodeId());
         COmulticastDTO pckg = new COmulticastDTO(clientData.cVector, data);
-        pckg = (COmulticastDTO)this.setDTONodeInfo(pckg);
+        this.setDTONodeInfo(pckg);
         System.out.println("Node " + node.getIpAddress() + " sending comulticast with vector " + clientData.cVector.get(node.getNodeId()).toString());
         bmultiCast.sendMulticast(pckg);
     }

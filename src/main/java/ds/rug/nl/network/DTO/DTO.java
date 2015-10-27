@@ -9,13 +9,12 @@ import java.net.InetAddress;
  */
 public abstract class DTO implements Serializable{
 
-    public InetAddress ip;
-    public String nodeName;
-    public int nodeId;
-    public int port;
+    private InetAddress ip;
+    private String nodeName;
+    private int nodeId;
+    private int port;
     
     public DTO(){}
-    
 
     public InetAddress getIp() {
         return ip;

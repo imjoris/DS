@@ -124,7 +124,7 @@ public class JoinAlgo extends Algorithm {
             Logger.getLogger(JoinAlgo.class.getName()).log(Level.SEVERE, null, ex);
         }
         if(joinResponse.responseType == accepted){
-            System.out.println("Node " + this.node.getIpAddress() + " is accepted to be a child of " + joinResponse.ip);
+            System.out.println("Node " + this.node.getIpAddress() + " is accepted to be a child of " + joinResponse.getIp());
         }
         return joinResponse.responseType == accepted;
     }

@@ -52,7 +52,7 @@ public class BMulticast extends Algorithm implements IReceiver{
         }
 
         receivedSeq = multidto.getSequencenum();
-        Integer mySeqNr = clientData.bVector.get(multidto.nodeId);
+        Integer mySeqNr = clientData.bVector.get(multidto.getNodeId());
 
         mySeqNr++;
         if (receivedSeq == mySeqNr) {
@@ -67,7 +67,7 @@ public class BMulticast extends Algorithm implements IReceiver{
             for (int i = mySeqNr + 1; i < receivedSeq; i++) {
                 requestMissingIds.getRequestSeqNums().add(i);
             }
-            send(requestMissingIds, multidto.ip, multidto.port);
+            send(requestMissingIds, multidto.getIp(), multidto.getPort());
         }
     }
     
@@ -76,7 +76,7 @@ public class BMulticast extends Algorithm implements IReceiver{
         //handle the dto the multicast had send
         mainHandler.handleDTO(data);
         
-        Integer sender = data.nodeId;
+        Integer sender = data.getNodeId();
         
         //increase the sequence number 
         int seqNodeNow = clientData.bVector.get(sender);

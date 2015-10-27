@@ -1,6 +1,5 @@
 package ds.rug.nl.tree;
 
-import ds.rug.nl.tree.TreeNode;
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.ArrayDeque;

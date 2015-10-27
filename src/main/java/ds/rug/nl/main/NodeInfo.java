@@ -38,9 +38,9 @@ public class NodeInfo implements java.io.Serializable {
     }
     
     public NodeInfo(DTO msg){
-        this.ipAddress = msg.ip;
-        this.name = msg.nodeName;
-        this.nodeId = msg.nodeId;
+        this.ipAddress = msg.getIp();
+        this.name = msg.getNodeName();
+        this.nodeId = msg.getNodeId();
     }
 
     @Override

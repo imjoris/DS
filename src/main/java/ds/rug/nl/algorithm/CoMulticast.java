@@ -30,7 +30,7 @@ public class CoMulticast extends Algorithm {
     public void sendSmthg(DTO data) {
         clientData.cVector.incementValue(node.getNodeId());
         COmulticastDTO pckg = new COmulticastDTO(clientData.cVector, data);
-        pckg = (COmulticastDTO)this.setDTONodeInfo(pckg);
+        this.setDTONodeInfo(pckg);
         bmultiCast.sendMulticast(pckg);
     }
 

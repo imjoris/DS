@@ -32,7 +32,7 @@ public class COmulticastDTO extends DTO {
     }
     
     public Integer getSender(){
-        return this.nodeId;
+        return this.getNodeId();
     }
     
 //    public void setSender(Integer sender){

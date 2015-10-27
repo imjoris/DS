@@ -63,10 +63,10 @@ public class LeaderAlgo extends Algorithm {
     @Override
     public void handleDTO(DTO message) {
         Direction dir = null;
-        if (message.getNodeName().equals(leftNeighbour.getName())) {
+        if (message.getNodeName().equals(leftNeighbour.getNodeName())) {
             dir = Direction.LEFT;
         }
-        if (message.getNodeName().equals(rightNeighbour.getName())) {
+        if (message.getNodeName().equals(rightNeighbour.getNodeName())) {
             dir = Direction.RIGHT;
         }
         if (dir == null) {

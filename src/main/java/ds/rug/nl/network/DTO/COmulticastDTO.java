@@ -8,13 +8,11 @@ import ds.rug.nl.algorithm.VectorClock;
  */
 public class COmulticastDTO extends DTO {
     private DTO message;
-    private VectorClock v;
-    private Integer sender;
+    private VectorClock vClock;
 
-    public COmulticastDTO(VectorClock v, DTO message, Integer sender){
-        this.v = v;
+    public COmulticastDTO(VectorClock v, DTO message){
+        this.vClock = v;
         this.message = message;
-        this.sender = sender;
     }
     
     public DTO getMessage() {
@@ -26,19 +24,19 @@ public class COmulticastDTO extends DTO {
     }
 
     public void setVectorClock(VectorClock v){
-        this.v = v;
+        this.vClock = v;
     }
     
     public VectorClock getVectorClock(){
-        return v;
+        return vClock;
     }
     
     public Integer getSender(){
-        return sender;
+        return this.getNodeId();
     }
     
-    public void setSender(Integer sender){
-        this.sender = sender;
-    }
+//    public void setSender(Integer sender){
+//        this.sender = sender;
+//    }
     
 }

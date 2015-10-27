@@ -22,7 +22,7 @@ public class NodeInfo implements java.io.Serializable {
     public NodeInfo(String ipAddress, String name) throws UnknownHostException {
         this.ipAddress = InetAddress.getByName(ipAddress);
         this.name = name;
-        this.nodeId = ipAddress.hashCode();
+        this.nodeId = this.ipAddress.hashCode();
     }
 
     public NodeInfo(InetAddress ipAddress, String name) throws UnknownHostException {
@@ -38,9 +38,9 @@ public class NodeInfo implements java.io.Serializable {
     }
     
     public NodeInfo(DTO msg){
-        this.ipAddress = msg.ip;
-        this.name = msg.nodeName;
-        this.nodeId = msg.nodeId;
+        this.ipAddress = msg.getIp();
+        this.name = msg.getNodeName();
+        this.nodeId = msg.getNodeId();
     }
 
     @Override
@@ -77,7 +77,7 @@ public class NodeInfo implements java.io.Serializable {
         return ipAddress;
     }
 
-    public String getName() {
+    public String getNodeName() {
         return name;
     }
 

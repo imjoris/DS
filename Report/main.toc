@@ -1,0 +1,18 @@
+\select@language {english}
+\contentsline {section}{\numberline {1}Itroduction}{2}
+\contentsline {section}{\numberline {2}State of the art}{2}
+\contentsline {subsection}{\numberline {2.1}Examples of Distributed Systems}{2}
+\contentsline {subsection}{\numberline {2.2}Trend and State of the art}{2}
+\contentsline {section}{\numberline {3}Problem Statement}{3}
+\contentsline {subsection}{\numberline {3.1}Implementation and Design}{3}
+\contentsline {subsection}{\numberline {3.2}TCP/IP protocols}{4}
+\contentsline {subsection}{\numberline {3.3}The structure of the network}{4}
+\contentsline {subsection}{\numberline {3.4}Dynamic joining}{4}
+\contentsline {subsection}{\numberline {3.5}Election System}{5}
+\contentsline {subsection}{\numberline {3.6}Propagate the Changes}{5}
+\contentsline {subsection}{\numberline {3.7}Crash Detection and Recovery}{6}
+\contentsline {subsection}{\numberline {3.8}Synchronization}{6}
+\contentsline {subsection}{\numberline {3.9}Usage of External Frameworks}{6}
+\contentsline {subsection}{\numberline {3.10}Defense against Malicious Behavior}{7}
+\contentsline {section}{\numberline {4}Relation to Distributed Systems}{7}
+\contentsline {subsection}{\numberline {4.1}Conclusion}{7}

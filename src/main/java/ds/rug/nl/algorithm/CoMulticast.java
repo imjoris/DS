@@ -17,7 +17,6 @@ import java.util.Iterator;
 public class CoMulticast extends Algorithm {
 
     private ArrayList<Tuple> holdBackQ;
-    private Integer id;
     private BMulticast bmultiCast;
     private final CommonClientData clientData;
     
@@ -25,18 +24,26 @@ public class CoMulticast extends Algorithm {
         super(node);
         this.bmultiCast = bmulti;
         this.clientData = clientData;
+        this.holdBackQ = new ArrayList<Tuple>();
     }
 
     public void sendSmthg(DTO data) {
-        COmulticastDTO pckg = new COmulticastDTO(clientData.cVector, data, id);
+        clientData.cVector.incrementValue(node.getNodeId());
+        COmulticastDTO pckg = new COmulticastDTO(clientData.cVector, data);
+        this.setDTONodeInfo(pckg);
+        System.out.println("Node " + node.getIpAddress() + " sending comulticast with vector " + clientData.cVector.get(node.getNodeId()).toString());
         bmultiCast.sendMulticast(pckg);
     }
 
     public void receiveSmthg(COmulticastDTO msg) {
         VectorClock rcvVector = msg.getVectorClock();
         DTO data = msg.getMessage();
-
+        
+        System.out.print(node.getIpAddress() + " received comulticast from " + msg.getIp() + " with vector " + msg.getVectorClock().get(msg.getSender()) + ".");
+        System.out.println(" Local vectorclock of node is " + clientData.cVector.get(msg.getSender()).toString());
+        
         if (clientData.cVector.isNext(rcvVector, msg.getSender())) {
+            System.out.println(node.getIpAddress() + " delivered comulti from " + msg.getIp());
             deliverDTO(data, msg.getSender());
         } else {
             holdBackQ.add(new Tuple(rcvVector, data, msg.getSender()));
@@ -44,8 +51,10 @@ public class CoMulticast extends Algorithm {
     }
 
     public void deliverDTO(DTO data, Integer sender) {
-        clientData.cVector.incementValue(sender);
-
+        this.node.getCmdMessageHandler().handleDTO(data);
+        
+        clientData.cVector.incrementValue(sender);
+        
         Iterator<Tuple> i = holdBackQ.iterator();
         while (i.hasNext()) {
             Tuple tmp = i.next();
@@ -58,6 +67,6 @@ public class CoMulticast extends Algorithm {
 
     @Override
     public void handleDTO(DTO message) {
-        COmulticastDTO msg = (COmulticastDTO) message;
+        receiveSmthg((COmulticastDTO) message);
     }
 }

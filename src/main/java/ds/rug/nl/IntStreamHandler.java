@@ -7,6 +7,9 @@ package ds.rug.nl;
 
 import ds.rug.nl.main.StreamHandler;
 import ds.rug.nl.network.DTO.StreamDTO;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 /**
  *
@@ -16,7 +19,6 @@ public class IntStreamHandler implements StreamHandler<Integer> {
 
     @Override
     public void receiveStream(StreamDTO<Integer> packet) {
-        System.out.println(packet.data);
-    }
-    
+        //new Logger().log(new LogRecord(Level.FINE, packet.data.toString()));
+    }    
 }

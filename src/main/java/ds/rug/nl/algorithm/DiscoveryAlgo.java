@@ -47,8 +47,9 @@ public class DiscoveryAlgo extends Algorithm {
             replyDto = msg;
             replyLatch.countDown();
         } else {
-            if (clientData.streamTree == null)
+            if (clientData.streamTree == null){
                 return;
+            }
             reply(new DiscoveryDTO(DiscoveryDTO.CmdType.reply), msg);
         }
     }

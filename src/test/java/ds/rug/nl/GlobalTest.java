@@ -4,17 +4,9 @@
  * and open the template in the editor.
  */
 package ds.rug.nl;
-import ds.rug.nl.main.Config;
-import ds.rug.nl.network.DTO.DTO;
-import ds.rug.nl.network.DTO.MulticastDTO;
-import ds.rug.nl.network.Networking;
-import ds.rug.nl.network.hostInfo;
-import ds.rug.nl.threads.IReceiver;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
 
+import ds.rug.nl.network.Networking;
+import org.junit.Test;
 
 /**
  *
@@ -23,9 +15,14 @@ import org.junit.Test;
 public class GlobalTest {
 
     @Test
-    public void test() throws InterruptedException{
-        Source.main(new String[] {"myhost1", "127.0.0.2"});
-        App.main(new String[] {"myhost1", "127.0.0.3"});
-        while(true){}
+    public void test() throws InterruptedException {
+        Source.main(new String[]{"myhost1", "127.0.0.2"});
+        Thread.sleep(5000);
+        Networking network = new Networking();
+        for (int i = 0; i <2 ; i++) {
+            App.main(new String[]{"myclient"+(i+3), Networking.nextIpAddress("127.0.0."+(i+2))});
+        }
+        while (true) {
+        }
     }
 }

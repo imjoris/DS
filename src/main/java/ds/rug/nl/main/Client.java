@@ -20,21 +20,24 @@ public class Client<T> extends Node {
 
     // Variables are shared with multiple algorithms
     private final CommonClientData clientData;
-    
+
     private final CoMulticast coMulticast;
     private final DiscoveryAlgo discoveryAlgo;
     private final JoinAlgo joinAlgo;
     private final StreamAlgo<T> streamAlgo;
 
+    private boolean isFirst;
+
     public Client(NodeInfo nodeInfo, StreamHandler streamHandler) {
         super(nodeInfo);
         clientData = new CommonClientData(nodeInfo);
-        
+
+        this.isFirst = false;
         System.out.println("Creating client");
 
         bMulticast = new BMulticast(this, cmdMessageHandler, clientData);
         cmdMessageHandler.registerAlgorithm(MulticastDTO.class, bMulticast);
-        
+
         coMulticast = new CoMulticast(this, bMulticast, clientData);
         cmdMessageHandler.registerAlgorithm(COmulticastDTO.class, coMulticast);
         
@@ -44,12 +47,16 @@ public class Client<T> extends Node {
         
         joinAlgo = new JoinAlgo(this, clientData, coMulticast, discoveryAlgo); 
         joinAlgo.registerDTOs();
-        
+
         streamAlgo = new StreamAlgo<T>(this, clientData, streamHandler);
         cmdMessageHandler.registerAlgorithm(StreamDTO.class, streamAlgo);
     }
-    
-    public StreamAlgo<T> getStream(){
+
+    public void setFirstNode(boolean isFirst) {
+        this.isFirst = isFirst;
+    }
+
+    public StreamAlgo<T> getStream() {
         return this.streamAlgo;
     }
 
@@ -63,10 +70,14 @@ public class Client<T> extends Node {
         hostInfo info = new hostInfo(this, Config.commandPort);
         network.startReceiving(info);
         network.startReceiveMulticasts(info, bMulticast);
-        try {
-            joinAlgo.joinTree();
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        if (isFirst) {
+            clientData.streamTree = clientData.thisNode;
+        } else {
+            try {
+                joinAlgo.joinTree();
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }

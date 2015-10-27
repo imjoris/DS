@@ -14,13 +14,15 @@ import ds.rug.nl.threads.CmdMessageHandler;
 import ds.rug.nl.tree.TreeNode;
 import java.net.UnknownHostException;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sun.misc.Queue;
 
 /**
  * Handles the following DTOs: JoinRequestDTO, JoinResponseDTO, NodeStateDTO,
- JoinAnnounceDTO
+ * JoinAnnounceDTO
  *
  * @author Bart
  */
@@ -35,15 +37,19 @@ public class JoinAlgo extends Algorithm {
     private CountDownLatch treeLatch;
     private NodeStateDTO treeResponse;
 
+    private LinkedList<JoinAnnounceDTO> joinAnnounceQueue;
+
     public JoinAlgo(Node node,
             CommonClientData clientData,
             CoMulticast coMulticast,
             DiscoveryAlgo discovery
             ) {
+
         super(node);
         this.clientData = clientData;
         this.coMulticast = coMulticast;
         this.discovery = discovery;
+        this.joinAnnounceQueue = new LinkedList<JoinAnnounceDTO>();
     }
 
     public void registerDTOs() {
@@ -62,7 +68,7 @@ public class JoinAlgo extends Algorithm {
         while (highestLeaves.hasNext()) {
             TreeNode<NodeInfo> leaf = highestLeaves.next();
             NodeInfo leafNode = leaf.contents;
-            
+
             if (!leafNode.equals(clientData.thisNode.contents) && requestAttach(leafNode)) {
                 clientData.thisNode = leaf.addChild(this.node.getNodeInfo());
                 announceJoin();
@@ -89,12 +95,14 @@ public class JoinAlgo extends Algorithm {
         } catch (InterruptedException ex) {
             Logger.getLogger(JoinAlgo.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (clientData.streamTree == null) {
-            clientData.streamTree = new TreeNode<NodeInfo>(new NodeInfo(treeResponse.ip, treeResponse.nodeName));
-        } else {
-            clientData.streamTree = treeResponse.streamTree;
-        }
+        System.out.println("Node " + clientData.thisNode.contents.getIpAddress() + "received tree");
+        clientData.streamTree = treeResponse.streamTree;
         
+        System.out.println("Received tree:");
+        printTree(treeResponse.streamTree);
+        
+        processJoinAnnounceQueue();
+
         clientData.bVector = treeResponse.bmvc;
         clientData.cVector = treeResponse.covc;
     }
@@ -109,6 +117,9 @@ public class JoinAlgo extends Algorithm {
             joinLatch.await();
         } catch (InterruptedException ex) {
             Logger.getLogger(JoinAlgo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if(joinResponse.responseType == accepted){
+            System.out.println("Node " + this.node.getIpAddress() + " is accepted to be a child of " + joinResponse.getIp());
         }
         return joinResponse.responseType == accepted;
     }
@@ -136,24 +147,18 @@ public class JoinAlgo extends Algorithm {
     }
 
     private void handleRequest(JoinRequestDTO message) {
-        if (this.fullNode()) {
+        if (this.isFull()) {
             joinResponse = new JoinResponseDTO(denied);
         } else {
-            this.addChild(message.nodeInfo);
+            //
             joinResponse = new JoinResponseDTO(accepted);
         }
         reply(joinResponse, message);
     }
 
-    private boolean fullNode() {
+    private boolean isFull() {
         synchronized (clientData) {
             return clientData.thisNode.children.size() >= 3;
-        }
-    }
-
-    private void addChild(NodeInfo nodeInfo) {
-        synchronized (clientData) {
-            clientData.thisNode.addChild(nodeInfo);
         }
     }
 
@@ -165,8 +170,9 @@ public class JoinAlgo extends Algorithm {
             return;
         }
         if (treeDTO.cmd == CmdType.request) {
-            if (clientData.streamTree == null)
+            if (clientData.streamTree == null) {
                 return;
+            }
             NodeStateDTO response = new NodeStateDTO(CmdType.reply, clientData.streamTree, clientData.bVector, clientData.cVector);
             reply(response, treeDTO);
         }
@@ -174,12 +180,55 @@ public class JoinAlgo extends Algorithm {
     }
 
     private void announceJoin() {
-        JoinAnnounceDTO msg = new JoinAnnounceDTO(clientData.thisNode.contents,
-                clientData.thisNode.parent.contents);
+        JoinAnnounceDTO msg = new JoinAnnounceDTO(
+                clientData.thisNode.contents,
+                clientData.thisNode.parent.contents
+        );
+        System.out.println("Node " + node.getIpAddress() + " announcing being a child of " + clientData.thisNode.parent.contents.getIpAddress());
         coMulticast.sendSmthg(msg);
     }
 
+    private void printTree(TreeNode<NodeInfo> node){
+        node = clientData.thisNode;
+        while (!node.isRoot()) {
+            printChildren(node);
+            node = node.parent;
+        }
+        printChildren(node);
+    }
+    private void printChildren(TreeNode<NodeInfo> t) {
+        if(t == null){
+            return;
+        }
+        int i = 1;
+        System.out.println("Info of Node " + t.contents.getIpAddress());
+        System.out.println("\tNUM CHILDREN:" + t.children.size());
+        
+        for (TreeNode<NodeInfo> childNode : t.children) {
+            System.out.println("\tINFO OF CHILD:" + i);
+            System.out.println("\t\tCHILD" + i +" IP:" + childNode.contents.getIpAddress());
+            System.out.println("\t\tCHILD" + i + " HOSTNAME:" + childNode.contents.getNodeName());
+            printChildren(childNode);
+        }
+    }
+    
+    private void processJoinAnnounceQueue() {
+        for (JoinAnnounceDTO joinDto : joinAnnounceQueue) {
+            if (clientData.streamTree.findTreeNode(joinDto.joinedNode) != null) {
+                handleAnnounce(joinDto);
+            }
+        }
+        joinAnnounceQueue.clear();
+    }
+
     private void handleAnnounce(JoinAnnounceDTO announcement) {
-        clientData.streamTree.findTreeNode(announcement.parentNode).addChild(announcement.joinedNode);
+        if (clientData.streamTree == null) {
+            System.out.println(node.getIpAddress() + " Queued an announcement");
+            joinAnnounceQueue.add(announcement);
+        }
+        TreeNode<NodeInfo> treeNode = clientData.streamTree.findTreeNode(announcement.parentNode);
+        treeNode.addChild(announcement.joinedNode);
+        System.out.println("MY IP:" + clientData.thisNode.contents.getIpAddress());
+        printTree(clientData.streamTree);
     }
 }

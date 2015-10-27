@@ -12,6 +12,7 @@ public class TestDTO extends DTO{
         super();
         this.testString = testString;
         this.setNodeName(nodeName);
+
     }
     
 }

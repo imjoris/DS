@@ -52,6 +52,8 @@ public class JoinAlgo extends Algorithm {
         this.leaderAl = leaderAl;
         this.discovery = discovery;
         this.joinAnnounceQueue = new LinkedList<JoinAnnounceDTO>();
+        this.treeLatch = new CountDownLatch(1);
+        this.joinLatch = new CountDownLatch(1);
     }
 
     public void registerDTOs() {
@@ -74,8 +76,9 @@ public class JoinAlgo extends Algorithm {
             if (!leafNode.equals(clientData.thisNode.contents) && requestAttach(leafNode)) {
                 clientData.thisNode = leaf.addChild(this.node.getNodeInfo());
                 announceJoin();
+                return;
             }
-            return;
+            
         }
 
         // if we get here, none of the leaves were available, so we restart
@@ -89,7 +92,7 @@ public class JoinAlgo extends Algorithm {
      */
     private void getTree() throws UnknownHostException {
         String aPeer = discovery.getAPeer();
-        treeLatch = new CountDownLatch(1);
+        
         NodeStateDTO req = new NodeStateDTO(CmdType.request, null, null, null);
         send(req, aPeer);
         try {
@@ -110,7 +113,7 @@ public class JoinAlgo extends Algorithm {
     }
 
     private boolean requestAttach(NodeInfo leafNode) {
-        joinLatch = new CountDownLatch(1);
+        
         JoinRequestDTO request = new JoinRequestDTO(this.node.getNodeInfo());
         send(request, leafNode);
         // Should be promise / future, perhaps on algorithm level
@@ -152,9 +155,11 @@ public class JoinAlgo extends Algorithm {
         if (this.isFull()) {
             joinResponse = new JoinResponseDTO(denied, null);
         } else {
-            //
+            clientData.thisNode.addChild(message.nodeInfo);
             joinResponse = new JoinResponseDTO(accepted, leaderAl.getNeighbour());
+            System.out.println(node.getIpAddress()+ " is accepting " + message.getIp() + " as a child");
         }
+        
         reply(joinResponse, message);
     }
 
@@ -193,24 +198,29 @@ public class JoinAlgo extends Algorithm {
     private void printTree(TreeNode<NodeInfo> node){
         node = clientData.thisNode;
         while (!node.isRoot()) {
-            printChildren(node);
+            printChildren(node, 0);
             node = node.parent;
         }
-        printChildren(node);
+        printChildren(node, 0);
     }
-    private void printChildren(TreeNode<NodeInfo> t) {
+    private void printChildren(TreeNode<NodeInfo> t, int ind) {
         if(t == null){
             return;
         }
+        String indent="";
+        for(int i =0; i < ind; i++){
+            indent += "\t";
+        }
         int i = 1;
-        System.out.println("Info of Node " + t.contents.getIpAddress());
-        System.out.println("\tNUM CHILDREN:" + t.children.size());
+        System.out.println(indent + "Info of Node " + t.contents.getIpAddress());
+        System.out.println(indent + "NUM CHILDREN:" + t.children.size());
         
         for (TreeNode<NodeInfo> childNode : t.children) {
-            System.out.println("\tINFO OF CHILD:" + i);
-            System.out.println("\t\tCHILD" + i +" IP:" + childNode.contents.getIpAddress());
-            System.out.println("\t\tCHILD" + i + " HOSTNAME:" + childNode.contents.getNodeName());
-            printChildren(childNode);
+            System.out.println(indent + "INFO OF CHILD:" + i);
+            System.out.println(indent + "\tCHILD" + i +" IP:" + childNode.contents.getIpAddress());
+            System.out.println(indent + "\tCHILD" + i + " HOSTNAME:" + childNode.contents.getNodeName());
+            printChildren(childNode, (ind+1));
+            i++;
         }
     }
     
@@ -228,6 +238,10 @@ public class JoinAlgo extends Algorithm {
             System.out.println(node.getIpAddress() + " Queued an announcement");
             joinAnnounceQueue.add(announcement);
         }
+        if(clientData.thisNode.contents.equals(announcement.parentNode)){
+            return;
+        }
+        
         TreeNode<NodeInfo> treeNode = clientData.streamTree.findTreeNode(announcement.parentNode);
         treeNode.addChild(announcement.joinedNode);
         System.out.println("MY IP:" + clientData.thisNode.contents.getIpAddress());

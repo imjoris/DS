@@ -21,7 +21,6 @@ public class VectorClock extends HashMap<Integer, Integer> {
     }
 
     public Boolean isNext(VectorClock vc, Integer senderKey) {
-
         Set<Integer> s = new HashSet<Integer>(this.keySet());
         s.addAll(new HashSet<Integer>(vc.keySet()));
 
@@ -34,7 +33,7 @@ public class VectorClock extends HashMap<Integer, Integer> {
         Iterator<Integer> sIterator = s.iterator();
         while (sIterator.hasNext()) {
             Integer key = sIterator.next();
-            if (!(vc.get(key) >= this.get(key))) {
+            if (!(vc.get(key) < this.get(key))) {
                 System.out.println(senderKey.toString() +" point 2: did not accept the vector clock");
                 return false;
             }

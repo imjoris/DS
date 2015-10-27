@@ -39,8 +39,8 @@ public class CoMulticast extends Algorithm {
         VectorClock rcvVector = msg.getVectorClock();
         DTO data = msg.getMessage();
         
-        System.out.print(node.getIpAddress() + " received comulticast from " + msg.getIp() + " with vector " + msg.getVectorClock().get(msg.getSender()) + ".");
-        System.out.println(" Local vectorclock of node is " + clientData.cVector.get(msg.getSender()).toString());
+        System.out.print(node.getIpAddress() + " received comulticast from " + msg.getIp() + " with vector " + msg.getVectorClock().toString() + ".");
+        System.out.println(" Local vectorclock of node is " + clientData.cVector.toString());
         
         if (clientData.cVector.isNext(rcvVector, msg.getSender())) {
             System.out.println(node.getIpAddress() + " delivered comulti from " + msg.getIp());

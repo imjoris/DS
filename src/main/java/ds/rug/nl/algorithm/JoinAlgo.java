@@ -71,7 +71,7 @@ public class JoinAlgo extends Algorithm {
             TreeNode<NodeInfo> leaf = highestLeaves.next();
             NodeInfo leafNode = leaf.contents;
 
-            if (!leafNode.equals(clientData.thisNode.contents) && requestAttach(leafNode)) {
+            if ((!leafNode.equals(clientData.thisNode.contents)) && requestAttach(leafNode)) {
                 clientData.thisNode = leaf.addChild(this.node.getNodeInfo());
                 announceJoin();
                 return;
@@ -102,7 +102,7 @@ public class JoinAlgo extends Algorithm {
         clientData.streamTree = treeResponse.streamTree;
         
         System.out.println("Received tree:");
-        printTree(treeResponse.streamTree);
+        printTree();
         
         processJoinAnnounceQueue();
 
@@ -193,10 +193,10 @@ public class JoinAlgo extends Algorithm {
         coMulticast.sendSmthg(msg);
     }
 
-    private void printTree(TreeNode<NodeInfo> node){
+    private void printTree(){
+        TreeNode<NodeInfo> node;
         node = clientData.thisNode;
         while (!node.isRoot()) {
-            printChildren(node, 0);
             node = node.parent;
         }
         printChildren(node, 0);
@@ -243,6 +243,6 @@ public class JoinAlgo extends Algorithm {
         TreeNode<NodeInfo> treeNode = clientData.streamTree.findTreeNode(announcement.parentNode);
         treeNode.addChild(announcement.joinedNode);
         System.out.println("MY IP:" + clientData.thisNode.contents.getIpAddress());
-        printTree(clientData.streamTree);
+        printTree();
     }
 }

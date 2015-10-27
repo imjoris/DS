@@ -29,8 +29,10 @@ public class Client<T> extends Node {
 
     private boolean isFirst;
 
-    public Client(NodeInfo nodeInfo, StreamHandler streamHandler) {
+    public Client(NodeInfo nodeInfo, StreamHandler streamHandler, boolean isFirst) {
         super(nodeInfo);
+        this.isFirst = isFirst;
+
         clientData = new CommonClientData(nodeInfo);
 
         this.isFirst = false;
@@ -41,19 +43,23 @@ public class Client<T> extends Node {
 
         coMulticast = new CoMulticast(this, bMulticast, clientData);
         cmdMessageHandler.registerAlgorithm(COmulticastDTO.class, coMulticast);
-        
+
         discoveryAlgo = new DiscoveryAlgo(this, clientData);
         cmdMessageHandler.registerAlgorithm(DiscoveryDTO.class, discoveryAlgo);
-        
+
         leaderAlgo = new LeaderAlgo(this);
         cmdMessageHandler.registerAlgorithm(ElectionDTO.class, leaderAlgo);
         cmdMessageHandler.registerAlgorithm(RingInsertDTO.class, leaderAlgo);
-        
-        joinAlgo = new JoinAlgo(this, clientData, coMulticast, discoveryAlgo, leaderAlgo);
+
+        joinAlgo = new JoinAlgo(this, clientData, coMulticast, discoveryAlgo, leaderAlgo, isFirst);
         joinAlgo.registerDTOs();
 
         streamAlgo = new StreamAlgo<T>(this, clientData, streamHandler);
         cmdMessageHandler.registerAlgorithm(StreamDTO.class, streamAlgo);
+
+        if (isFirst) {
+            clientData.streamTree = clientData.thisNode;
+        }
     }
 
     public void setFirstNode(boolean isFirst) {
@@ -74,14 +80,16 @@ public class Client<T> extends Node {
         hostInfo info = new hostInfo(this, Config.commandPort);
         network.startReceiving(info);
         network.startReceiveMulticasts(info, bMulticast);
-        if (isFirst) {
-            clientData.streamTree = clientData.thisNode;
-        } else {
-            try {
-                joinAlgo.joinTree();
-            } catch (UnknownHostException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        try {
+            joinAlgo.joinTree();
+            while(true){
+                Thread.sleep(300);
+                this.bMulticast.sendMulticast(new GeneralHeartBeatDTO(null, null));
             }
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

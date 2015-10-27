@@ -39,7 +39,7 @@ public class App {
             }
             NodeInfo nodeInfo = new NodeInfo(Ip, hostName);
 
-            Client client = new Client(nodeInfo, sHandle);
+            Client client = new Client(nodeInfo, sHandle, false);
             client.start();
         } catch (UnknownHostException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);

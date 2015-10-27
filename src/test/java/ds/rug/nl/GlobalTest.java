@@ -17,10 +17,12 @@ public class GlobalTest {
     @Test
     public void test() throws InterruptedException {
         Source.main(new String[]{"myhost1", "127.0.0.2"});
-        Thread.sleep(5000);
+        Thread.sleep(1000);
         Networking network = new Networking();
-        for (int i = 0; i <6 ; i++) {
-            App.main(new String[]{"myclient"+(i+3), Networking.nextIpAddress("127.0.0."+(i+2))});
+        for (int i = 0; i < 6; i++) {
+            Thread.sleep(500);
+            App.main(new String[]{"myclient" + (i + 3), Networking.nextIpAddress("127.0.0." + (i + 2))
+            });
         }
         while (true) {
             Thread.sleep(2000);

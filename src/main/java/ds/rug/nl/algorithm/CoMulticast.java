@@ -15,7 +15,6 @@ import java.util.Iterator;
  * @author angelo
  */
 public class CoMulticast extends Algorithm {
-
     private ArrayList<Tuple> holdBackQ;
     private BMulticast bmultiCast;
     private final CommonClientData clientData;
@@ -50,7 +49,7 @@ public class CoMulticast extends Algorithm {
         }
     }
 
-    public void deliverDTO(DTO data, Integer sender) {
+    public synchronized void deliverDTO(DTO data, Integer sender) {
         
         this.node.getCmdMessageHandler().handleDTO(data);
         

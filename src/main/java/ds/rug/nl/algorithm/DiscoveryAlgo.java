@@ -9,9 +9,6 @@ import ds.rug.nl.main.CommonClientData;
 import ds.rug.nl.main.Node;
 import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.DTO.DiscoveryDTO;
-import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -19,7 +16,7 @@ import java.util.logging.Logger;
  */
 public class DiscoveryAlgo extends Algorithm {
 
-    private CountDownLatch replyLatch;
+    private CustomLatch replyLatch;
     private DiscoveryDTO replyDto;
     CommonClientData clientData;
 
@@ -29,15 +26,10 @@ public class DiscoveryAlgo extends Algorithm {
     }
 
     public String getAPeer() {
-        replyLatch = new CountDownLatch(1);
+        replyLatch = new CustomLatch();
         this.multicast(new DiscoveryDTO(DiscoveryDTO.CmdType.request));
-        try {
-            replyLatch.await();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(DiscoveryAlgo.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        replyLatch.await();
         return replyDto.getIp().getHostAddress();
-
     }
 
     @Override
@@ -45,7 +37,7 @@ public class DiscoveryAlgo extends Algorithm {
         DiscoveryDTO msg = (DiscoveryDTO) message;
         if (msg.cmd == DiscoveryDTO.CmdType.reply) {
             replyDto = msg;
-            replyLatch.countDown();
+            replyLatch.notifyWaiter();
         } else {
             if (clientData.streamTree == null 
                     || message.getIp() == node.getIpAddress()){

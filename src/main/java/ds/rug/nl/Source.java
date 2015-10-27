@@ -38,7 +38,7 @@ public class Source {
             }
             NodeInfo nodeInfo = new NodeInfo(Ip, hostName);
 
-            client = new Client<Integer>(nodeInfo, sHandle);
+            client = new Client<Integer>(nodeInfo, sHandle, true);
             client.setFirstNode(true);
             class keepSendingThread extends Thread {
 

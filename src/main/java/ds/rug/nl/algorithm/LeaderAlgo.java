@@ -24,7 +24,7 @@ public class LeaderAlgo extends Algorithm {
     private NodeInfo nextNode;
     private NodeInfo currentLeader;
     
-    private final CountDownLatch insertLatch;
+    private final CustomLatch insertLatch;
     private RingInsertDTO insertMessage;
     private final ElectionLock electionLock;
     private boolean participant;
@@ -96,17 +96,13 @@ public class LeaderAlgo extends Algorithm {
         super(node);
         nextNode = null;
         currentLeader = null;
-        insertLatch = new CountDownLatch(1);
+        insertLatch = new CustomLatch();
         electionLock = new ElectionLock();
     }
     
     public synchronized void requestInsert(NodeInfo node){
         send(new RingInsertDTO(RingInsertDTO.CmdType.REQUEST, this.node.getNodeInfo()), node);
-        try {
-            insertLatch.await();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(LeaderAlgo.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        insertLatch.await();
         // here we received the response in this.insertMessage
         this.nextNode = insertMessage.newNeighbour;        
     }
@@ -153,7 +149,7 @@ public class LeaderAlgo extends Algorithm {
             break;
             case ACCEPT:
                 insertMessage = message;
-                insertLatch.countDown();
+                insertLatch.notifyWaiter();
             break;
             case ACCEPT_ACK:
                 electionLock.LeaveJoining();

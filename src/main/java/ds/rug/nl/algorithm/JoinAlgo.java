@@ -45,7 +45,7 @@ public class JoinAlgo extends Algorithm {
             CoMulticast coMulticast,
             DiscoveryAlgo discovery,
             LeaderAlgo leaderAlgo
-            ) {
+    ) {
 
         super(node);
         this.clientData = clientData;
@@ -79,7 +79,7 @@ public class JoinAlgo extends Algorithm {
                 announceJoin();
                 leaderAlgo.requestInsert(leafNode);
                 return;
-            }            
+            }
         }
 
         // if we get here, none of the leaves were available, so we restart
@@ -93,7 +93,7 @@ public class JoinAlgo extends Algorithm {
      */
     private void getTree() throws UnknownHostException {
         String aPeer = discovery.getAPeer();
-        
+
         NodeStateDTO req = new NodeStateDTO(CmdType.request, null, null, null);
         send(req, aPeer);
         try {
@@ -103,10 +103,10 @@ public class JoinAlgo extends Algorithm {
         }
         System.out.println("Node " + clientData.thisNode.contents.getIpAddress() + "received tree");
         clientData.streamTree = treeResponse.streamTree;
-        
+
         System.out.println("Received tree:");
         printTree();
-        
+
         processJoinAnnounceQueue();
 
         clientData.bVector = treeResponse.bmvc;
@@ -114,7 +114,7 @@ public class JoinAlgo extends Algorithm {
     }
 
     private boolean requestAttach(NodeInfo leafNode) {
-        
+
         JoinRequestDTO request = new JoinRequestDTO(this.node.getNodeInfo());
         send(request, leafNode);
         // Should be promise / future, perhaps on algorithm level
@@ -124,7 +124,7 @@ public class JoinAlgo extends Algorithm {
         } catch (InterruptedException ex) {
             Logger.getLogger(JoinAlgo.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if(joinResponse.responseType == accepted){
+        if (joinResponse.responseType == accepted) {
             System.out.println("Node " + this.node.getIpAddress() + " is accepted to be a child of " + joinResponse.getIp());
         }
         return joinResponse.responseType == accepted;
@@ -158,9 +158,9 @@ public class JoinAlgo extends Algorithm {
         } else {
             clientData.thisNode.addChild(message.nodeInfo);
             joinResponse = new JoinResponseDTO(accepted);
-            System.out.println(node.getIpAddress()+ " is accepting " + message.getIp() + " as a child");
+            System.out.println(node.getIpAddress() + " is accepting " + message.getIp() + " as a child");
         }
-        
+
         reply(joinResponse, message);
     }
 
@@ -196,7 +196,7 @@ public class JoinAlgo extends Algorithm {
         coMulticast.sendSmthg(msg);
     }
 
-    private void printTree(){
+    private void printTree() {
         TreeNode<NodeInfo> node;
         node = clientData.thisNode;
         while (!node.isRoot()) {
@@ -204,27 +204,28 @@ public class JoinAlgo extends Algorithm {
         }
         printChildren(node, 0);
     }
+
     private void printChildren(TreeNode<NodeInfo> t, int ind) {
-        if(t == null){
+        if (t == null) {
             return;
         }
-        String indent="";
-        for(int i =0; i < ind; i++){
+        String indent = "";
+        for (int i = 0; i < ind; i++) {
             indent += "\t";
         }
         int i = 1;
         System.out.println(indent + "Info of Node " + t.contents.getIpAddress());
         System.out.println(indent + "NUM CHILDREN:" + t.children.size());
-        
+
         for (TreeNode<NodeInfo> childNode : t.children) {
             System.out.println(indent + "INFO OF CHILD:" + i);
-            System.out.println(indent + "\tCHILD" + i +" IP:" + childNode.contents.getIpAddress());
+            System.out.println(indent + "\tCHILD" + i + " IP:" + childNode.contents.getIpAddress());
             System.out.println(indent + "\tCHILD" + i + " HOSTNAME:" + childNode.contents.getNodeName());
-            printChildren(childNode, (ind+1));
+            printChildren(childNode, (ind + 1));
             i++;
         }
     }
-    
+
     private void processJoinAnnounceQueue() {
         for (JoinAnnounceDTO joinDto : joinAnnounceQueue) {
             if (clientData.streamTree.findTreeNode(joinDto.joinedNode) != null) {
@@ -239,13 +240,14 @@ public class JoinAlgo extends Algorithm {
             System.out.println(node.getIpAddress() + " Queued an announcement");
             joinAnnounceQueue.add(announcement);
         }
-        if(clientData.thisNode.contents.equals(announcement.parentNode)){
+        if (clientData.thisNode.contents.equals(announcement.parentNode)) {
             return;
         }
+
         
-        TreeNode<NodeInfo> treeNode = clientData.streamTree.findTreeNode(announcement.parentNode);
-        treeNode.addChild(announcement.joinedNode);
-        System.out.println("MY IP:" + clientData.thisNode.contents.getIpAddress());
-        printTree();
+            TreeNode<NodeInfo> treeNode = clientData.streamTree.findTreeNode(announcement.parentNode);
+            treeNode.addChild(announcement.joinedNode);
+            System.out.println("MY IP:" + clientData.thisNode.contents.getIpAddress());
+            printTree();
     }
 }

@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.Queue;
 import java.util.ArrayDeque;
 
-
 public class HighestLeafIter<T> implements Iterator<TreeNode<T>> {
     // This Deque will honor depth order via breadth first search
     // (with shallowest nodes appearing nearer to the end)

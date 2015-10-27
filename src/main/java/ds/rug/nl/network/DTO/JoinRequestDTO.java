@@ -7,9 +7,9 @@ import ds.rug.nl.main.NodeInfo;
  * @author Bart
  */
 public class JoinRequestDTO extends DTO{
-    public final NodeInfo nodeInfo;
+    public final NodeInfo requestingNode;
 
     public JoinRequestDTO(NodeInfo nodeInfo) {
-        this.nodeInfo = nodeInfo;
+        this.requestingNode = nodeInfo;
     }
 }

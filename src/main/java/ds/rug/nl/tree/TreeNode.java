@@ -34,7 +34,7 @@ public class TreeNode<T> implements java.io.Serializable {
 
     }
 
-    private boolean innerContainsrRecursive(TreeNode<T> node, NodeInfo nodeToSearch) {
+    private synchronized boolean innerContainsrRecursive(TreeNode<T> node, NodeInfo nodeToSearch) {
         if (node == null) {
             return false;
         }
@@ -78,7 +78,7 @@ public class TreeNode<T> implements java.io.Serializable {
         this.children = new ArrayList<TreeNode<T>>();
     }
 
-    public TreeNode<T> addChild(T child) {
+    public synchronized TreeNode<T> addChild(T child) {
         TreeNode<T> childNode = new TreeNode<T>(child);
 
         if (!(this.containsNode((NodeInfo) child))) {

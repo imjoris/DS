@@ -53,7 +53,6 @@ public class JoinAlgo extends Algorithm {
         this.discovery = discovery;
         this.leaderAlgo = leaderAlgo;
         this.joinAnnounceQueue = new LinkedList<JoinAnnounceDTO>();
-        this.treeLatch = new CountDownLatch(1);
         this.joinLatch = new CountDownLatch(1);
     }
 
@@ -97,6 +96,7 @@ public class JoinAlgo extends Algorithm {
         NodeStateDTO req = new NodeStateDTO(CmdType.request, null, null, null);
         send(req, aPeer);
         try {
+            this.treeLatch = new CountDownLatch(1);
             treeLatch.await();
         } catch (InterruptedException ex) {
             Logger.getLogger(JoinAlgo.class.getName()).log(Level.SEVERE, null, ex);
@@ -113,21 +113,31 @@ public class JoinAlgo extends Algorithm {
         clientData.cVector = treeResponse.covc;
     }
 
-    private boolean requestAttach(NodeInfo leafNode) {
+    private synchronized boolean requestAttach(NodeInfo leafNode) {
 
         JoinRequestDTO request = new JoinRequestDTO(this.node.getNodeInfo());
+        System.out.println(node.getIpAddress() + "is about to send a joinreq to " + leafNode.getIpAddress());
         send(request, leafNode);
         // Should be promise / future, perhaps on algorithm level
         try {
             // handleResponse will call notifyAll()
+            this.joinLatch = new CountDownLatch(1);
             joinLatch.await();
+            if (joinResponse.responseType == accepted) {
+                System.out.println("Node " + this.node.getIpAddress() + " is accepted to be a child of " + joinResponse.getIp());
+            } else {
+                System.out.println("Node " + this.node.getIpAddress() + " is denied to be a child of " + joinResponse.getIp());
+            }
+
+            if (joinResponse.responseType == accepted) {
+                return true;
+            } else {
+                return false;
+            }
         } catch (InterruptedException ex) {
             Logger.getLogger(JoinAlgo.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (joinResponse.responseType == accepted) {
-            System.out.println("Node " + this.node.getIpAddress() + " is accepted to be a child of " + joinResponse.getIp());
-        }
-        return joinResponse.responseType == accepted;
+        return false;
     }
 
     @Override
@@ -152,13 +162,15 @@ public class JoinAlgo extends Algorithm {
         joinLatch.countDown();
     }
 
-    private void handleRequest(JoinRequestDTO message) {
+    private synchronized void handleRequest(JoinRequestDTO message) {
         if (this.isFull()) {
             joinResponse = new JoinResponseDTO(denied);
+            System.out.println(node.getIpAddress() + " is denying " + message.getIp() + " as a child");
         } else {
-            clientData.thisNode.addChild(message.nodeInfo);
+            clientData.thisNode.addChild(message.requestingNode);
             joinResponse = new JoinResponseDTO(accepted);
             System.out.println(node.getIpAddress() + " is accepting " + message.getIp() + " as a child");
+            System.out.println("message ip of joinrequest: " + message.getIp());
         }
 
         reply(joinResponse, message);
@@ -244,10 +256,9 @@ public class JoinAlgo extends Algorithm {
             return;
         }
 
-        
-            TreeNode<NodeInfo> treeNode = clientData.streamTree.findTreeNode(announcement.parentNode);
-            treeNode.addChild(announcement.joinedNode);
-            System.out.println("MY IP:" + clientData.thisNode.contents.getIpAddress());
-            printTree();
+        TreeNode<NodeInfo> treeNode = clientData.streamTree.findTreeNode(announcement.parentNode);
+        treeNode.addChild(announcement.joinedNode);
+        System.out.println("MY IP:" + clientData.thisNode.contents.getIpAddress());
+        printTree();
     }
 }

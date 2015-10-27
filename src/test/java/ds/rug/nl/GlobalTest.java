@@ -19,7 +19,7 @@ public class GlobalTest {
         Source.main(new String[]{"myhost1", "127.0.0.2"});
         Thread.sleep(5000);
         Networking network = new Networking();
-        for (int i = 0; i <5 ; i++) {
+        for (int i = 0; i <6 ; i++) {
             App.main(new String[]{"myclient"+(i+3), Networking.nextIpAddress("127.0.0."+(i+2))});
         }
         while (true) {

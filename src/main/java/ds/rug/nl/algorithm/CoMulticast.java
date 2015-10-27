@@ -51,6 +51,7 @@ public class CoMulticast extends Algorithm {
     }
 
     public void deliverDTO(DTO data, Integer sender) {
+        
         this.node.getCmdMessageHandler().handleDTO(data);
         
         clientData.cVector.incrementValue(sender);
@@ -59,8 +60,8 @@ public class CoMulticast extends Algorithm {
         while (i.hasNext()) {
             Tuple tmp = i.next();
             if (clientData.cVector.isNext(tmp.vectorClock, tmp.id)) {
-                deliverDTO(data, tmp.id);
                 i.remove();
+                deliverDTO(tmp.dto, tmp.id);
             }
         }
     }

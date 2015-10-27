@@ -25,6 +25,7 @@ public class Client<T> extends Node {
     private final DiscoveryAlgo discoveryAlgo;
     private final JoinAlgo joinAlgo;
     private final StreamAlgo<T> streamAlgo;
+    private final LeaderAlgo leaderAlgo;
 
     private boolean isFirst;
 
@@ -44,8 +45,11 @@ public class Client<T> extends Node {
         discoveryAlgo = new DiscoveryAlgo(this, clientData);
         cmdMessageHandler.registerAlgorithm(DiscoveryDTO.class, discoveryAlgo);
         
+        leaderAlgo = new LeaderAlgo(this);
+        cmdMessageHandler.registerAlgorithm(ElectionDTO.class, discoveryAlgo);
+        cmdMessageHandler.registerAlgorithm(RingInsertDTO.class, discoveryAlgo);
         
-        joinAlgo = new JoinAlgo(this, clientData, coMulticast, discoveryAlgo); 
+        joinAlgo = new JoinAlgo(this, clientData, coMulticast, discoveryAlgo, leaderAlgo);
         joinAlgo.registerDTOs();
 
         streamAlgo = new StreamAlgo<T>(this, clientData, streamHandler);

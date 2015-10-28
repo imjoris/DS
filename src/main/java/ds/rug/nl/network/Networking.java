@@ -108,6 +108,7 @@ public class Networking {
 
                             ObjectInputStream in = new ObjectInputStream(callsocket.getInputStream());
                             DTO objectReceived = (DTO) in.readObject();
+                            callsocket.close();
                             Thread handleThreat = new mythread2(host.handler, objectReceived);
                             executor.execute(handleThreat);
 
@@ -258,7 +259,6 @@ public class Networking {
                             ByteArrayInputStream baos = new ByteArrayInputStream(b);
                             ObjectInputStream ois = new ObjectInputStream(baos);
                             DTO dto = (DTO) ois.readObject();
-
                             Thread handlerThread = new mythread2(handler, dto);
                             executor.execute(handlerThread);
                         } catch (IOException ex) {

@@ -90,25 +90,34 @@ public class JoinAlgo extends Algorithm {
 
     @SuppressWarnings("InfiniteRecursion")
     public void joinTree() throws UnknownHostException {
-        getTree();
+        try {
+            getTree();
+            processJoinAnnounceQueue();
+            Iterator<TreeNode<NodeInfo>> highestLeaves = clientData.streamTree.getHighestLeaves();
+            while (highestLeaves.hasNext()) {
+                TreeNode<NodeInfo> leaf = highestLeaves.next();
+                NodeInfo leafNode = leaf.contents;
 
-        Iterator<TreeNode<NodeInfo>> highestLeaves = clientData.streamTree.getHighestLeaves();
-        while (highestLeaves.hasNext()) {
-            TreeNode<NodeInfo> leaf = highestLeaves.next();
-            NodeInfo leafNode = leaf.contents;
-
-            if ((!leafNode.equals(clientData.thisNode.contents)) && requestAttach(leafNode)) {
-                clientData.thisNode = leaf.addChild(this.node.getNodeInfo());
-                announceJoin();
-                leaderAlgo.requestInsert(leafNode);
-                return;
+                if ((!leafNode.equals(clientData.thisNode.contents)) && requestAttach(leafNode)) {
+                    //clientData.thisNode = new TreeNode<NodeInfo>(this.node.getNodeInfo());
+                    leaf.children.add(clientData.thisNode);
+                    clientData.thisNode.parent = leaf;
+                    //leaf.addChild(this.node.getNodeInfo());
+                    announceJoin();
+                    //leaderAlgo.requestInsert(leafNode);
+                    return;
+                }
             }
-        }
 
-        // if we get here, none of the leaves were available, so we restart
-        // this should be rare, so recursion should rarely happen and it is more
-        // legible than a while (true)
-        this.joinTree();
+            // if we get here, none of the leaves were available, so we restart
+            // this should be rare, so recursion should rarely happen and it is more
+            // legible than a while (true)
+            Thread.sleep(1000);
+            System.out.println(node.getIpAddress() + " No leaves found");
+            this.joinTree();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(JoinAlgo.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -124,8 +133,7 @@ public class JoinAlgo extends Algorithm {
         clientData.streamTree = treeResponse.streamTree;
 
         //out.println("Received tree:");
-        //printTree();
-        processJoinAnnounceQueue();
+        printTree();
 
         clientData.bVector = treeResponse.bmvc;
         clientData.cVector = treeResponse.covc;
@@ -193,7 +201,9 @@ public class JoinAlgo extends Algorithm {
                 //System.out.println(node.getIpAddress() + " is accepting " + message.getIp() + " as a child");
                 //System.out.println("message ip of joinrequest: " + message.getIp());
             }
-
+            if (joinResponse == null) {
+                System.out.println("joinresponse was null");
+            }
             reply(joinResponse, message);
         }
     }
@@ -232,7 +242,7 @@ public class JoinAlgo extends Algorithm {
         hasAnnouncedLatch.countDown();
     }
 
-    private void printTree() {
+    public void printTree() {
         TreeNode<NodeInfo> node;
         node = clientData.streamTree;
         while (!node.isRoot()) {
@@ -283,11 +293,22 @@ public class JoinAlgo extends Algorithm {
             }
             System.out.println(node.getIpAddress() + " Processes announcement: parentnode=" + announcement.parentNode.getIpAddress() + " joinednode: " + announcement.joinedNode.getIpAddress());
             TreeNode<NodeInfo> treeNode = clientData.streamTree.findTreeNode(announcement.parentNode);
-            //if(treeNode != null){
-            NodeInfo announcedJoinedNode = announcement.joinedNode;
-            treeNode.addChild(announcedJoinedNode);
+            if (treeNode == null) {
+                try {
+                    System.out.println(node.getIpAddress() + " is retrying to process the announce with a new tree");
+                    Thread.sleep(500);
+                    getTree();
+                    handleAnnounce(announcement);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(JoinAlgo.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (UnknownHostException ex) {
+                    Logger.getLogger(JoinAlgo.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                NodeInfo announcedJoinedNode = announcement.joinedNode;
+                TreeNode<NodeInfo> addChild = treeNode.addChild(announcedJoinedNode);
+            }
             //}
-
             //LOGGERSTUFF
             //System.out.println("MY IP:" + clientData.thisNode.contents.getIpAddress());
             //printTree();

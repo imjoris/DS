@@ -75,20 +75,23 @@ public class Client<T> extends Node {
         //network.send(new JoinDTO(getinfo), Config.dnsip, Config.commandPort);
     }
 
+    public void printTree(){
+        joinAlgo.printTree();
+    }
     @Override
     public void run() {
         hostInfo info = new hostInfo(this, Config.commandPort);
         network.startReceiving(info);
         network.startReceiveMulticasts(info, bMulticast);
         try {
-            joinAlgo.joinTree();
-            while(true){
-                Thread.sleep(300);
-                this.bMulticast.sendMulticast(new GeneralHeartBeatDTO(null, null));
+            if (!isFirst) {
+                joinAlgo.joinTree();
             }
+//            while(true){
+//                Thread.sleep(300);
+//                this.bMulticast.sendMulticast(new GeneralHeartBeatDTO(null, null));
+//            }
         } catch (UnknownHostException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

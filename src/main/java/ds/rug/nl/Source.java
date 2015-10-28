@@ -18,9 +18,9 @@ import java.util.logging.Logger;
  * @author Bart
  */
 public class Source {
-
+    public static Client<Integer> client;
     public static void main(String[] args) throws InterruptedException {
-        Client<Integer> client;
+        
         try {
             StreamHandler<Integer> sHandle = new IntStreamHandler();
 
@@ -72,5 +72,7 @@ public class Source {
         }
 
     }
-
+    public static void printTree(){
+        client.printTree();
+    }
 }

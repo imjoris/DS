@@ -7,6 +7,10 @@ import ds.rug.nl.network.DTO.DTO;
 import ds.rug.nl.network.Tuple;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Handles the following DTOs:
@@ -24,8 +28,9 @@ public class CoMulticast extends Algorithm {
         this.bmultiCast = bmulti;
         this.clientData = clientData;
         this.holdBackQ = new ArrayList<Tuple>();
-    }
 
+    }
+    
     public void sendSmthg(DTO data) {
         clientData.cVector.incrementValue(node.getNodeId());
         COmulticastDTO pckg = new COmulticastDTO(clientData.cVector, data);
@@ -64,7 +69,7 @@ public class CoMulticast extends Algorithm {
             }
         }
     }
-
+    
     @Override
     public void handleDTO(DTO message) {
         receiveSmthg((COmulticastDTO) message);

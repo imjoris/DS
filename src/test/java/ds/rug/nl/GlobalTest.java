@@ -24,6 +24,9 @@ public class GlobalTest {
             App.main(new String[]{"myclient" + (i + 3), Networking.nextIpAddress("127.0.0." + (i + 2))
             });
         }
+        Thread.sleep(5000);
+        System.out.println("Final tree:");
+        Source.printTree();
         while (true) {
             Thread.sleep(2000);
         }

@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ds.rug.nl.algorithm.Algorithm;
 import ds.rug.nl.network.DTO.DTO;
+import ds.rug.nl.network.DTO.MulticastDTO;
 import ds.rug.nl.network.DTO.StreamDTO;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +22,7 @@ import java.util.logging.Logger;
  *
  * @author joris
  */
-public class CmdMessageHandler implements IReceiver{
+public class CmdMessageHandler implements IReceiver, IMulticastReceiver{
 
     Map<Class, Algorithm> mTypeToHandler;
     private final BlockingQueue queue;
@@ -31,14 +32,6 @@ public class CmdMessageHandler implements IReceiver{
     }
     public void registerAlgorithm(Class messagetype, Algorithm algorithm){
         mTypeToHandler.put(messagetype, algorithm);
-    }
-    
-    public void putDTOToHandle(DTO dto){
-        try {
-            queue.put(dto);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(CmdMessageHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
     
     @Override
@@ -53,6 +46,11 @@ public class CmdMessageHandler implements IReceiver{
             }
             algo.handleMsg(dto);
         }
+    }
+    
+    @Override
+    public void handleMulticastDTO(MulticastDTO dto){
+        
     }
     
     

@@ -65,7 +65,8 @@ public class TreeNode<T> implements java.io.Serializable {
      * @return Whether this node has children
      */
     public boolean isLeaf() {
-        return children.isEmpty();
+        return this.children.size() <3;
+        //return children.isEmpty();
     }
 
     /**
@@ -80,11 +81,8 @@ public class TreeNode<T> implements java.io.Serializable {
 
     public synchronized TreeNode<T> addChild(T child) {
         TreeNode<T> childNode = new TreeNode<T>(child);
-
-        if (!(this.containsNode((NodeInfo) child))) {
             childNode.parent = this;
             this.children.add(childNode);
-        }
 
         return childNode;
     }
@@ -107,20 +105,23 @@ public class TreeNode<T> implements java.io.Serializable {
      * @param item the item to find
      * @return the node containing item
      */
-    public TreeNode<T> findTreeNode(T item) {
-        if (item.equals(this.contents)) {
-            return this;
+    public TreeNode<T> findTreeNode(NodeInfo item) {
+        TreeNode<T> rootnode = this.getRoot();
+        return findTreeRec(rootnode, item);
+    }
+    private TreeNode<T> findTreeRec(TreeNode<T> currentNode, NodeInfo nodeToFind){
+        
+        if (((NodeInfo)currentNode.contents).getIpAddress().equals(nodeToFind.getIpAddress())) {
+            return currentNode;
         }
-        for (TreeNode<T> child : this.children) {
-            if (item.equals(child.contents)) {
-                return child;
-            }
-
-            TreeNode<T> recursiveResult = child.findTreeNode(item);
-            if (recursiveResult != null) {
-                return recursiveResult;
+        TreeNode<T> t;
+        for (TreeNode<T> child : currentNode.children) {
+            t = findTreeRec(child, nodeToFind);
+            if(t != null){
+                return t;
             }
         }
+            
         return null;
     }
 
